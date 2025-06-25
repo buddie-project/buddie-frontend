@@ -1,0 +1,14 @@
+import {Navigate} from "react-router-dom";
+import {useUserContext} from "../services/UserContext.jsx";
+
+const ProtectedRoute = ({children}) => {
+    const contexto = useUserContext();
+
+    if(!contexto.user) {
+        return <Navigate to="/login" replace />;
+    }
+
+    return children;
+}
+
+export default ProtectedRoute;
