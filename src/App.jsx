@@ -5,7 +5,7 @@ import '../public/icons/css/icons.css';
 function App() {
 
   return (
-    <>s
+    <>
         <div>
 
         </div>
