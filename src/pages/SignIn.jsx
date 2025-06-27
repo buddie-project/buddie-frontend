@@ -4,7 +4,6 @@ import Login from "../components/loginPage/Login.jsx";
 function SignIn() {
     return (
         <>
-            <Navbar />
             <Login />
         </>
     );
