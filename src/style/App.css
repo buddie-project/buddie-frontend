@@ -7,11 +7,11 @@ body, html, #root {
 
 .nav{
     width: 100%;
-    background-color: white;
+    background-color: transparent;
     display: flex;
     justify-content: space-between;
     padding: 5px 30px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    /*box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);*/
     position: fixed;
     top: 0;
     left: 0;
@@ -95,7 +95,7 @@ body, html, #root {
 }
 .footer-link{
     text-decoration: none;
-    color: black;
+    color: white;
     font-size: 14px;
     text-transform: lowercase;
 }
