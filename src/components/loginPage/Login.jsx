@@ -7,7 +7,7 @@ import {useState} from "react";
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const contexto = useUserContext();
+    const context = useUserContext();
     const navigate = useNavigate();
 
     async function handleSubmit(e) {
@@ -27,7 +27,7 @@ function Login() {
 
             let response = await api.get("/user/logado", {withCredentials: true});
             let user = response.data;
-            contexto.setUser(user);
+            context.setUser(user);
 
             navigate("/");
         } catch (e) {

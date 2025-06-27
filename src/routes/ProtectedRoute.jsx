@@ -2,9 +2,9 @@ import {Navigate} from "react-router-dom";
 import {useUserContext} from "../services/UserContext.jsx";
 
 const ProtectedRoute = ({children}) => {
-    const contexto = useUserContext();
+    const context = useUserContext();
 
-    if(!contexto.user) {
+    if(!context.user) {
         return <Navigate to="/login" replace />;
     }
 
