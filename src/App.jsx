@@ -1,5 +1,6 @@
 import './style/Login.css'
 import './style/App.css';
+import "../public/icons/css/icons.css";
 import {Route, Routes} from "react-router-dom";
 import SignIn from "./pages/SignIn.jsx";
 import SignUp from "./pages/SignUp.jsx";

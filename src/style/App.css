@@ -35,12 +35,15 @@ body, html, #root {
     text-transform: lowercase;
     text-decoration: none;
     color: black;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 18px;
+    font-weight: 600;
 }
 
 .nav-link:hover {
     color: #999;
+    font-size: 20px;
+    font-weight: bolder;
+    transition: color 0.3s ease, font-size 0.3s ease;
 }
 
 .menu-toggle {
@@ -75,6 +78,19 @@ body, html, #root {
     .nav-links.open {
         display: flex;
     }
+}
+
+.icon-search {
+    font-size: 20px;
+    color: black;
+    cursor: pointer;
+}
+
+.icon-search:hover {
+    color: #999;
+    font-size: 22px;
+    font-weight: bolder;
+    transition: color 0.3s ease, font-size 0.3s ease;
 }
 
 .footer {
