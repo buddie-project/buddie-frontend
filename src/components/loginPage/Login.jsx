@@ -46,22 +46,22 @@ function Login() {
             </div>
 
         <section id="contact">
-            <h1>iniciar sessão</h1>
             <div className="contact-container">
+            <h3>iniciar sessão</h3>
                 <form id="form" className="topBefore" onSubmit={handleSubmit}>
                     <label htmlFor="email"></label>
                     <input id="email" type="text" value={email}
                            onChange={(e) => {
                                setEmail(e.target.value);
-                           }} placeholder="EMAIL"/>
+                           }} placeholder="email"/>
 
                     <label htmlFor="password"></label>
                     <input id="password" type="password" value={password}
                            onChange={(e) => {
                                setPassword(e.target.value);
-                           }} placeholder="PASSWORD"/>
+                           }} placeholder="password"/>
 
-                    <input id="submit" type="submit" value="LOGIN"/>
+                    <input id="submit" type="submit" value="entrar"/>
                 </form>
             </div>
         </section>
