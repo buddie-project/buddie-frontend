@@ -17,7 +17,7 @@ function Navbar() {
                 onClick={() => setMenuOpen(!menuOpen)}
                 aria-label="Abrir menu"
             >
-                ...
+                menu
             </button>
 
             <div className={`nav-links ${menuOpen ? "open" : ""}`}>
@@ -26,6 +26,7 @@ function Navbar() {
                 <Link to="/cursos" className="nav-link" onClick={() => setMenuOpen(false)}>cursos</Link>
                 <Link to="/entrar" className="nav-link" onClick={() => setMenuOpen(false)}>iniciar sessão</Link>
                 <Link to="/registar" className="nav-link" onClick={() => setMenuOpen(false)}>registar</Link>
+                <i className="icon-search" aria-hidden="true"></i>
             </div>
         </nav>
     )
