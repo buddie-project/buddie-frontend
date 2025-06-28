@@ -1,4 +1,4 @@
-import "../../style/Register.css";
+import "../../style/LoginAndRegister.css";
 import api from "../../services/api.js";
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
@@ -55,36 +55,41 @@ function Register() {
                 <div className="contact-container">
                 <h3>registo</h3>
                     <form id="form" className="topBefore" onSubmit={handleSubmit}>
-                        <label htmlFor="firstName"></label>
-                        <input id="firstName" type="text" value={inputs.firstName}
-                               onChange={(e) => setInputs({...inputs, firstName: e.target.value})}
-                               placeholder="primeiro nome"/>
+                        <div className="form-columns">
+                            <div className="column left-column">
+                                <label htmlFor="firstName"></label>
+                                <input id="firstName" type="text" value={inputs.firstName}
+                                       onChange={(e) => setInputs({...inputs, firstName: e.target.value})}
+                                       placeholder="primeiro nome" />
 
-                        <label htmlFor="lastName"></label>
-                        <input id="lastName" type="text" value={inputs.lastName}
-                               onChange={(e) => setInputs({...inputs, lastName: e.target.value})}
-                               placeholder="último nome"/>
+                                <label htmlFor="email"></label>
+                                <input id="email" type="email" value={inputs.email}
+                                       onChange={(e) => setInputs({...inputs, email: e.target.value})}
+                                       placeholder="email" />
 
-                        <label htmlFor="email"></label>
-                        <input id="email" type="email" value={inputs.email}
-                               onChange={(e) => setInputs({...inputs, email: e.target.value})}
-                               placeholder="email"/>
+                                <label htmlFor="newPassword"></label>
+                                <input id="newPassword" type="password" value={inputs.newPassword}
+                                       onChange={(e) => setInputs({...inputs, newPassword: e.target.value})}
+                                       placeholder="nova palavra-passe" />
+                            </div>
 
-                        <label htmlFor="username"></label>
-                        <input id="username" type="text" value={inputs.username}
-                               onChange={(e) => setInputs({...inputs, username: e.target.value})}
-                               placeholder="nome de utilizador"/>
+                            <div className="column right-column">
+                                <label htmlFor="lastName"></label>
+                                <input id="lastName" type="text" value={inputs.lastName}
+                                       onChange={(e) => setInputs({...inputs, lastName: e.target.value})}
+                                       placeholder="último nome" />
 
-                        <label htmlFor="newPassword"></label>
-                        <input id="newPassword" type="password" value={inputs.newPassword}
-                               onChange={(e) => setInputs({...inputs, newPassword: e.target.value})}
-                               placeholder="nova palavra-passe"/>
+                                <label htmlFor="username"></label>
+                                <input id="username" type="text" value={inputs.username}
+                                       onChange={(e) => setInputs({...inputs, username: e.target.value})}
+                                       placeholder="nome de utilizador" />
 
-                        <label htmlFor="repeatPassword"></label>
-                        <input id="repeatPassword" type="password" value={inputs.repeatPassword}
-                               onChange={(e) => setInputs({...inputs, repeatPassword: e.target.value})}
-                               placeholder="repetir palavra-passe"/>
-
+                                <label htmlFor="repeatPassword"></label>
+                                <input id="repeatPassword" type="password" value={inputs.repeatPassword}
+                                       onChange={(e) => setInputs({...inputs, repeatPassword: e.target.value})}
+                                       placeholder="repetir palavra-passe" />
+                            </div>
+                        </div>
                         <button type="submit">registar</button>
                     </form>
                 </div>

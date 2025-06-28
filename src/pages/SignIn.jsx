@@ -1,5 +1,5 @@
-import Navbar from "../components/generalComponents/Navbar.jsx";
 import Login from "../components/loginPage/Login.jsx";
+import "../style/LoginAndRegister.css";
 
 function SignIn() {
     return (

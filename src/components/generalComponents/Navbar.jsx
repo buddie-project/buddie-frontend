@@ -12,13 +12,13 @@ function Navbar() {
                 </Link>
             </div>
 
-            <button
+            <h2
                 className="menu-toggle"
                 onClick={() => setMenuOpen(!menuOpen)}
                 aria-label="Abrir menu"
             >
                 menu
-            </button>
+            </h2>
 
             <div className={`nav-links ${menuOpen ? "open" : ""}`}>
                 <Link to="/" className="nav-link" onClick={() => setMenuOpen(false)}>homepage</Link>
