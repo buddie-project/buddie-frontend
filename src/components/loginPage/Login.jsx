@@ -1,4 +1,4 @@
-import '../../style/Login.css';
+import '../../style/LoginAndRegister.css';
 import api from "../../services/api.js";
 import {useNavigate} from "react-router-dom";
 import {useUserContext} from "../../services/UserContext.jsx";
@@ -61,7 +61,7 @@ function Login() {
                                setPassword(e.target.value);
                            }} placeholder="password"/>
 
-                    <input id="submit" type="submit" value="entrar"/>
+                    <button type="submit">entrar</button>
                 </form>
             </div>
         </section>
