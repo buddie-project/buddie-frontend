@@ -52,8 +52,8 @@ function Register() {
             </div>
 
             <section id="contact">
-                <h1>registo</h1>
                 <div className="contact-container">
+                <h3>registo</h3>
                     <form id="form" className="topBefore" onSubmit={handleSubmit}>
                         <label htmlFor="firstName"></label>
                         <input id="firstName" type="text" value={inputs.firstName}

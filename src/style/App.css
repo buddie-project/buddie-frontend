@@ -93,7 +93,7 @@ body, html, #root {
     transition: color 0.3s ease, font-size 0.3s ease;
 }
 
-.footer {
+/*.footer {
     width: 100%;
     background-color: white;
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
@@ -115,4 +115,4 @@ body, html, #root {
     color: white;
     font-size: 14px;
     text-transform: lowercase;
-}
+}*/

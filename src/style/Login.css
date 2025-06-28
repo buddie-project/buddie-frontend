@@ -72,6 +72,5 @@ input#submit {
 }
 
 #submit:hover {
-    color: darkgrey;
+    background-color: darkgrey;
 }
-

@@ -1,4 +1,3 @@
-import './style/Login.css'
 import './style/App.css';
 import "../public/icons/css/icons.css";
 import {Route, Routes} from "react-router-dom";
