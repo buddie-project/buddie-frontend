@@ -51,7 +51,7 @@
     font-family: 'Alumni Sans', sans-serif;
     font-weight: 550;
     animation: move 0.6s infinite alternate;
-    z-index: 1;
+    z-index: 10;
     cursor: pointer;
 }
 
