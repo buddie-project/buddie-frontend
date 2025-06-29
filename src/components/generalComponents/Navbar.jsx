@@ -15,14 +15,14 @@ function Navbar() {
             <h2
                 className="menu-toggle"
                 onClick={() => setMenuOpen(!menuOpen)}
-                aria-label="Abrir menu"
+                aria-label="open menu"
             >
                 menu
             </h2>
 
             <div className={`nav-links ${menuOpen ? "open" : ""}`}>
                 <Link to="/" className="nav-link" onClick={() => setMenuOpen(false)}>homepage</Link>
-                <Link to="/about" className="nav-link" onClick={() => setMenuOpen(false)}>sobre</Link>
+                <Link to="/sobre" className="nav-link" onClick={() => setMenuOpen(false)}>sobre</Link>
                 <Link to="/cursos" className="nav-link" onClick={() => setMenuOpen(false)}>cursos</Link>
                 <Link to="/entrar" className="nav-link" onClick={() => setMenuOpen(false)}>iniciar sessão</Link>
                 <Link to="/registar" className="nav-link" onClick={() => setMenuOpen(false)}>registar</Link>
