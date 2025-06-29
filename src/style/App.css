@@ -39,9 +39,10 @@ body, html, #root {
 }
 
 .nav-link:hover {
-    color: #999;
+    /*color: #999;*/
     font-size: 20px;
     font-weight: bolder;
+    text-decoration: underline;
     transition: color 0.3s ease, font-size 0.3s ease;
 }
 
@@ -86,7 +87,7 @@ body, html, #root {
 }
 
 .icon-search:hover {
-    color: #999;
+    /*color: #999;*/
     font-size: 22px;
     font-weight: bolder;
     transition: color 0.3s ease, font-size 0.3s ease;
