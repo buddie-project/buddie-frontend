@@ -38,8 +38,40 @@ body, html, #root {
     display: flex;
     align-items: center;
     gap: 25px;
-
+    transition: margin-left 0.3s ease, padding-left 0.3s ease;
 }
+
+.nav-links .search-input {
+    display: inline-block;
+    transition: transform 0.3s ease;
+    transform: scale(0);
+    opacity: 0;
+    height: 30%;
+}
+
+.search-input {
+    width: 200px;
+    font-size: 16px;
+    transition: transform 0.5s ease, opacity 0.3s ease, width 0.3s ease;
+    margin-top: 10px;
+    opacity: 0;
+    transform: scale(0);
+}
+
+.nav-links.search-active {
+    margin-left: 150px;
+}
+.nav-links .search-input {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+.nav-links.search-active .search-input {
+    opacity: 1;
+    transform: scale(1);
+    width: 200px;
+}
+
 .nav-link{
     text-transform: lowercase;
     text-decoration: none;
