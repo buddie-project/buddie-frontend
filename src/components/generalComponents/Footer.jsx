@@ -1,12 +1,16 @@
-import {Link} from "react-router-dom";
 
 function Footer() {
     return (
         <footer className="footer">
             <div className="footer-content">
-                <Link to="/" className="footer-link">homepage</Link>
+                <a href="https://github.com/buddie-project"
+                   target="_blank"
+                   rel="noreferrer"
+                   className="github-link">
+                    <img src="/images/github-mark.svg" className="github-icon" width="32" height="auto" alt="Github Logo" />
+                </a>
 
-                <p>&copy; {new Date().getFullYear()} Buddie. All rights reserved. </p>
+                <p> | &copy; {new Date().getFullYear()} Buddie. All rights reserved. </p>
 
             </div>
 

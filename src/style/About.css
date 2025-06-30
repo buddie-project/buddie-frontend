@@ -4,28 +4,41 @@
     box-sizing: border-box;
 }
 
+body, html {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.about-hero {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5vw;
+    z-index: 1;
+    font-family: "Futura Std", sans-serif;
+    overflow: hidden;
+}
+
 .background-about {
-    position: fixed;
-    top: 80%;
+    position: absolute;
+    top: 70%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 140vw;
+    width: 150vw;
     height: 150vh;
     background: url('/images/student-about.png') no-repeat center center;
     background-size: contain;
-    z-index: 0;
+    z-index: -1;
+    opacity: 1;
 }
 
 .about {
-    border-top: 10px;
-    position: relative;
-    min-height: 100vh;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 5vw;
-    color: black;
-    font-family: "Futura Std", sans-serif;
     z-index: 1;
 }
 
@@ -33,12 +46,52 @@
     padding-left: 150px;
     font-size: 60px;
     font-weight: bold;
-    position: relative;
 }
 
-.what.now {
+.what-now {
     padding-right: 150px;
     font-size: 40px;
     font-weight: bold;
+}
+
+
+.about-section {
+    background-color: #ffffff;
+    padding: 4rem 2rem;
+    text-align: center;
+    z-index: 2;
     position: relative;
+}
+
+.about-section h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.about-section p {
+    max-width: 800px;
+    margin: 0 auto 2rem;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.about-cards {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.card {
+    background: #E67700;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    max-width: 300px;
+}
+
+.card img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
 }

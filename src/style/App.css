@@ -5,23 +5,12 @@ body, html, #root {
     font-family: "Futura Std", sans-serif;
 }
 
-.app-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-.main-content {
-    flex: 1;
-    padding-top: 110px;
-}
-
 .nav{
     width: 100%;
     background-color: transparent;
     display: flex;
     justify-content: space-between;
     padding: 5px 30px;
-    /*box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);*/
     position: fixed;
     top: 0;
     left: 0;
@@ -146,17 +135,12 @@ body, html, #root {
     margin: auto;
     padding: 0 20px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 12px;
     align-items: center;
     text-align: center;
-}
-
-.footer-link {
-    text-decoration: none;
-    color: black;
-    font-size: 14px;
-    text-transform: lowercase;
+    overflow: hidden;
+    justify-content: center;
 }
 
 .footer-content p {
