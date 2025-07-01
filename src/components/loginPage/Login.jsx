@@ -62,6 +62,7 @@ function Login() {
                            }} placeholder="password"/>
 
                     <button type="submit">entrar</button>
+                    <p className="register-link">Ainda não tens conta? <a className="register-link-text" href="/registar">Regista-te</a></p>
                 </form>
             </div>
         </section>
