@@ -1,6 +1,6 @@
 body, html, #root {
     height: 100%;
-    margin: 0 auto;
+    margin: 0;
     padding: 0;
     font-family: "Futura Std", sans-serif;
 }
@@ -125,9 +125,16 @@ body, html, #root {
 }
 
 .footer {
+    position: absolute;
     width: 100%;
-    background-color: rgba(255, 255, 255, 0.73);
+    background-color: rgba(255, 255, 255, 0.1);
     padding: 20px 20px;
+    bottom: 0;
+    left: 0;
+    top: auto;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+    z-index: 2;
 }
 
 .footer-content {

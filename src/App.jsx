@@ -22,8 +22,8 @@ function App() {
             <Routes>
                 <Route path="/" element={<Homepage/>}/>
                 <Route path="/sobre" element={<About/>}/>
-                <Route path="/registar" element={<SignUp/>}/>
                 <Route path="/entrar" element={<SignIn/>}/>
+                <Route path="/registar" element={<SignUp/>}/>
             </Routes>
           </UserProvider>
           {!isHomePage && <Footer />}
