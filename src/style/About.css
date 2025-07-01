@@ -21,17 +21,29 @@ body, html {
 }
 
 .background-about {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-size: cover;
+    background: url('/images/student-about.jpg') no-repeat center center;
+    transition: background-image 0.3s ease-in-out;
+}
+
+/*.background-about {
     position: absolute;
     top: 70%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 150vw;
     height: 150vh;
-    background: url('/images/student-about.png') no-repeat center center;
+    background: url('/images/student-about.jpg') no-repeat center center;
     background-size: contain;
     z-index: -1;
     opacity: 1;
-}
+}*/
 
 .about {
     width: 100%;
@@ -56,10 +68,12 @@ body, html {
 
 .about-section {
     background-color: #ffffff;
-    padding: 4rem 2rem;
     text-align: center;
     z-index: 2;
-    position: relative;
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
 }
 
 .about-section h2 {
@@ -111,7 +125,7 @@ body, html {
     transform: translateX(-50%);
     color: black;
     cursor: pointer;
-    z-index: 1;
+    z-index: 10;
     animation: bounceArrow 1s ease-in-out infinite;
     font-size: 40px;
 }

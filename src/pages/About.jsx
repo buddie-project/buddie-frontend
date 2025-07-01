@@ -1,4 +1,5 @@
 import "../style/About.css";
+import "../style/App.css";
 import { useEffect } from "react";
 
 function About() {
