@@ -44,7 +44,46 @@
 
 @media (max-width: 1200px) {
     .area {
-        display: none;
+        font-size: smaller;
+    }
+
+    .map {
+
+        .arts {
+            top: 29vh;
+            left: 10vw;
+        }
+
+        .architecture {
+            top: 41vh;
+            left: 79vw;
+        }
+
+        .geometry {
+            top: 48vh;
+            left: 35vw;
+
+        }
+
+        .philosophy {
+            top: 77vh;
+            left: 49vw;
+        }
+
+        .portuguese {
+            top: 30vh;
+            left: 55vw;
+        }
+
+        .design {
+            top: 60vh;
+            left: 62vw;
+        }
+
+        .math {
+            top: 73vh;
+            left: 81vw;
+        }
     }
 }
 
@@ -56,7 +95,7 @@
     }
 
     .area {
-        font-size: smaller;
+        display: none;
     }
 }
 
@@ -83,32 +122,18 @@
 
 
 @keyframes move {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(-5px); }
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(-5px);
+    }
 }
 
 .area:hover {
     animation: none;
     transform: translateY(-5px);
 }
-
-/*@media (max-width: 1024px) {*/
-/*    .area {*/
-/*        display: none;*/
-/*    }*/
-/*}*/
-
-/*@media (max-width: 768px) {*/
-/*    .area {*/
-/*        display: none;*/
-/*    }*/
-/*}*/
-
-/*@media (max-width: 576px) {*/
-/*    .area {*/
-/*        display: none;*/
-/*    }*/
-/*}*/
 
 .arts {
     color: #F50000;

@@ -5,10 +5,6 @@ body, html {
     font-family: "Futura Std", sans-serif;
 }
 
-#root {
-    position: relative;
-}
-
 .nav{
     width: 100%;
     background-color: transparent;
