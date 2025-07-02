@@ -118,7 +118,6 @@ body, html {
 }
 
 .icon-search:hover {
-    /*color: #999;*/
     font-size: 22px;
     font-weight: bolder;
     transition: color 0.3s ease, font-size 0.3s ease;

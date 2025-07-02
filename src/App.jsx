@@ -11,6 +11,7 @@ import UserProvider from "./services/UserContext.jsx";
 import About from "./pages/About.jsx";
 import Faqs from "./pages/Faqs.jsx";
 import Courses from "./pages/Courses.jsx";
+import ProfilePage from "./pages/ProfilePage.jsx";
 
 function App() {
 
@@ -28,6 +29,7 @@ function App() {
                 <Route path="/entrar" element={<SignIn/>}/>
                 <Route path="/registar" element={<SignUp/>}/>
                 <Route path="/faqs" element={<Faqs/>}/>
+                <Route path="/perfil" element={<ProfilePage/>}/>
             </Routes>
           </UserProvider>
           {!isHomePage && <Footer />}

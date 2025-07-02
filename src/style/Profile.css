@@ -1,0 +1,93 @@
+/* Área principal */
+.cards {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    align-items: flex-start;
+    flex-grow: 1;
+    flex-wrap: wrap;
+    margin-top: 6rem;
+}
+
+.card-one {
+    background: white;
+    border-radius: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    padding: 2rem;
+    width: 300px;
+    height: 550px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+}
+
+.card-one-title {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.card-two-title {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.card-two {
+    background: white;
+    border-radius: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    padding: 2rem;
+    width: 800px;
+    min-width: 300px;
+    height: 550px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+}
+
+.card-two {
+    width: 800px;
+}
+
+.profile-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: left;
+    gap: 1.5rem;
+    width: 100%;
+    padding-top: 7.5rem;
+    padding-left: 2.5rem;
+    padding-right: 2rem;
+    max-width: 600px;
+}
+
+.profile-menu p {
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.profile-menu p:hover {
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.logout {
+padding-top: 2rem;
+}
+
+@media (max-width: 960px) {
+    .cards {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .card-two {
+        width: 90%;
+    }
+}
