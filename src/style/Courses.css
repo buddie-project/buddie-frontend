@@ -1,0 +1,109 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    overflow-x: hidden;
+    overflow-y: auto;
+    font-family: "Futura Std", sans-serif;
+}
+
+.filters{
+    display: flex;
+    justify-content: center;
+    padding-top: 150px;
+    margin-bottom: 0;
+}
+
+.filters-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+    padding: 1rem 2rem;
+    border-radius: 15px;
+    max-width: 900px;
+    width: 1200px;
+    height: 60px;
+    flex-shrink: 0;
+    border: 3px solid #000;
+    box-sizing: border-box;
+}
+
+.filters-box select {
+    border-radius: 6px;
+    /*border: 1px solid #ccc;*/
+    text-align: left;
+    border: none;
+    font-size: 1rem;
+    font-family: inherit;
+    min-width: 140px;
+    height: 25px;
+    align-items: center;
+    justify-content: center;
+}
+
+.courses-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(281px, 0px));
+    justify-content: center;
+    gap: 2.5rem;
+    padding: 70px 2rem 8rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.course-card{
+    padding: 1.5rem 1.5rem 1.5rem 1.5rem;
+    width: 281px;
+    height: 279px;
+    border-radius: 25px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease;
+}
+
+.red {
+    background: rgba(245, 0, 0, 0.80);
+}
+
+.purple {
+    background: rgba(156, 1, 104, 0.80);
+}
+
+.orange {
+    background: rgba(230, 119, 0, 0.80);
+}
+
+.green {
+    background: rgba(0, 153, 102, 0.80);
+}
+.yellow {
+    background: rgba(230, 196, 3, 0.80);
+}
+
+.blue {
+    background: rgba(0, 194, 220, 0.80);
+}
+
+.course-card h3 {
+    color: white;
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.course-card h5 {
+    font-size: 28px;
+    font-weight: 650;
+}
+
+.course-card p {
+    font-size: 15px;
+    font-weight: 500;
+}

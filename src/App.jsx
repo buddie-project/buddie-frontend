@@ -10,6 +10,7 @@ import Footer from "./components/generalComponents/Footer.jsx";
 import UserProvider from "./services/UserContext.jsx";
 import About from "./pages/About.jsx";
 import Faqs from "./pages/Faqs.jsx";
+import Courses from "./pages/Courses.jsx";
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<Homepage/>}/>
                 <Route path="/sobre" element={<About/>}/>
+                <Route path="/cursos" element={<Courses/>}/>
                 <Route path="/entrar" element={<SignIn/>}/>
                 <Route path="/registar" element={<SignUp/>}/>
                 <Route path="/faqs" element={<Faqs/>}/>
