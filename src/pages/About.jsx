@@ -41,6 +41,7 @@ function About() {
         <>
             <section className="about-hero" id="about">
                 <div className="background-about"></div>
+               
                 <div className="about">
                     <span className="age">+23?</span>
                     <span className="what-now">E agora?</span>
@@ -51,21 +52,27 @@ function About() {
             </section>
 
             <section className="about-section">
+                <section className="section-text">
                 <h2>Quem somos?</h2>
                 <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse blandit lobortis magna in eleifend. Vestibulum leo sem, pharetra at tempor quis, maximus at odio. Cras iaculis facilisis massa mollis luctus. Nam a blandit sem. Nam id tincidunt nisl. Praesent ut faucibus libero. Donec imperdiet magna ut orci iaculis, at porta neque hendrerit. Aliquam malesuada semper metus, eu auctor tortor ultrices nec. Quisque mollis pulvinar cursus. Fusce dictum euismod lectus. Nullam sagittis purus et aliquam scelerisque. Etiam dignissim dui vel dictum semper. Sed ullamcorper, quam eu hendrerit hendrerit, ipsum leo placerat urna, euismod egestas sem nunc nec lectus. Nulla finibus volutpat lacinia. Mauris nibh enim, rutrum ac commodo in, fringilla eu elit. Aenean maximus ante id velit tempor, et tincidunt nisi facilisis.
-                </p>
+                    O Buddie é um companheiro para todos os estudantes que pretendam ingressar no ensino superior através do regime +23.
 
-                <div className="about-cards">
-                    <div className="card">
-                        <img src="/images/buddie-logo-wht.png" alt="team" />
-                    </div>
-                    <div className="card">
-                        <h3>Encontra-nos</h3>
-                        <p>Github</p>
-                    </div>
+                    Voltar a estudar pode ser um processo desafiante e, por vezes, solitário. Requer que o estudante esteja atento e a par de todo o processo burocrático de candidatura, entrevista e ingresso numa instituição de ensino superior.
+
+                    Foi para colmatar as dificuldades deste processo que surgiu o Buddie.
+
+                    Nesta plataforma, os estudantes +23 encontram toda a informação relativa aos cursos e instituições de ensino superior onde pretendam ingressar, bem como todo o processo de candidatura. Além disso, poderão ter acesso aos requisitos de qualquer curso de ensino superior com regime +23 anos, em instituições nacionais.
+
+                    Para os futuros estudantes que ainda estejam a explorar opções, o Buddie  permite conhecer todos os cursos por área científica e de formação com base na lista oficial da DGES.
+
+                    Se já decidiste que queres voltar a estudar, ou se ainda estás a ponderar essa possibilidade, o Buddie está aqui para garantir que tomas uma decisão informada e que sabes sempre o que precisas para avançar com confiança nesta nova etapa.
+                </p>
+            </section>
+                <div className="card">
+                    <img src="/images/buddie-logo-wht.png" alt="logo" />
                 </div>
             </section>
+
         </>
     );
 }

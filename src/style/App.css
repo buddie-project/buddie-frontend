@@ -5,6 +5,10 @@ body, html {
     font-family: "Futura Std", sans-serif;
 }
 
+#root {
+    position: relative;
+}
+
 .nav{
     width: 100%;
     background-color: transparent;
@@ -70,7 +74,6 @@ body, html {
 }
 
 .nav-link:hover {
-    /*color: #999;*/
     font-size: 20px;
     font-weight: bolder;
     text-decoration: underline;
