@@ -1,21 +1,21 @@
 /* Área principal */
 .cards {
     display: flex;
-    gap: 2rem;
+    gap: 2.5rem;
     justify-content: center;
     align-items: flex-start;
     flex-grow: 1;
     flex-wrap: wrap;
-    margin-top: 6rem;
+    margin-top: 7.5rem;
 }
 
 .card-one {
     background: white;
     border-radius: 25px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    padding: 2rem;
+    padding: 2.5rem 2rem;
     width: 300px;
-    height: 550px;
+    height: 580px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -26,12 +26,14 @@
     align-items: center;
     justify-content: center;
     display: flex;
+    margin-bottom: 0.5rem;
 }
 
 .card-two-title {
     align-items: center;
     justify-content: center;
     display: flex;
+    margin-bottom: 0.5rem;
 }
 
 .card-two {
@@ -41,7 +43,7 @@
     padding: 2rem;
     width: 800px;
     min-width: 300px;
-    height: 550px;
+    height: 580px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -57,17 +59,19 @@
     flex-direction: column;
     align-items: start;
     justify-content: left;
-    gap: 1.5rem;
+    gap: 1.6rem;
     width: 100%;
-    padding-top: 7.5rem;
     padding-left: 2.5rem;
-    padding-right: 2rem;
-    max-width: 600px;
+    max-width: 700px;
 }
 
 .profile-menu p {
     font-size: 1rem;
     font-weight: 400;
+}
+
+.profile-menu p i {
+    margin-right: 0.5rem;
 }
 
 .profile-menu p:hover {
@@ -77,9 +81,31 @@
     text-decoration: underline;
 }
 
-.logout {
-padding-top: 2rem;
+.profile-menu p.active {
+    font-weight: bolder;
+    text-decoration: underline;
 }
+
+.profile-avatar-container {
+    text-align: center;
+}
+
+.profile-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 3px solid white;
+    object-fit: cover;
+}
+
+.avatar-upload-hint {
+    font-size: 12px;
+    color: #9c9c9c;
+    margin-top: 5px;
+    text-align: center;
+    font-weight: 500;
+}
+
 
 @media (max-width: 960px) {
     .cards {
