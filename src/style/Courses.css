@@ -25,7 +25,7 @@ body, html {
     gap: 2rem;
     padding: 1rem 2rem;
     border-radius: 15px;
-    max-width: 900px;
+    max-width: 925px;
     width: 1200px;
     height: 60px;
     flex-shrink: 0;
@@ -58,15 +58,17 @@ body, html {
 }
 
 .course-card{
-    padding: 1.5rem 1.5rem 1.5rem 1.5rem;
+    padding: 1.5rem;
     width: 281px;
     height: 279px;
-    border-radius: 25px;
     color: white;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: left;
     transition: transform 0.2s ease;
+    position: relative;
+    border-radius: 1rem;
+    overflow: hidden;
 }
 
 .red {
@@ -97,6 +99,11 @@ body, html {
     font-size: 21px;
     font-weight: 700;
     text-transform: uppercase;
+    padding-bottom: 10px;
+    padding-top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .course-card h5 {
@@ -110,11 +117,22 @@ body, html {
 }
 
 .icon-bookmark{
-    font-size: 20px;
-    color: white;
-    cursor: pointer;
     position: absolute;
-    align-self: flex-end;
+    top: 1.3rem;
+    right: 1rem;
+    font-size: 22px;
+    cursor: pointer;
+    z-index: 1;
+}
+.course-header {
+    font-weight: bold;
+    text-transform: uppercase;
+    padding-right: 2rem;
+    margin-bottom: 4rem;
+}
+
+.course-type {
+    flex: 1;
 }
 
 .icon-bookmark:hover {
@@ -125,33 +143,7 @@ body, html {
 
 .icon-bookmark.active {
     font-weight: bolder;
-    font-size: 22px;
+    font-size: 25px;
     transition: color 0.3s ease, font-size 0.3s ease;
     color: gold;
-}
-
-.footer-courses {
-    position: relative;
-    width: 100%;
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 20px 20px;
-    left: 0;
-    top: auto;
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
-    backdrop-filter: blur(10px);
-    z-index: 2;
-    bottom: 0;
-    display: flex;
-}
-
-.footer-courses-content {
-    max-width: 1200px;
-    margin: auto;
-    padding: 0 20px;
-    display: flex;
-    flex-direction: row;
-    gap: 12px;
-    align-items: center;
-    text-align: center;
-    overflow: hidden;
 }
