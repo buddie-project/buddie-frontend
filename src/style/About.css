@@ -5,7 +5,6 @@
 body, html {
     overflow-x: hidden;
     overflow-y: auto;
-    font-family: "Futura Std", sans-serif;
 }
 
 .about-hero {
@@ -15,6 +14,7 @@ body, html {
     justify-content: space-between;
     padding: 4vw;
     z-index: 1;
+    font-family: "Futura Std", sans-serif;
     overflow: hidden;
     background: url('/images/student-about.jpg') no-repeat center center;
 }
@@ -29,19 +29,6 @@ body, html {
     background-size: cover;
     transition: background-image 0.3s ease-in-out;
 }
-
-/*.background-about {
-    position: absolute;
-    top: 70%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 150vw;
-    height: 150vh;
-    background: url('/images/student-about.jpg') no-repeat center center;
-    background-size: contain;
-    z-index: -1;
-    opacity: 1;
-}*/
 
 .about {
     width: 100%;
@@ -63,6 +50,9 @@ body, html {
     font-weight: bold;
 }
 
+.section {
+    flex: 2;
+}
 
 .about-section {
     background-color: #ffffff;
@@ -123,7 +113,7 @@ body, html {
 }
 
 .scroll-down {
-    position: absolute;
+    position: fixed;
     bottom: 40px;
     left: 50%;
     transform: translateX(-50%);
@@ -132,4 +122,30 @@ body, html {
     z-index: 10;
     animation: bounceArrow 1s ease-in-out infinite;
     font-size: 40px;
+}
+
+.footer-about {
+    position: static;
+    width: 100vw;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 20px 20px;
+    left: 0;
+    top: auto;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+    z-index: 2;
+    bottom: 0;
+    display: flex;
+}
+
+.footer-about-content {
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
 }

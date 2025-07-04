@@ -5,10 +5,6 @@ body, html {
     font-family: "Futura Std", sans-serif;
 }
 
-#root {
-    position: relative;
-}
-
 .nav{
     width: 100%;
     background-color: transparent;
@@ -127,16 +123,16 @@ body, html {
 }
 
 .footer {
-    position: absolute;
+    position: fixed;
     width: 100%;
     background-color: rgba(255, 255, 255, 0.1);
     padding: 20px 20px;
-    bottom: 0;
     left: 0;
     top: auto;
     box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
     backdrop-filter: blur(10px);
     z-index: 2;
+    bottom: 0;
 }
 
 .footer-content {

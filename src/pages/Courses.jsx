@@ -146,7 +146,20 @@ function Courses() {
                     <p>universidade da Beira Interior</p>
                 </div>
             </div>
+            <footer className="footer-courses">
+                <div className="footer-courses-content">
+                    <a href="https://github.com/buddie-project"
+                       target="_blank"
+                       rel="noreferrer"
+                       className="github-link">
+                        <img src="/images/github-mark.svg" className="github-icon" width="32" height="auto" alt="Github Logo" />
+                    </a>
 
+                    <p> | &copy; {new Date().getFullYear()} Buddie. All rights reserved. </p>
+
+                </div>
+
+            </footer>
         </>
     )
 }

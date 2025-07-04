@@ -24,6 +24,8 @@ function App() {
     const location = useLocation();
     const isHomePage = location.pathname === '/';
     const isProfilePage = location.pathname.startsWith('/area-pessoal');
+    const isAboutPage = location.pathname === '/sobre';
+    const isCoursesPage = location.pathname === '/cursos';
 
     return (
       <>
@@ -45,7 +47,7 @@ function App() {
                 <Route path="/area-pessoal/configuracoes" element={<Configurations/>}/>
             </Routes>
           </UserProvider>
-          {!isHomePage && !isProfilePage && <Footer />}
+          {!isHomePage && !isProfilePage && !isAboutPage && !isCoursesPage && <Footer />}
       </>
   )
 }

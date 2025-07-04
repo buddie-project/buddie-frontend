@@ -19,7 +19,7 @@ function Register() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        let body = new URLSearchParams();
+        let body = new FormData();
         body.append("firstName", inputs.firstName);
         body.append("lastName", inputs.lastName);
         body.append("email", inputs.email);
@@ -28,7 +28,7 @@ function Register() {
         body.append("repeatPassword", inputs.repeatPassword);
 
 
-        await api.post("/users", body);
+        await api.post("/api/signup", body);
 
         navigate("/sucessRegister", {
             state: {
@@ -90,7 +90,7 @@ function Register() {
                                        placeholder="repetir palavra-passe" />
                             </div>
                         </div>
-                        <button type="submit">registar</button>
+                        <button type="submit" onSubmit={handleSubmit}>registar</button>
                     </form>
                 </div>
             </section>
