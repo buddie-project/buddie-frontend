@@ -222,3 +222,8 @@ body, html {
     text-align: center;
     overflow: hidden;
 }
+
+.footer-courses-content p {
+    font-size: 13px;
+    color: #666;
+}

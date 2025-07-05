@@ -13,8 +13,8 @@ function Navbar() {
     };
 
     const handleLogout = () => {
-        context.logout();          // chama o metodo logout do teu contexto
-        navigate("/");             // redireciona para a homepage
+        context.logout();
+        navigate("/");
     };
 
     return (
