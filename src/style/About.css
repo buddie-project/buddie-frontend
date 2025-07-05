@@ -76,7 +76,8 @@ body, html {
     font-style: normal;
     font-weight: 700;
     line-height: 160px;
-    margin: 0 14rem 2rem 2.4rem;
+    margin: 0 14rem 0 4rem;
+    text-align: left;
 }
 
 .about-section p {
