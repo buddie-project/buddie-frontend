@@ -93,17 +93,17 @@ function Courses() {
                         <option value="ISCTE">ISCTE</option>
                         <option value="FBAUL">FBAUL</option>
                     </select>
-                    <select onChange={(e) => setFilters({ ...filters, curso: e.target.value })}>
+                    <select onChange={(e) => setFilters({ ...filters, area: e.target.value })}>
                         <option value="">área</option>
                         <option value="artes">artes</option>
                         <option value="ciencias">ciências</option>
                     </select>
-                    <select onChange={(e) => setFilters({ ...filters, instituicao: e.target.value })}>
+                    <select onChange={(e) => setFilters({ ...filters, distrito: e.target.value })}>
                         <option value="">distrito</option>
                         <option value="Lisboa">Lisboa</option>
                         <option value="Beja">Beja</option>
                     </select>
-                    <select onChange={(e) => setFilters({ ...filters, instituicao: e.target.value })}>
+                    <select onChange={(e) => setFilters({ ...filters, data: e.target.value })}>
                         <option value="">data</option>
                         <option value="2024">2024</option>
                         <option value="2026">2026</option>

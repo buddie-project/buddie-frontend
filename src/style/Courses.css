@@ -52,7 +52,7 @@ body, html {
     grid-template-columns: repeat(auto-fit, minmax(281px, 0px));
     justify-content: center;
     gap: 2.5rem;
-    padding: 70px 2rem 8rem;
+    padding: 30px 2rem 8rem;
     max-width: 1200px;
     margin: 0 auto;
 }
@@ -146,6 +146,55 @@ body, html {
     font-size: 25px;
     transition: color 0.3s ease, font-size 0.3s ease;
     color: gold;
+}
+
+.filter-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.filters {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.applied-filters {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: #333;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.applied-filters p {
+    margin: 0;
+    font-weight: 500;
+    text-align: center;
+}
+
+.tags {
+    flex:1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 0.5rem;
+}
+
+.filter-tag {
+    background-color: #eee;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
 }
 
 .footer-courses {
