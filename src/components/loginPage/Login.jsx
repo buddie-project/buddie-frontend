@@ -17,7 +17,7 @@ function Login() {
             body.append("email", email);
             body.append("password", password);
 
-            await api.post("/login", body, {
+            await api.post("/api/login", body, {
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded"
                 },
@@ -25,7 +25,7 @@ function Login() {
             });
 
 
-            let response = await api.get("/user/logado", {withCredentials: true});
+            let response = await api.get("/api/user/logged", {withCredentials: true});
             let user = response.data;
             context.setUser(user);
 

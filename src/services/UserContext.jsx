@@ -10,7 +10,7 @@ const UserProvider = ( {children} ) => {
     useEffect(() => {
         (async () => {
             try {
-                let response = await api.get("/user/logged");
+                let response = await api.get("/api/user/logged");
                 setUser(response.data);
             } catch (error) {
                 console.error('Error fetching user:', error);
