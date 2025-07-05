@@ -29,7 +29,7 @@ function Login() {
             let user = response.data;
             context.setUser(user);
 
-            navigate("/");
+            navigate("/area-pessoal/conta");
         } catch (e) {
             console.error("Erro ao fazer login:", e);
             alert("Erro ao fazer login. Verifique as suas credenciais.");
