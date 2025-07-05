@@ -71,18 +71,51 @@ function Courses() {
         }
     ];
 
+    const [filters, setFilters] = useState({
+        curso: "",
+        instituicao: "",
+        area: "",
+        distrito: "",
+        data: ""
+    });
+
     return (
         <>
             <div className="filters">
                 <div className="filters-box">
-                    <select><option>curso</option><option>design</option><option>bioquimica</option></select>
-                    <select><option>instituição</option><option>ISCTE</option><option>FBAUL</option></select>
-                    <select><option>área</option><option>artes</option><option>ciências</option></select>
-                    <select><option>distrito</option><option>Lisboa</option><option>Beja</option></select>
-                    <select><option>data</option><option>2025</option><option>2026</option></select>
+                    <select onChange={(e) => setFilters({ ...filters, curso: e.target.value })}>
+                        <option value="">curso</option>
+                        <option value="design">design</option>
+                        <option value="bioquimica">bioquimica</option>
+                    </select>
+                    <select onChange={(e) => setFilters({ ...filters, instituicao: e.target.value })}>
+                        <option value="">instituição</option>
+                        <option value="ISCTE">ISCTE</option>
+                        <option value="FBAUL">FBAUL</option>
+                    </select>
+                    <select onChange={(e) => setFilters({ ...filters, curso: e.target.value })}>
+                        <option value="">área</option>
+                        <option value="artes">artes</option>
+                        <option value="ciencias">ciências</option>
+                    </select>
+                    <select onChange={(e) => setFilters({ ...filters, instituicao: e.target.value })}>
+                        <option value="">distrito</option>
+                        <option value="Lisboa">Lisboa</option>
+                        <option value="Beja">Beja</option>
+                    </select>
+                    <select onChange={(e) => setFilters({ ...filters, instituicao: e.target.value })}>
+                        <option value="">data</option>
+                        <option value="2024">2024</option>
+                        <option value="2026">2026</option>
+                    </select>
                 </div>
             </div>
-
+            <div className="applied-filters">
+                <p>Filtros ativos:</p>
+                {Object.entries(filters).map(([key, value]) =>
+                    value && <span key={key} className="filter-tag">{key}: {value}</span>
+                )}
+            </div>
             <div className="courses-container">
                 {coursesData.map((course) => (
                     <div key={course.id} className={`course-card ${course.colorClass}`}>
