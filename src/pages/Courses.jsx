@@ -1,17 +1,16 @@
 import "../style/Courses.css";
-import {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 
 function Courses() {
     const [bookmarkedCourses, setBookmarkedCourses] = useState([]);
 
-    const handleBookmark = (courseInfo) => {
-        setBookmarkedCourses(prev => {
-            const isBookmarked = prev.some(course => course.id === courseInfo.id);
-
+    const handleBookmark = (course) => {
+        setBookmarkedCourses((prev) => {
+            const isBookmarked = prev.some((c) => c.id === course.id);
             if (isBookmarked) {
-                return prev.filter(course => course.id !== courseInfo.id);
+                return prev.filter((c) => c.id !== course.id);
             } else {
-                return [...prev, courseInfo];
+                return [...prev, course];
             }
         });
     };
@@ -27,128 +26,128 @@ function Courses() {
         localStorage.setItem("bookmarkedCourses", JSON.stringify(bookmarkedCourses));
     }, [bookmarkedCourses]);
 
+    const coursesData = [
+        {
+            id: 1,
+            type: "licenciatura",
+            title: "Design de moda",
+            institution: "faculdade de arquitetura da universidade de Lisboa, FAUL",
+            colorClass: "red"
+        },
+        {
+            id: 2,
+            type: "pós-graduação",
+            title: "design de produto",
+            institution: "universidade IADE",
+            colorClass: "purple"
+        },
+        {
+            id: 3,
+            type: "mestrado",
+            title: "ux/ui design",
+            institution: "Atlântica - instituto universitário",
+            colorClass: "orange"
+        },
+        {
+            id: 4,
+            type: "CTeSP",
+            title: "design de interiores",
+            institution: "escola Superior de Viseu",
+            colorClass: "green"
+        },
+        {
+            id: 5,
+            type: "curso de especialização",
+            title: "design gráfico",
+            institution: "escola de tecnologias inovação e criação, ETIC",
+            colorClass: "yellow"
+        },
+        {
+            id: 6,
+            type: "upskill",
+            title: "design multimédia",
+            institution: "universidade da Beira Interior",
+            colorClass: "blue"
+        }
+    ];
+
+    const [filters, setFilters] = useState({
+        curso: "",
+        instituicao: "",
+        area: "",
+        distrito: "",
+        data: ""
+    });
 
     return (
         <>
             <div className="filters">
                 <div className="filters-box">
-                    <select>
-                        <option>curso</option>
-                        <option>design</option>
-                        <option>bioquimica</option>
+                    <select onChange={(e) => setFilters({ ...filters, curso: e.target.value })}>
+                        <option value="">curso</option>
+                        <option value="design">design</option>
+                        <option value="bioquimica">bioquimica</option>
                     </select>
-                    <select>
-                        <option>instituição</option>
-                        <option>ISCTE</option>
-                        <option>FBAUL</option>
+                    <select onChange={(e) => setFilters({ ...filters, instituicao: e.target.value })}>
+                        <option value="">instituição</option>
+                        <option value="ISCTE">ISCTE</option>
+                        <option value="FBAUL">FBAUL</option>
                     </select>
-                    <select>
-                        <option>area</option>
-                        <option>artes</option>
-                        <option>ciências</option>
+                    <select onChange={(e) => setFilters({ ...filters, area: e.target.value })}>
+                        <option value="">área</option>
+                        <option value="artes">artes</option>
+                        <option value="ciencias">ciências</option>
                     </select>
-                    <select>
-                        <option>distrito</option>
-                        <option>Lisboa</option>
-                        <option>Beja</option>
+                    <select onChange={(e) => setFilters({ ...filters, distrito: e.target.value })}>
+                        <option value="">distrito</option>
+                        <option value="Lisboa">Lisboa</option>
+                        <option value="Beja">Beja</option>
                     </select>
-                    <select>
-                        <option>data</option>
-                        <option>2025</option>
-                        <option>2026</option>
+                    <select onChange={(e) => setFilters({ ...filters, data: e.target.value })}>
+                        <option value="">data</option>
+                        <option value="2024">2024</option>
+                        <option value="2026">2026</option>
                     </select>
                 </div>
+            </div>
+            <div className="applied-filters">
+                <p>Filtros ativos:</p>
+                {Object.entries(filters).map(([key, value]) =>
+                    value && <span key={key} className="filter-tag">{key}: {value}</span>
+                )}
             </div>
             <div className="courses-container">
-                <div className="course-card red">
-                    <i className={`icon-bookmark ${bookmarkedCourses.some(c => c.id === 1) ? "active" : ""}`}
-                       onClick={() => handleBookmark({
-                           id: 1,
-                           type: "licenciatura",
-                           title: "Design de moda",
-                           institution: "faculdade de arquitetura da universidade de Lisboa, FAUL"
-                       })}
-                       aria-hidden="true">
-                    </i>
-                    <h3>licenciatura</h3>
-                    <h5>design de moda</h5>
-                    <p>faculdade de arquitetura da universidade de Lisboa, FAUL</p>
-                </div>
-                <div className="course-card purple">
-                    <i className={`icon-bookmark ${bookmarkedCourses.some(c => c.id === 2) ? "active" : ""}`}
-                       onClick={() => handleBookmark({
-                           id: 2,
-                           type: "pós-graduaçã",
-                           title: "design de produto",
-                           institution: "universidade IADE"
-                       })}
-                       aria-hidden="true">
-                    </i>
-                    <h3>pós-graduação</h3>
-                    <h5>design de produto</h5>
-                    <p>universidade IADE</p>
-                </div>
-                <div className="course-card orange">
-                    <i className={`icon-bookmark ${bookmarkedCourses.some(c => c.id === 3) ? "active" : ""}`}
-                       onClick={() => handleBookmark({
-                           id: 3,
-                           type: "mestrado",
-                           title: "ux/ui design",
-                           institution: "Atlântica - instituto universitário"
-                       })}
-                       aria-hidden="true">
-                    </i>
-                    <h3>CESPU</h3>
-                    <h5>ux/ui design</h5>
-                    <p>Atlântica - instituto universitário</p>
-                </div>
-                <div className="course-card green">
-                    <i className={`icon-bookmark ${bookmarkedCourses.some(c => c.id === 4) ? "active" : ""}`}
-                       onClick={() => handleBookmark({
-                           id: 4,
-                           type: "CTeSP",
-                           title: "design de interiores",
-                           institution: "escola Superior de Viseu"
-                       })}
-                       aria-hidden="true">
-                    </i>
-                    <h3>CTeSP</h3>
-                    <h5>design de interiores</h5>
-                    <p>escola Superior de Viseu</p>
-                </div>
-                <div className="course-card yellow">
-                    <i className={`icon-bookmark ${bookmarkedCourses.some(c => c.id === 5) ? "active" : ""}`}
-                       onClick={() => handleBookmark({
-                           id: 5,
-                           type: "curso de especialização",
-                           title: "design gráfico",
-                           institution: "escola de tecnologias inovação e criação, ETIC",
-                       })}
-                       aria-hidden="true">
-                    </i>
-                    <h3>curso de especialização</h3>
-                    <h5>design gráfico</h5>
-                    <p>escola de tecnologias
-                        inovação e criação, ETIC</p>
-                </div>
-                <div className="course-card blue">
-                    <i className={`icon-bookmark ${bookmarkedCourses.some(c => c.id === 6) ? "active" : ""}`}
-                       onClick={() => handleBookmark({
-                           id: 6,
-                           type: "upskill",
-                           title: "design multimédia",
-                           institution: "universidade da Beira Interior",
-                       })}
-                       aria-hidden="true">
-                    </i>
-                    <h3>upskill</h3>
-                    <h5>design multimédia</h5>
-                    <p>universidade da Beira Interior</p>
-                </div>
+                {coursesData.map((course) => (
+                    <div key={course.id} className={`course-card ${course.colorClass}`}>
+                        <h3 className="course-header">
+                            <span className="course-type">{course.type}</span>
+                            <span
+                                className={`icon-bookmark ${bookmarkedCourses.some(c => c.id === course.id) ? "active" : ""}`}
+                                onClick={() => handleBookmark(course)}
+                                aria-hidden="true"
+                            ></span>
+                        </h3>
+                        <h5>{course.title}</h5>
+                        <p>{course.institution}</p>
+                    </div>
+                ))}
             </div>
+            <footer className="footer-courses">
+                <div className="footer-courses-content">
+                    <a href="https://github.com/buddie-project"
+                       target="_blank"
+                       rel="noreferrer"
+                       className="github-link">
+                        <img src="/images/github-mark.svg" className="github-icon" width="32" height="auto" alt="Github Logo" />
+                    </a>
 
+                    <p> | &copy; {new Date().getFullYear()} Buddie. All rights reserved. </p>
+
+                </div>
+
+            </footer>
         </>
-    )
+    );
 }
 
 export default Courses;

@@ -5,10 +5,6 @@ body, html {
     font-family: "Futura Std", sans-serif;
 }
 
-#root {
-    position: relative;
-}
-
 .nav{
     width: 100%;
     background-color: transparent;
@@ -88,6 +84,52 @@ body, html {
     cursor: pointer;
 }
 
+.user-dropdown {
+    position: relative;
+    display: inline-block;
+    padding-right: 40px;
+}
+
+.username {
+    cursor: pointer;
+}
+
+.username:hover {
+    font-weight: bold;
+    color: #d4af37;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #222;
+    min-width: 120px;
+    right: 0;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content button {
+    width: 100%;
+    padding: 10px;
+    background-color: transparent;
+    border: none;
+    color: white;
+    text-align: left;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: 'Futura Std', sans-serif;
+    font-size: 0.8em;
+}
+
+.dropdown-content button:hover {
+    background-color: #d4af37;
+}
+
+.user-dropdown:hover .dropdown-content {
+    display: block;
+}
+
 @media (max-width: 768px) {
     .menu-toggle {
         display: block;
@@ -127,16 +169,16 @@ body, html {
 }
 
 .footer {
-    position: absolute;
+    position: fixed;
     width: 100%;
     background-color: rgba(255, 255, 255, 0.1);
     padding: 20px 20px;
-    bottom: 0;
     left: 0;
     top: auto;
     box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
     backdrop-filter: blur(10px);
     z-index: 2;
+    bottom: 0;
 }
 
 .footer-content {

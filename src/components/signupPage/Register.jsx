@@ -149,6 +149,7 @@ function Register() {
                             </div>
                         </div>
                         <button type="submit">registar</button>
+                        <p className="login-link">Já tens conta? <a className="login-link-text" href="/entrar">Iniciar Sessão</a></p>
                     </form>
                 </div>
             </section>

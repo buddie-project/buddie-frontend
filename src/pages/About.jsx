@@ -1,6 +1,6 @@
 import "../style/About.css";
 import "../style/App.css";
-import { useEffect } from "react";
+import {useEffect} from "react";
 
 function About() {
 
@@ -10,26 +10,10 @@ function About() {
 
         const handleClick = () => {
             const targetPosition = window.innerHeight;
-            const startPosition = window.scrollY;
-            const distance = targetPosition - startPosition;
-            const duration = 1500;
-            let start = null;
-
-            function easeInOutQuad(t) {
-                return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-            }
-
-            function step(timestamp) {
-                if (!start) start = timestamp;
-                const progress = timestamp - start;
-                const percent = Math.min(progress / duration, 1);
-                window.scrollTo(0, startPosition + distance * easeInOutQuad(percent));
-                if (progress < duration) {
-                    window.requestAnimationFrame(step);
-                }
-            }
-
-            window.requestAnimationFrame(step);
+            document.body.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            })
         };
 
         scrollDownButton.addEventListener('click', handleClick);
@@ -41,7 +25,6 @@ function About() {
         <>
             <section className="about-hero" id="about">
                 <div className="background-about"></div>
-               
                 <div className="about">
                     <span className="age">+23?</span>
                     <span className="what-now">E agora?</span>
@@ -72,7 +55,20 @@ function About() {
                     <img src="/images/buddie-logo-wht.png" alt="logo" />
                 </div>
             </section>
+            <footer className="footer-about">
+                <div className="footer-about-content">
+                    <a href="https://github.com/buddie-project"
+                       target="_blank"
+                       rel="noreferrer"
+                       className="github-link">
+                        <img src="/images/github-mark.svg" className="github-icon" width="32" height="auto" alt="Github Logo" />
+                    </a>
 
+                    <p> | &copy; {new Date().getFullYear()} Buddie. All rights reserved. </p>
+
+                </div>
+
+            </footer>
         </>
     );
 }
