@@ -1,0 +1,228 @@
+.cards {
+    display: flex;
+    gap: 2.5rem;
+    justify-content: center;
+    align-items: flex-start;
+    flex-grow: 1;
+    flex-wrap: wrap;
+    margin-top: 7.5rem;
+}
+
+.card-one-title {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    margin-bottom: 0.5rem;
+}
+
+.card-two-title {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    margin-bottom: 0.5rem;
+}
+
+.profile-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: left;
+    gap: 1.6rem;
+    width: 100%;
+    padding-left: 2.5rem;
+    max-width: 700px;
+}
+
+.profile-menu p {
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.profile-menu p i {
+    margin-right: 0.5rem;
+}
+
+.profile-menu p:hover {
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.profile-menu p.active {
+    font-weight: bolder;
+    text-decoration: underline;
+}
+
+.profile-avatar-container {
+    text-align: center;
+}
+
+.profile-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 3px solid white;
+    object-fit: cover;
+}
+
+.avatar-upload-hint {
+    font-size: 12px;
+    color: #9c9c9c;
+    margin-top: 5px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.cards .sections {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2rem;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+.cards .section {
+    min-height: 150px;
+    border-radius: 25px;
+    border: 3px solid transparent;
+    background:
+            linear-gradient(white, white) padding-box,
+            linear-gradient(to right, #F50000, #9C0168, #E67700, #E6C403, #960014, #03A53F, #00C2DC, #026CB8, #1B049D) border-box;
+    align-items: center;
+    display: block;
+}
+
+
+.configurations-section .section-two {
+    padding: 1rem 1rem 0 1rem;
+}
+
+.cards .section-two p, .section-three p {
+    display: grid;
+    justify-content: left;
+}
+
+.line {
+    display: flex;
+    align-items: center;
+}
+
+.line > div {
+    flex: 1;
+}
+
+.line:first-child, .line:nth-child(2) div {
+    margin-bottom: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.age {
+    padding: 0;
+}
+
+    .inputs {
+        margin-right: 1rem;
+        margin-top: 1.5rem;
+        width: 100%;
+        max-height: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: .2rem;
+
+        .first-name, .last-name, .age, .bio, .email, .phone {
+            width: 100%;
+            height: 30px;
+            border-radius: 8px;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+
+        .country, .city, .zip, .district {
+            width: 100%;
+            height: 30px;
+            border-radius: 8px;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+        }
+    }
+
+.configurations-section .section-one {
+    padding: 1rem;
+}
+
+.configurations-section h4 {
+    padding-bottom: 1.5rem;
+}
+
+.configurations-section .section-two {
+    margin-bottom: .5rem;
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+}
+
+.configurations-section .section p {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #ADADAD;
+}
+.save {
+    height: 25px;
+    color: black;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.delete {
+    height: 25px;
+    color: red;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+}
+
+.delete img {
+    width: 25px;
+    height: 25px;
+    margin-right: 0.1rem;
+    padding-bottom: .35rem;
+}
+
+
+.card-two .save-delete {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 3rem;
+}
+
+.checkbox-container .show-hide-picture {
+    margin-top: .5rem;
+    height: 15px;
+    width: 15px;
+    cursor: pointer;
+    margin-right: 0.5rem;
+}
+
+@media (max-width: 564px) {
+    .profile-menu-toggle {
+        font-size: 2rem;
+        top: 0.1rem;
+        left: 45%;
+        width: 50px;
+        height: 50px;
+    }
+
+    .card-two {
+        padding: 1rem;
+        width: 90%;
+        height: auto;
+        margin: 1rem 1rem 0.5rem 1.5rem;
+    }
+}

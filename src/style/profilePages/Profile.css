@@ -49,10 +49,6 @@
     position: relative;
 }
 
-.card-two {
-    width: 800px;
-}
-
 .profile-menu {
     display: flex;
     flex-direction: column;
@@ -126,27 +122,28 @@
 }
 
 .cards .section-one {
-    padding: 2.6rem 1rem 1rem 1rem;
+    padding: 2.8rem 1rem 1rem 1rem;
 }
 
 .cards .section-three, .section-two {
-    padding: 1rem 1rem 1rem 1rem;
+    padding: 1rem;
 }
 
 .cards .section p {
     font-size: 0.9rem;
-    font-weight: 500;
-    color: grey;
-}
-
-.cards .section p:last-child {
-    font-size: 1rem;
-    color: black;
+    font-weight: 600;
+    color: #ADADAD;
 }
 
 .cards .section-two p, .section-three p {
     display: grid;
     justify-content: left;
+}
+
+.cards .section-two p:last-child, .section-three p:last-child {
+    font-size: 1rem;
+    color: black;
+    font-weight: 400;
 }
 
 .line {
@@ -169,8 +166,8 @@
 
 .profile-menu-toggle {
     position: fixed;
-    top: 2rem;
-    left: 1rem;
+    top: 4rem;
+    left: 0.7rem;
     z-index: 1000;
     background: none;
     border: none;
@@ -178,7 +175,9 @@
     cursor: pointer;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    display: none; /* só aparece no breakpoint */
+    display: none;
+    width: 5%;
+    height: 5%;
 }
 
 @media (max-width: 900px) {

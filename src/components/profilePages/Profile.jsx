@@ -56,7 +56,6 @@ function Profile() {
     return (
         <>
             <section className="cards">
-                {/* BOTÃO que aparece só no breakpoint */}
                 <button className="profile-menu-toggle" onClick={toggleMenu}>
                     {isMenuOpen ? '✖' : '☰'}
                 </button>
@@ -112,6 +111,8 @@ function Profile() {
                                         <p>Idade</p>
                                         <p>25</p>
                                     </div>
+
+
                                 </div>
 
                                 <div className="line">
