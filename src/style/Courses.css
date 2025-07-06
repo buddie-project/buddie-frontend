@@ -35,7 +35,6 @@ body, html {
 
 .filters-box select {
     border-radius: 6px;
-    /*border: 1px solid #ccc;*/
     text-align: center;
     border: none;
     font-size: 1rem;
@@ -116,7 +115,7 @@ body, html {
     font-weight: 500;
 }
 
-.icon-bookmark{
+.course-card .icon-bookmark{
     position: absolute;
     top: 1.3rem;
     right: 1rem;
@@ -135,13 +134,13 @@ body, html {
     flex: 1;
 }
 
-.icon-bookmark:hover {
+.course-card .icon-bookmark:hover {
     font-size: 22px;
     font-weight: bolder;
     transition: color 0.3s ease, font-size 0.3s ease;
 }
 
-.icon-bookmark.active {
+.course-card .icon-bookmark.active {
     font-weight: bolder;
     font-size: 25px;
     transition: color 0.3s ease, font-size 0.3s ease;
