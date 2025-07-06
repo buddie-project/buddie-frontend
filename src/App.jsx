@@ -19,6 +19,7 @@ import Interactions from "./pages/profilePages/Interactions.jsx";
 import Calendar from "./pages/profilePages/Calendar.jsx";
 import Configurations from "./pages/profilePages/Configurations.jsx";
 import ProtectedRoute from "./routes/ProtectedRoute.jsx";
+import CourseDetails from "./pages/CourseDetails.jsx";
 
 function App() {
 
@@ -36,6 +37,7 @@ function App() {
                 <Route path="/" element={<Homepage/>}/>
                 <Route path="/sobre" element={<About/>}/>
                 <Route path="/cursos" element={<Courses/>}/>
+                <Route path="/cursos/:id" element={<CourseDetails/>}/>
                 <Route path="/entrar" element={<SignIn/>}/>
                 <Route path="/registar" element={<SignUp/>}/>
                 <Route path="/faqs" element={<Faqs/>}/>

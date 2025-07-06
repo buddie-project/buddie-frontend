@@ -1,0 +1,65 @@
+.course-detail-container {
+    max-width: 1000px;
+    margin: 150px auto;
+    padding: 30px;
+    border-radius: 25px;
+    border: 4px solid #000;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 3px 3px 6px 2px rgba(0, 0, 0, 0.20);
+    font-family: "Futura Std", sans-serif;
+    width: 950px;
+    height: 500px;
+}
+
+.course-detail-container h1 {
+    color: rgb(0, 0, 0);
+    margin-bottom: 15px;
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 650;
+    line-height: normal;
+    width: 689px;
+    height: 40px;
+    flex-shrink: 0;
+}
+
+.course-detail-container h2 {
+    color: rgba(0, 0, 0, 0.43);
+    margin-bottom: 30px;
+    font-size: 25px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    width: 438px;
+    height: 26px;
+    flex-shrink: 0;
+}
+
+.course-info p {
+    font-size: 1.1rem;
+    margin: 10px 0;
+}.course-info {
+     display: flex;
+     justify-content: space-between;
+     flex-wrap: wrap;
+     gap: 30px;
+ }
+
+.course-info-column {
+    flex: 1;
+    min-width: 250px;
+}
+
+.course-info-column p {
+    font-size: 1.1rem;
+    margin: 10px 0;
+}
+
+.course-info a {
+    color: #0077cc;
+    text-decoration: none;
+}
+
+.course-info a:hover {
+    text-decoration: underline;
+}
