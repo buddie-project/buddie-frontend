@@ -1,0 +1,97 @@
+.comments-section {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 0 20px;
+    font-family: "Futura Std", sans-serif;
+}
+
+.comments-section h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #222;
+}
+
+.comment-input {
+    display: flex;
+    align-items: center;
+    background: #f7f7f7;
+    border: 2px solid #ccc;
+    border-radius: 12px;
+    padding: 10px 15px;
+    margin-bottom: 30px;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.comment-input input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    outline: none;
+}
+
+.submit-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #111;
+    margin-left: 60px;
+    align-self: center;
+    align-items: center;
+}
+
+.comment-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.avatar {
+    width: 30px;
+    height: 30px;
+    background-color: #ddd;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 30px;
+    margin-right: 10px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.username {
+    font-weight: bold;
+    margin-right: 10px;
+    font-size: 14px;
+    color: #444;
+}
+
+.date {
+    font-size: 12px;
+    color: #888;
+}
+
+.comment-text {
+    font-size: 15px;
+    color: #333;
+    line-height: 1.4;
+}
+
+.see-more {
+    text-align: center;
+    margin-top: 25px;
+    font-weight: bold;
+    color: #000;
+    cursor: pointer;
+    text-decoration: underline;
+}
