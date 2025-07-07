@@ -1,0 +1,165 @@
+
+
+.cards {
+    display: flex;
+    gap: 2.5rem;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-top: 7.5rem;
+}
+
+.container-card-one, .container-card-two {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-one, .card-two {
+    background: white;
+    border-radius: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    padding: 2rem;
+}
+
+.card-one {
+    width: 300px;
+    height: 580px;
+}
+
+.card-two {
+    width: 800px;
+    min-width: 300px;
+    height: 580px;
+    justify-content: flex-start;
+}
+
+.admin-tabs {
+    display: flex;
+    margin-bottom: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    gap: .5rem;
+}
+
+.admin-tabs button {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid black;
+    background: white;
+    cursor: pointer;
+}
+
+.admin-tabs button.active {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.search-user {
+    max-width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.8rem;
+    border-radius: 25px;
+    font-size: 1rem;
+}
+
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.3rem;
+}
+
+.comment-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f5f5f5;
+    border-radius: 12px;
+    padding: 0.8rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.comment-info {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.comment-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #ccc;
+}
+
+.comment-username {
+    font-weight: 600;
+}
+
+.comment-actions button {
+    margin-left: 0.5rem;
+    padding: 0.3rem 0.6rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-course-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.add-course-form select, .add-course-form input {
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+
+    margin-bottom: 0.5rem;
+}
+
+.add-course-form input {
+    max-width: 50%;
+}
+
+.add-course-btn {
+    padding: 0.8rem;
+    border: none;
+    background: grey;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 30%;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.bottom-gradient-line {
+    height: 3px;
+    width: 100%;
+    margin-top: 6.5vh;
+    border-radius: 2px;
+    background: linear-gradient(to right, #F50000, #9C0168, #E67700, #E6C403, #960014, #03A53F, #00C2DC, #026CB8, #1B049D);
+}
+
+@media (max-width: 900px) {
+    .card-two {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 564px) {
+    .card-two {
+        padding: 1rem;
+        height: auto;
+    }
+}

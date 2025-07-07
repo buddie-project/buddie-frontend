@@ -61,7 +61,7 @@ function Profile() {
                 </button>
 
                 <div className={`container-card-one ${isMenuOpen ? 'open' : ''}`}>
-                    <h2 className="card-one-title">Área Pessoal</h2>
+                    <h2 className="card-one-title">área pessoal</h2>
                     <div className="card-one">
                         <div className="profile-avatar-container" onClick={triggerFileInput}>
                             <input type="file" ref={avatarInputRef} onChange={handleImageUpload} accept="image/*" style={{ display: 'none' }} />

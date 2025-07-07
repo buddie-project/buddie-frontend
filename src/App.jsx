@@ -20,6 +20,7 @@ import Calendar from "./pages/profilePages/Calendar.jsx";
 import Configurations from "./pages/profilePages/Configurations.jsx";
 import ProtectedRoute from "./routes/ProtectedRoute.jsx";
 import CourseDetails from "./pages/CourseDetails.jsx";
+import AdminPage from "./components/profilePages/AdminPage.jsx";
 
 function App() {
 
@@ -48,6 +49,7 @@ function App() {
                 <Route path="/area-pessoal/interacoes" element={<Interactions/>}/>
                 <Route path="/area-pessoal/calendario" element={<Calendar/>}/>
                 <Route path="/area-pessoal/configuracoes" element={<Configurations/>}/>
+                <Route path="/area-pessoal/admin" element={<AdminPage/>}/>
             </Routes>
           </UserProvider>
           {!isHomePage && !isProfilePage && !isAboutPage && !isCoursesPage && <Footer />}

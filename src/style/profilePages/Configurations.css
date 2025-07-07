@@ -187,11 +187,10 @@
     display: flex;
 }
 
-.delete img {
-    width: 25px;
-    height: 25px;
-    margin-right: 0.1rem;
-    padding-bottom: .35rem;
+.delete-icon {
+    margin-right: .15rem;
+    padding-bottom: .1rem;
+    fill: red;
 }
 
 
