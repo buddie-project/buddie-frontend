@@ -1,17 +1,52 @@
 import "../style/Courses.css";
 import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Pagination from "../components/generalComponents/Pagination.jsx";
 
 function Courses() {
     const [bookmarkedCourses, setBookmarkedCourses] = useState([]);
+    const [coursesData, setCoursesData] = useState([]);
+    const [institutionData, setInstitutionData] = useState([]);
+    const [filters, setFilters] = useState({
+        curso: "",
+        instituicao: "",
+        area: "",
+        distrito: "",
+        data: ""
+    });
+
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const [coursesPerPage] = useState(9);
+    const totalPages = Math.ceil(coursesData.length / coursesPerPage);
+
+    const getPaginatedCourses = () => {
+        const start = (currentPage - 1) * coursesPerPage;
+        const end = start + coursesPerPage;
+        return coursesData.slice(start, end);
+    };
+
+    useEffect(() => {
+        axios.get("http://localhost:8080/api/courses")
+            .then((res) => {
+                const coursesWithColors = assignColors(res.data);
+                setCoursesData(coursesWithColors);
+            })
+            .catch((err) => console.error("Erro ao procurar cursos:", err));
+    }, []);
+
+    useEffect(() => {
+        axios.get("http://localhost:8080/api/institution")
+            .then((res) => setInstitutionData(res.data))
+            .catch((err) => console.error("Erro ao procurar instituições:", err));
+    }, []);
 
     const handleBookmark = (course) => {
         setBookmarkedCourses((prev) => {
-            const isBookmarked = prev.some((c) => c.id === course.id);
-            if (isBookmarked) {
-                return prev.filter((c) => c.id !== course.id);
-            } else {
-                return [...prev, course];
-            }
+            const isBookmarked = prev.some((c) => c.codigoCurso === course.codigoCurso);
+            return isBookmarked
+                ? prev.filter((c) => c.codigoCurso !== course.codigoCurso)
+                : [...prev, course];
         });
     };
 
@@ -26,58 +61,21 @@ function Courses() {
         localStorage.setItem("bookmarkedCourses", JSON.stringify(bookmarkedCourses));
     }, [bookmarkedCourses]);
 
-    const coursesData = [
-        {
-            id: 1,
-            type: "licenciatura",
-            title: "Design de moda",
-            institution: "faculdade de arquitetura da universidade de Lisboa, FAUL",
-            colorClass: "red"
-        },
-        {
-            id: 2,
-            type: "pós-graduação",
-            title: "design de produto",
-            institution: "universidade IADE",
-            colorClass: "purple"
-        },
-        {
-            id: 3,
-            type: "mestrado",
-            title: "ux/ui design",
-            institution: "Atlântica - instituto universitário",
-            colorClass: "orange"
-        },
-        {
-            id: 4,
-            type: "CTeSP",
-            title: "design de interiores",
-            institution: "escola Superior de Viseu",
-            colorClass: "green"
-        },
-        {
-            id: 5,
-            type: "curso de especialização",
-            title: "design gráfico",
-            institution: "escola de tecnologias inovação e criação, ETIC",
-            colorClass: "yellow"
-        },
-        {
-            id: 6,
-            type: "upskill",
-            title: "design multimédia",
-            institution: "universidade da Beira Interior",
-            colorClass: "blue"
-        }
-    ];
+    const colors = ["red", "blue", "green", "orange", "purple", "yellow"];
 
-    const [filters, setFilters] = useState({
-        curso: "",
-        instituicao: "",
-        area: "",
-        distrito: "",
-        data: ""
-    });
+    const assignColors = (courses) => {
+        let lastColor = "";
+        return courses.map((course) => {
+            let availableColors = colors.filter(c => c !== lastColor);
+            let color = availableColors[Math.floor(Math.random() * availableColors.length)];
+            lastColor = color;
+            return { ...course, color };
+        });
+    };
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filters]);
 
     return (
         <>
@@ -110,41 +108,74 @@ function Courses() {
                     </select>
                 </div>
             </div>
+
             <div className="applied-filters">
                 <p>Filtros ativos:</p>
-                {Object.entries(filters).map(([key, value]) =>
-                    value && <span key={key} className="filter-tag">{key}: {value}</span>
+                {Object.entries(filters).map(
+                    ([key, value]) =>
+                        value && (
+                            <span key={key} className="filter-tag">
+                                {key}: {value}
+                            </span>
+                        )
                 )}
             </div>
+
             <div className="courses-container">
-                {coursesData.map((course) => (
-                    <div key={course.id} className={`course-card ${course.colorClass}`}>
-                        <h3 className="course-header">
-                            <span className="course-type">{course.type}</span>
-                            <span
-                                className={`icon-bookmark ${bookmarkedCourses.some(c => c.id === course.id) ? "active" : ""}`}
-                                onClick={() => handleBookmark(course)}
-                                aria-hidden="true"
-                            ></span>
-                        </h3>
-                        <h5>{course.title}</h5>
-                        <p>{course.institution}</p>
-                    </div>
-                ))}
+                {getPaginatedCourses().map((course) => {
+                    const matchedInstitution = institutionData.find(
+                        (inst) => inst.id === course.instituicaoId
+                    );
+
+                    return (
+                        <div key={course.codigoCurso} className={`course-card ${course.color}`}>
+                            <h3 className="course-header">
+                                <span className="course-name">{course.nome}</span>
+                                <span
+                                    className={`icon-bookmark ${
+                                        bookmarkedCourses.some(
+                                            (c) => c.codigoCurso === course.codigoCurso
+                                        )
+                                            ? "active"
+                                            : ""
+                                    }`}
+                                    onClick={() => handleBookmark(course)}
+                                    aria-hidden="true"
+                                ></span>
+                            </h3>
+                            <section className="course-info">
+                                <h5>{course.nomeAreaEstudo}</h5>
+                                <p>{matchedInstitution?.nomeIes || "Desconhecida"}</p>
+                            </section>
+                        </div>
+                    );
+                })}
             </div>
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+            />
+
             <footer className="footer-courses">
                 <div className="footer-courses-content">
-                    <a href="https://github.com/buddie-project"
-                       target="_blank"
-                       rel="noreferrer"
-                       className="github-link">
-                        <img src="/images/github-mark.svg" className="github-icon" width="32" height="auto" alt="Github Logo" />
+                    <a
+                        href="https://github.com/buddie-project"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="github-link"
+                    >
+                        <img
+                            src="/images/github-mark.svg"
+                            className="github-icon"
+                            width="32"
+                            height="auto"
+                            alt="Github Logo"
+                        />
                     </a>
-
-                    <p> | &copy; {new Date().getFullYear()} Buddie. All rights reserved. </p>
-
+                    <p> | &copy; {new Date().getFullYear()} Buddie. All rights reserved.</p>
                 </div>
-
             </footer>
         </>
     );
