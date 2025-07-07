@@ -10,7 +10,6 @@ function Comments() {
                 <input type="text" placeholder="Adicionar comentário" />
                 <button className="submit-button">➤</button>
             </div>
-
             <div className="comment-card">
                 <div className="comment-header">
                     <div className="avatar">@</div>

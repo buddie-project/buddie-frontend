@@ -51,6 +51,7 @@ function CourseDetails() {
                 </div>
             </div>
         </div>
+
            <Comments/>
     </>
     );
