@@ -1,12 +1,9 @@
-
-
 .cards {
     display: flex;
     gap: 2.5rem;
     justify-content: center;
     align-items: flex-start;
     flex-wrap: wrap;
-    margin-top: 7.5rem;
 }
 
 .container-card-one, .container-card-two {
@@ -145,21 +142,61 @@
 .bottom-gradient-line {
     height: 3px;
     width: 100%;
-    margin-top: 6.5vh;
+    margin-top: 7.5vh;
     border-radius: 2px;
     background: linear-gradient(to right, #F50000, #9C0168, #E67700, #E6C403, #960014, #03A53F, #00C2DC, #026CB8, #1B049D);
 }
 
+
 @media (max-width: 900px) {
+
+    .container-card-one.open {
+        transform: translateX(0);
+        box-shadow: none;
+        background: transparent;
+    }
+
+    .container-card-two {
+        flex: 1;
+        width: 100%;
+        margin: 0 auto;
+    }
+
     .card-two {
         width: 100%;
         max-width: 100%;
+        margin: 0 auto;
     }
+
+    .card-one-title {
+        font-size: 1rem;
+        background-color: transparent;
+    }
+
+    .card-two-title {
+        margin-top: 6rem;
+    }
+
+.admin-tabs button {
+    font-size: 0.70rem;
+    font-weight: 800;
+}
+
 }
 
 @media (max-width: 564px) {
+    .profile-menu-toggle {
+        font-size: 2rem;
+        top: 0.1rem;
+        left: 45%;
+        width: 50px;
+        height: 50px;
+    }
+
     .card-two {
         padding: 1rem;
+        width: 90%;
         height: auto;
+        margin: 0.5rem 1rem 0.5rem 1.5rem;
     }
 }

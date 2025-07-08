@@ -1,16 +1,19 @@
-import '../../style/profilePages/Profile.css';
+import '../../style/profilePages/ProfileLayout.css';
 import '../../style/profilePages/AdminPage.css';
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { toast } from 'react-toastify';
+import {NavLink} from "react-router-dom";
+import {useUserContext} from "../../services/UserContext.jsx";
 
 function AdminPage() {
     const [activeTab, setActiveTab] = useState('GerirUtilizadores');
     const [formData, setFormData] = useState({ avatar: '' });
-    const [activePage, setActivePage] = useState('Administração');
+    const [activePage] = useState('Administração');
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const avatarInputRef = useRef(null);
+    const context = useUserContext();
 
     const cookies = new Cookies();
     const user_id = cookies.get('xyz');
@@ -52,7 +55,6 @@ function AdminPage() {
     };
 
     const triggerFileInput = () => avatarInputRef.current.click();
-    const handlePageChange = (page) => setActivePage(page);
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
     return (
@@ -79,37 +81,23 @@ function AdminPage() {
                                 className="profile-avatar"
                                 style={{ cursor: 'pointer' }}
                             />
-                            <div className="avatar-upload-hint">@ana_pinto</div>
+                            <div className="avatar-upload-hint">@{context.user.username}</div>
                         </div>
                         <div className="profile-menu">
-                            <p className={`${activePage === 'Administração' ? 'active' : ''}`}
-                               onClick={() => handlePageChange('Administração')}>
-                                <i className="icon-user"></i>Administração
-                            </p>
-                            <p className={`${activePage === 'Favoritos' ? 'active' : ''}`}
-                               onClick={() => handlePageChange('Favoritos')}>
-                                <i className="icon-star"></i>Favoritos
-                            </p>
-                            <p className={`${activePage === 'Ver mais tarde' ? 'active' : ''}`}
-                               onClick={() => handlePageChange('Ver mais tarde')}>
-                                <i className="icon-bookmark"></i>Ver mais tarde
-                            </p>
-                            <p className={`${activePage === 'Notificações' ? 'active' : ''}`}
-                               onClick={() => handlePageChange('Notificações')}>
-                                <i className="icon-bell"></i>Notificações
-                            </p>
-                            <p className={`${activePage === 'Interações' ? 'active' : ''}`}
-                               onClick={() => handlePageChange('Interações')}>
-                                <i className="icon-interactions"></i>Interações
-                            </p>
-                            <p className={`${activePage === 'Calendário' ? 'active' : ''}`}
-                               onClick={() => handlePageChange('Calendário')}>
-                                <i className="icon-calendar"></i>Calendário
-                            </p>
-                            <p className={`${activePage === 'Configurações' ? 'active' : ''}`}
-                               onClick={() => handlePageChange('Configurações')}>
-                                <i className="icon-config"></i>Configurações
-                            </p>
+                            <NavLink to="/admin" className={({isActive}) => isActive ? 'active' : ''}><i
+                                className="icon-user"></i>Administração</NavLink>
+                            <NavLink to="/admin/favoritos" className={({isActive}) => isActive ? 'active' : ''}><i
+                                className="icon-star"></i>Favoritos</NavLink>
+                            <NavLink to="/admin/ver-mais-tarde" className={({isActive}) => isActive ? 'active' : ''}><i
+                                className="icon-bookmark"></i>Ver mais tarde</NavLink>
+                            <NavLink to="/admin/notificacoes" className={({isActive}) => isActive ? 'active' : ''}><i
+                                className="icon-bell"></i>Notificações</NavLink>
+                            <NavLink to="/admin/interacoes" className={({isActive}) => isActive ? 'active' : ''}><i
+                                className="icon-interactions"></i>Interações</NavLink>
+                            <NavLink to="/admin/calendario" className={({isActive}) => isActive ? 'active' : ''}><i
+                                className="icon-calendar"></i>Calendário</NavLink>
+                            <NavLink to="/admin/configuracoes" className={({isActive}) => isActive ? 'active' : ''}><i
+                                className="icon-config"></i>Configurações</NavLink>
                             <p><i className="icon-logout"></i>Terminar Sessão</p>
                         </div>
                     </div>
