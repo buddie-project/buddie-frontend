@@ -2,6 +2,7 @@ import "../style/Courses.css";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Pagination from "../components/generalComponents/Pagination.jsx";
+import {Link} from "react-router-dom";
 
 function Courses() {
     const [bookmarkedCourses, setBookmarkedCourses] = useState([]);
@@ -128,7 +129,7 @@ function Courses() {
                     );
 
                     return (
-                        <div key={course.codigoCurso} className={`course-card ${course.color}`}>
+                        <Link to={`/courses/${course.codigoCurso}`} key={course.codigoCurso} className={`course-card ${course.color}`}>
                             <h3 className="course-header">
                                 <span className="course-name">{course.nome}</span>
                                 <span
@@ -139,15 +140,26 @@ function Courses() {
                                             ? "active"
                                             : ""
                                     }`}
-                                    onClick={() => handleBookmark(course)}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        handleBookmark(course);
+                                    }}
                                     aria-hidden="true"
                                 ></span>
                             </h3>
                             <section className="course-info">
                                 <h5>{course.nomeAreaEstudo}</h5>
-                                <p>{matchedInstitution?.nomeIes || "Desconhecida"}</p>
+                                <p>
+                                    {matchedInstitution?.nomeIes ? (
+                                        <Link to={`/institutions/${matchedInstitution.id}`} style={{ color: '#007bff', textDecoration: 'underline' }}>
+                                            {matchedInstitution.nomeIes}
+                                        </Link>
+                                    ) : (
+                                        "Desconhecida"
+                                    )}
+                                </p>
                             </section>
-                        </div>
+                        </Link>
                     );
                 })}
             </div>

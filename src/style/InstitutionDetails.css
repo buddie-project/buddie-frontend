@@ -1,0 +1,108 @@
+.institution-detail-container {
+    max-width: 1000px;
+    margin: 150px auto;
+    padding: 30px;
+    border-radius: 25px;
+    border: 4px solid #000;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 3px 3px 6px 2px rgba(0, 0, 0, 0.20);
+    font-family: "Futura Std", sans-serif;
+}
+
+.institution-title {
+    color: rgb(0, 0, 0);
+    margin-bottom: 15px;
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 650;
+    line-height: normal;
+
+    flex-shrink: 0;
+    text-align: left;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.institution-subtitle {
+    color: rgba(0, 0, 0, 0.43);
+    margin-bottom: 30px;
+    font-size: 25px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    flex-shrink: 0;
+    text-align: left;
+}
+
+.institution-info-box {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.institution-info-box .left-column,
+.institution-info-box .right-column {
+    flex: 1;
+    min-width: 300px;
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.institution-info-box p {
+    font-size: 1.1rem;
+    margin: 10px 0;
+    line-height: 1.6;
+}
+
+.institution-info-box p strong {
+    color: #333;
+    display: inline;
+}
+
+.institution-info-box a {
+    color: #0077cc;
+    text-decoration: none;
+}
+
+.institution-info-box a:hover {
+    text-decoration: underline;
+}
+
+.loading {
+    text-align: center;
+    padding: 50px;
+    font-size: 1.5em;
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    .institution-detail-container {
+        margin: 80px auto 40px auto;
+        padding: 20px;
+        width: auto;
+    }
+
+    .institution-title {
+        font-size: 30px;
+        text-align: center;
+    }
+
+    .institution-subtitle {
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .institution-info-box {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .institution-info-box .left-column,
+    .institution-info-box .right-column {
+        min-width: unset;
+    }
+}
