@@ -1,4 +1,4 @@
-import '../../style/profilePages/Profile.css';
+import '../../style/profilePages/ProfileLayout.css';
 import '../../style/profilePages/Interactions.css';
 import React, { useEffect, useState, useRef } from "react";
 import axios from 'axios';
