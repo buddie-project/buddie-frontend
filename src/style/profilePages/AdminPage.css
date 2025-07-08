@@ -50,7 +50,7 @@
 }
 
 .admin-tabs button.active {
-    font-weight: bold;
+    font-weight: bolder;
     text-decoration: underline;
 }
 

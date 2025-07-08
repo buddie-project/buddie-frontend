@@ -4,6 +4,7 @@ import React, {useEffect, useState, useRef} from "react";
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import {toast} from 'react-toastify';
+import {Link} from "react-router-dom";
 
 function Configurations() {
 

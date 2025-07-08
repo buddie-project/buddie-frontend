@@ -87,43 +87,49 @@ body, html {
 .user-dropdown {
     position: relative;
     display: inline-block;
-    padding-right: 40px;
 }
 
-.username {
+.user-dropdown .username {
     cursor: pointer;
+    font-size: 16px;
 }
 
 .username:hover {
-    font-weight: bold;
-    color: #d4af37;
+    font-weight: bolder;
 }
 
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #222;
-    min-width: 120px;
-    right: 0;
+    background-color: white;
+    min-width: 110px;
     box-shadow: 0 8px 16px rgba(0,0,0,0.2);
     z-index: 1;
+    border: 2px solid black;
+    margin-top: .1rem;
+    border-radius: 0;
+    margin-right: 0;
 }
 
 .dropdown-content button {
     width: 100%;
-    padding: 10px;
-    background-color: transparent;
-    border: none;
-    color: white;
+    padding: 5px;
+    color: black;
     text-align: left;
     cursor: pointer;
     font-weight: bold;
     font-family: 'Futura Std', sans-serif;
-    font-size: 0.8em;
+    font-size: 0.7em;
+    border-radius: 0;
+    background-color: white;
+    border: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-top: 0;
 }
 
 .dropdown-content button:hover {
-    background-color: #d4af37;
+    background-color: black;
+    color: white;
 }
 
 .user-dropdown:hover .dropdown-content {

@@ -31,30 +31,30 @@ function App() {
     const isCoursesPage = location.pathname === '/cursos';
 
     return (
-      <>
-        <Navbar />
-         <UserProvider>
-            <Routes>
-                <Route path="/" element={<Homepage/>}/>
-                <Route path="/sobre" element={<About/>}/>
-                <Route path="/cursos" element={<Courses/>}/>
-                <Route path="/cursos/:id" element={<CourseDetails/>}/>
-                <Route path="/entrar" element={<SignIn/>}/>
-                <Route path="/registar" element={<SignUp/>}/>
-                <Route path="/faqs" element={<Faqs/>}/>
-                <Route path="/area-pessoal/conta" element={<ProfilePage/>}/>
-                <Route path="/area-pessoal/favoritos" element={<Favorites/>}/>
-                <Route path="/area-pessoal/ver-mais-tarde" element={<Bookmarks/>}/>
-                <Route path="/area-pessoal/notificacoes" element={<Notifications/>}/>
-                <Route path="/area-pessoal/interacoes" element={<Interactions/>}/>
-                <Route path="/area-pessoal/calendario" element={<Calendar/>}/>
-                <Route path="/area-pessoal/configuracoes" element={<Configurations/>}/>
-                <Route path="/area-pessoal/admin" element={<AdminPage/>}/>
-            </Routes>
-          </UserProvider>
-          {!isHomePage && !isProfilePage && !isAboutPage && !isCoursesPage && <Footer />}
-      </>
-  )
+        <>
+            <UserProvider>
+                <Navbar/>
+                <Routes>
+                    <Route path="/" element={<Homepage/>}/>
+                    <Route path="/sobre" element={<About/>}/>
+                    <Route path="/cursos" element={<Courses/>}/>
+                    <Route path="/cursos/:id" element={<CourseDetails/>}/>
+                    <Route path="/entrar" element={<SignIn/>}/>
+                    <Route path="/registar" element={<SignUp/>}/>
+                    <Route path="/faqs" element={<Faqs/>}/>
+                    <Route path="/area-pessoal/conta" element={<ProfilePage/>}/>
+                    <Route path="/area-pessoal/favoritos" element={<Favorites/>}/>
+                    <Route path="/area-pessoal/ver-mais-tarde" element={<Bookmarks/>}/>
+                    <Route path="/area-pessoal/notificacoes" element={<Notifications/>}/>
+                    <Route path="/area-pessoal/interacoes" element={<Interactions/>}/>
+                    <Route path="/area-pessoal/calendario" element={<Calendar/>}/>
+                    <Route path="/area-pessoal/configuracoes" element={<Configurations/>}/>
+                    <Route path="/area-pessoal/admin" element={<AdminPage/>}/>
+                </Routes>
+            </UserProvider>
+            {!isHomePage && !isProfilePage && !isAboutPage && !isCoursesPage && <Footer/>}
+        </>
+    )
 }
 
 export default App
