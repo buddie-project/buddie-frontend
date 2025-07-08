@@ -6,6 +6,7 @@ function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
     const context = useUserContext();
+
     const navigate = useNavigate();
 
     const handleSearchToggle = () => {
@@ -36,36 +37,36 @@ function Navbar() {
 
                 {!context?.user && (
                     <>
-                    <NavLink to="/entrar" className="nav-link" onClick={() => setMenuOpen(false)}>iniciar sessão</NavLink>
+                        <NavLink to="/entrar" className="nav-link" onClick={() => setMenuOpen(false)}>iniciar sessão</NavLink>
                     </>
-                    )}
+                )}
 
                 {context?.user && (
                     <>
-                    <div className="user-dropdown">
-                        <NavLink to="/area-pessoal/conta" className="nav-link" onClick={() => setMenuOpen(false)}>{context.user.username}</NavLink>
-                        <div className="dropdown-content">
-                            <button
-                                onClick={() => {
-                                    navigate("/area-pessoal/conta");
-                                }}>
-                                Conta
-                            </button>
-                            <button
-                                onClick={() => {
-                                    navigate("/area-pessoal/configuracoes");
-                                }}>
-                                Configurações
-                            </button>
-                            <button
-                                onClick={() => {
-                                    context.logout();
-                                    navigate("/");
-                                }}>
-                                Terminar Sessão
-                            </button>
+                        <div className="user-dropdown">
+                            <NavLink to="/perfil" className="nav-link" onClick={() => setMenuOpen(false)}>{context.user.username}</NavLink>
+                            <div className="dropdown-content">
+                                <button
+                                    onClick={() => {
+                                        navigate("/perfil");
+                                    }}>
+                                    Conta
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        navigate("/perfil/configuracoes");
+                                    }}>
+                                    Configurações
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        context.logout();
+                                        navigate("/");
+                                    }}>
+                                    Terminar Sessão
+                                </button>
+                            </div>
                         </div>
-                    </div>
                     </>
                 )}
                 <i className="icon-search" onClick={handleSearchToggle} aria-hidden="true"></i>
@@ -76,3 +77,4 @@ function Navbar() {
 }
 
 export default Navbar;
+

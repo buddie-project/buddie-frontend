@@ -29,7 +29,7 @@ function Login() {
             let user = response.data;
             context.setUser(user);
 
-            navigate("/area-pessoal/conta");
+            navigate("/perfil");
         } catch (e) {
             console.error("Erro ao fazer login:", e);
             alert("Erro ao fazer login. Verifique as suas credenciais.");
@@ -38,7 +38,6 @@ function Login() {
 
     return (
         <div>
-
             <div className="background-register">
                 <div className="background-image">
                     <img src="/images/background-login.jpg" alt="Background Image" className="background-image"/>
@@ -61,7 +60,7 @@ function Login() {
                                setPassword(e.target.value);
                            }} placeholder="password"/>
 
-                    <button type="submit">entrar</button>
+                    <button type="submit" value="LOGIN">entrar</button>
                     <p className="register-link">Ainda não tens conta? <a className="register-link-text" href="/registar">Regista-te</a></p>
                 </form>
             </div>
