@@ -109,6 +109,15 @@
     }
 }
 
+@media (max-width: 600px) {
+    .react-calendar__navigation {
+        width: unset;
+    }
+    .react-calendar__navigation button {
+        margin-bottom: 0.5rem;
+    }
+}
+
 @media (max-width: 480px) {
     .react-calendar__navigation {
         align-items: center;

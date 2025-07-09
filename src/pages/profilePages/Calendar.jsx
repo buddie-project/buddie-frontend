@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import CalendarLib from 'react-calendar';
+import seedrandom from 'seedrandom';
 import 'react-calendar/dist/Calendar.css';
 import { toast } from 'react-toastify';
 
@@ -39,9 +40,10 @@ function Calendar() {
         const colors = {};
         let prevColor = '';
         monthDates.forEach((date) => {
+            let rng = seedrandom(date.toDateString());
             let randomColor;
             do {
-                randomColor = colorList[Math.floor(Math.random() * colorList.length)];
+                randomColor = colorList[Math.floor(rng() * colorList.length)];
             } while (randomColor === prevColor);
             prevColor = randomColor;
             colors[date.toDateString()] = randomColor;

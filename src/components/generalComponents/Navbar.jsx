@@ -35,13 +35,7 @@ function Navbar() {
                 <NavLink to="/cursos" className="nav-link" onClick={() => setMenuOpen(false)}>cursos</NavLink>
                 <NavLink to="/faqs" className="nav-link" onClick={() => setMenuOpen(false)}>faqs</NavLink>
 
-                {!context?.user && (
-                    <>
-                        <NavLink to="/entrar" className="nav-link" onClick={() => setMenuOpen(false)}>iniciar sessão</NavLink>
-                    </>
-                )}
-
-                {context?.user && (
+                {context?.user ? (
                     <>
                         <div className="user-dropdown">
                             <NavLink to="/perfil" className="nav-link" onClick={() => setMenuOpen(false)}>{context.user.username}</NavLink>
@@ -67,6 +61,10 @@ function Navbar() {
                                 </button>
                             </div>
                         </div>
+                    </>
+                ) : (
+                    <>
+                        <NavLink to="/entrar" className="nav-link" onClick={() => setMenuOpen(false)}>iniciar sessão</NavLink>
                     </>
                 )}
                 <i className="icon-search" onClick={handleSearchToggle} aria-hidden="true"></i>
