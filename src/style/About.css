@@ -3,11 +3,17 @@
 }
 
 body, html {
+    min-height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
 }
 
+.about-page {
+    height: auto;
+}
+
 .about-hero {
+    position: relative;
     height: 100vh;
     display: flex;
     align-items: center;
@@ -15,7 +21,6 @@ body, html {
     padding: 4vw;
     z-index: 1;
     font-family: "Futura Std", sans-serif;
-    overflow: hidden;
     background: url('/images/student-about.jpg') no-repeat center center;
 }
 
@@ -31,6 +36,7 @@ body, html {
 }
 
 .about {
+    font-size: 60px;
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -38,16 +44,14 @@ body, html {
     z-index: 1;
 }
 
-.age {
-    font-size: 60px;
+.about .age {
     font-weight: bold;
     margin-left: 5rem;
 }
 
 .what-now {
-    font-size: 40px;
     font-weight: bold;
-    margin-right: 5rem;
+    margin-right: 1.5rem;
 }
 
 .about-section {
@@ -61,7 +65,8 @@ body, html {
     padding-top: 50px;
     padding-bottom: 100px;
 }
-.section-text{
+
+.section-text {
     flex: 1.6;
 }
 
@@ -91,7 +96,7 @@ body, html {
     align-content: center;
     flex-wrap: wrap;
     background: #E67700;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     max-width: 350px;
     flex: 1;
     width: 462px;
@@ -115,7 +120,7 @@ body, html {
 }
 
 .scroll-down {
-    position: fixed;
+    position: absolute;
     bottom: 40px;
     left: 50%;
     transform: translateX(-50%);
@@ -133,7 +138,7 @@ body, html {
     padding: 20px 20px;
     left: 0;
     top: auto;
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(10px);
     z-index: 2;
     bottom: 0;
@@ -157,7 +162,7 @@ body, html {
     color: #666;
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 1200px) {
     .about-hero {
         flex-direction: column;
         align-items: center;
@@ -168,12 +173,13 @@ body, html {
         flex-direction: column;
         align-items: center;
         padding-top: 30rem;
+
+        .age, .what-now {
+            font-size: 40px;
+            margin: 0;
+        }
     }
 
-    .age, .what-now {
-        font-size: 40px;
-        margin: 0;
-    }
 
     .about-section h2 {
         font-size: 60px;
@@ -207,12 +213,13 @@ body, html {
         padding-top: 20rem;
         display: flex;
         flex-direction: column;
+
+        .age, .what-now {
+            font-size: 30px;
+            margin: 0;
+        }
     }
 
-    .age, .what-now {
-        font-size: 30px;
-        margin: 0;
-    }
 
     .about-section h2 {
         font-size: 40px;

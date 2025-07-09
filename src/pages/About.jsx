@@ -9,16 +9,18 @@ function About() {
         if (!scrollDownButton) return;
 
         const handleClick = () => {
-            const targetPosition = window.innerHeight;
-            document.body.scrollTo({
-                top: targetPosition,
-                behavior: 'smooth'
-            })
+            const nextSection = document.querySelector('.about-section');
+            nextSection?.scrollIntoView({ behavior: 'smooth' });
         };
 
         scrollDownButton.addEventListener('click', handleClick);
 
         return () => scrollDownButton.removeEventListener('click', handleClick);
+    }, []);
+
+    useEffect(() => {
+        document.body.classList.add('about-page');
+        return () => document.body.classList.remove('about-page');
     }, []);
 
     return (
