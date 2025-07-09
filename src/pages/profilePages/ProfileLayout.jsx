@@ -1,6 +1,6 @@
 import '../../style/profilePages/ProfileLayout.css';
 import React, {useState, useRef, useEffect} from 'react';
-import {Outlet, NavLink} from 'react-router-dom';
+import {Outlet, NavLink, useNavigate} from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import {toast} from 'react-toastify';
@@ -11,6 +11,7 @@ function ProfileLayout() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const avatarInputRef = useRef(null);
     const context = useUserContext();
+    const navigate = useNavigate();
 
     const cookies = new Cookies();
     const user_id = cookies.get('xyz');
@@ -83,7 +84,7 @@ function ProfileLayout() {
                                 className="icon-calendar"></i>Calendário</NavLink>
                             <NavLink to="/perfil/configuracoes" className={({isActive}) => isActive ? 'active' : ''}><i
                                 className="icon-config"></i>Configurações</NavLink>
-                            <p><i className="icon-logout"></i>Terminar Sessão</p>
+                            <button onClick={() => { context.logout(); navigate("/"); }}><i className="icon-logout"></i>Terminar Sessão</button>
                         </div>
                     </div>
                 </div>

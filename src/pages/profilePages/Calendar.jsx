@@ -72,7 +72,6 @@ function Calendar() {
                     <CalendarLib
                         value={selectedDate}
                         onClickDay={setSelectedDate}
-                        // Força sempre 6 fileiras
                         showFixedNumberOfWeeks={true}
                         tileClassName={({ date, view }) => {
                             if (view === 'month') {

@@ -7,7 +7,6 @@ function Profile() {
     return (
         <>
             <section className="cards">
-
                 <div className="container-card-two">
                     <h2 className="card-two-title">{activePage}</h2>
                     <div className="card-two">
