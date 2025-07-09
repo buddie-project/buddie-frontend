@@ -37,8 +37,8 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
     return (
         <div className="pagination">
-            <button onClick={goToPreviousPage} disabled={currentPage === 1}>
-                &lt;
+            <button className="pagination-button" onClick={goToPreviousPage} disabled={currentPage === 1}>
+                <i className="icon-left-arrow" aria-hidden="true"></i>
             </button>
 
             <input
@@ -48,10 +48,10 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                 onKeyDown={handleKeyDown}
                 className="pagination-input"
             />
-            <span> / {totalPages}</span>
+            <span className="total-pages"> / {totalPages}</span>
 
-            <button onClick={goToNextPage} disabled={currentPage === totalPages}>
-                &gt;
+            <button className="pagination-button" onClick={goToNextPage} disabled={currentPage === totalPages}>
+                <i className="icon-right-arrow" aria-hidden="true"></i>
             </button>
         </div>
     );

@@ -1,8 +1,8 @@
 import "../style/Courses.css";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import Pagination from "../components/generalComponents/Pagination.jsx";
 import {Link} from "react-router-dom";
+import api from "../services/api.js";
 
 function Courses() {
     const [bookmarkedCourses, setBookmarkedCourses] = useState([]);
@@ -17,36 +17,36 @@ function Courses() {
     });
 
     const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
 
     const [coursesPerPage] = useState(9);
-    const totalPages = Math.ceil(coursesData.length / coursesPerPage);
-
-    const getPaginatedCourses = () => {
-        const start = (currentPage - 1) * coursesPerPage;
-        const end = start + coursesPerPage;
-        return coursesData.slice(start, end);
-    };
 
     useEffect(() => {
-        axios.get("http://localhost:8080/api/courses")
+        api.get("/api/courses", {
+            params: {
+                page: currentPage - 1,
+                numResults: 9
+            }
+        })
             .then((res) => {
-                const coursesWithColors = assignColors(res.data);
+                const coursesWithColors = assignColors(res.data.courses);
                 setCoursesData(coursesWithColors);
+                setTotalPages(res.data.totalPages);
             })
             .catch((err) => console.error("Erro ao procurar cursos:", err));
-    }, []);
+    }, [currentPage]);
 
     useEffect(() => {
-        axios.get("http://localhost:8080/api/institution")
+        api.get("/api/institution")
             .then((res) => setInstitutionData(res.data))
             .catch((err) => console.error("Erro ao procurar instituições:", err));
     }, []);
 
     const handleBookmark = (course) => {
         setBookmarkedCourses((prev) => {
-            const isBookmarked = prev.some((c) => c.codigoCurso === course.codigoCurso);
+            const isBookmarked = prev.some((c) => c.courseId === course.courseId);
             return isBookmarked
-                ? prev.filter((c) => c.codigoCurso !== course.codigoCurso)
+                ? prev.filter((c) => c.courseId !== course.courseId)
                 : [...prev, course];
         });
     };
@@ -123,19 +123,15 @@ function Courses() {
             </div>
 
             <div className="courses-container">
-                {getPaginatedCourses().map((course) => {
-                    const matchedInstitution = institutionData.find(
-                        (inst) => inst.id === course.instituicaoId
-                    );
-
+                {coursesData.map((course) => {
                     return (
-                        <Link to={`/courses/${course.codigoCurso}`} key={course.codigoCurso} className={`course-card ${course.color}`}>
+                        <Link to={`/courses/${course.courseId}`} key={course.courseId} className={`course-card ${course.color}`}>
                             <h3 className="course-header">
-                                <span className="course-name">{course.nome}</span>
+                                <span className="course-name">{course.courseName}</span>
                                 <span
                                     className={`icon-bookmark ${
                                         bookmarkedCourses.some(
-                                            (c) => c.codigoCurso === course.codigoCurso
+                                            (c) => c.courseId === course.courseId
                                         )
                                             ? "active"
                                             : ""
@@ -148,11 +144,11 @@ function Courses() {
                                 ></span>
                             </h3>
                             <section className="course-info">
-                                <h5>{course.nomeAreaEstudo}</h5>
+                                <h5>{course.fieldOfStudy}</h5>
                                 <p>
-                                    {matchedInstitution?.nomeIes ? (
-                                        <Link to={`/institutions/${matchedInstitution.id}`} style={{ color: '#007bff', textDecoration: 'underline' }}>
-                                            {matchedInstitution.nomeIes}
+                                    {course.institutionName ? (
+                                        <Link to={`/institutions/${course.institutionId}`} style={{ color: '#007bff', textDecoration: 'underline' }}>
+                                            {course.institutionName}
                                         </Link>
                                     ) : (
                                         "Desconhecida"

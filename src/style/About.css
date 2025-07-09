@@ -50,10 +50,6 @@ body, html {
     font-weight: bold;
 }
 
-.section {
-    flex: 2;
-}
-
 .about-section {
     background-color: #ffffff;
     text-align: center;

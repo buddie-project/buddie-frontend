@@ -52,7 +52,7 @@ body, html {
     grid-template-columns: repeat(auto-fit, minmax(281px, 0px));
     justify-content: center;
     gap: 2.5rem;
-    padding: 30px 2rem 8rem;
+    padding: 30px 2rem 2.2rem;
     max-width: 1200px;
     margin: 0 auto;
 }

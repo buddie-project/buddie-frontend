@@ -5,26 +5,26 @@ import "../style/CourseDetails.css";
 import Comments from "../components/generalComponents/Comments.jsx";
 
 function CourseDetails() {
-    const { id } = useParams();
+    const { courseId } = useParams();
     const [course, setCourse] = useState(null);
     const [institution, setInstitution] = useState(null);
 
     useEffect(() => {
 
-        axios.get(`http://localhost:8080/api/courses/${id}`)
+        axios.get(`http://localhost:8080/api/courses/${courseId}`)
             .then((res) => {
                 setCourse(res.data);
                 if (res.data.instituicaoId) {
                     axios.get(`http://localhost:8080/api/institution/${res.data.instituicaoId}`)
                         .then((instRes) => setInstitution(instRes.data))
-                        .catch((err) => console.error("Erro ao buscar detalhes da instituição:", err));
+                        .catch((err) => console.error("Erro ao encontrar detalhes da instituição:", err));
                 }
             })
             .catch((err) => {
-                console.error("Erro ao buscar detalhes do curso:", err);
+                console.error("Erro ao encontrar detalhes do curso:", err);
                 setCourse(null);
             });
-    }, [id]);
+    }, [courseId]);
 
     if (!course) return <div className="loading">A carregar detalhes ou curso não encontrado...</div>;
 
