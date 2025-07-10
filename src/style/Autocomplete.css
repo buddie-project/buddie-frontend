@@ -1,0 +1,72 @@
+.autocomplete-dropdown-wrapper {
+    position: relative;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background-color: white;
+}
+
+.autocomplete-dropdown-input {
+    flex-grow: 1;
+    padding: 0 5px;
+    font-size: 1rem;
+    font-family: inherit;
+    color: #403f3f;
+    font-weight: 500;
+    border: none;
+    background-color: transparent;
+    text-align: center;
+    height: 100%;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+}
+
+.autocomplete-dropdown-input:focus {
+    outline: none;
+}
+
+.autocomplete-dropdown-suggestions {
+    position: absolute;
+    top: 100%;
+    left: -1px;
+    right: -1px;
+    z-index: 1000;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.autocomplete-dropdown-suggestions li {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    font-size: 1rem;
+    color: #403f3f;
+    text-align: center;
+}
+
+.autocomplete-dropdown-suggestions li:last-child {
+    border-bottom: none;
+}
+
+.autocomplete-dropdown-suggestions li:hover {
+    background-color: #f0f0f0;
+}
+
+.autocomplete-dropdown-suggestions .no-suggestions {
+    padding: 10px 12px;
+    color: #999;
+    font-style: italic;
+    text-align: center;
+}

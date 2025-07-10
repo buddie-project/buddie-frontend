@@ -1,8 +1,9 @@
 import "../style/Courses.css";
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import Pagination from "../components/generalComponents/Pagination.jsx";
 import {Link, useLocation} from "react-router-dom";
 import api from "../services/api.js";
+import AutocompleteDropdown from "./../components/generalComponents/AutocompleteDropdown.jsx";
 
 function Courses() {
     const [bookmarkedCourses, setBookmarkedCourses] = useState([]);
@@ -12,7 +13,7 @@ function Courses() {
         instituicao: "",
         area: "",
         distrito: "",
-        estado: "",
+        status: "",
     });
 
     const [courseNames, setCourseNames] = useState([]);
@@ -32,7 +33,7 @@ function Courses() {
         if (filtro) {
             setFilters(prevFilters => ({
                 ...prevFilters,
-                area: filtro // Aplicar o filtro à área
+                area: filtro
             }));
         }
     }, [location]);
@@ -59,23 +60,22 @@ function Courses() {
     useEffect(() => {
         const fetchFilterOptions = async () => {
             try {
-                // Buscar nomes de cursos distintos
+
                 const coursesNamesRes = await api.get("/api/courses/distinct-names");
                 setCourseNames(coursesNamesRes.data);
 
-                // Buscar nomes de instituições distintos
                 const institutionNamesRes = await api.get("/api/institution/distinct-names");
                 setInstitutionNames(institutionNamesRes.data);
 
-                // Buscar áreas de estudo distintas
+
                 const areasRes = await api.get("/api/courses/distinct-areas");
                 setAreas(areasRes.data);
 
-                // Buscar distritos distintos
+
                 const districtsRes = await api.get("/api/institution/distinct-districts");
                 setDistricts(districtsRes.data);
 
-                // Buscar estados de curso DGES distintos
+
                 const statusesRes = await api.get("/api/courses/distinct-statuses");
                 setStatus(statusesRes.data);
 
@@ -129,40 +129,53 @@ function Courses() {
         }));
     };
 
+    const handleRemoveFilter = (filterName) => {
+        setFilters(prevFilters => ({
+            ...prevFilters,
+            [filterName]: ""
+        }));
+    };
+
     return (
         <>
             <div className="filters">
                 <div className="filters-box">
-                    <select className="option" onChange={(e) => handleFilterChange("curso", e.target.value)} value={filters.curso}>
-                        <option value="">curso</option>
-                        {courseNames.map(name => (
-                            <option key={name} value={name}>{name}</option>
-                        ))}
-                    </select>
-                    <select className="option" onChange={(e) => handleFilterChange("instituicao", e.target.value)} value={filters.instituicao}>
-                        <option value=" ">instituição</option>
-                        {institutionNames.map(name => (
-                            <option key={name} value={name}>{name}</option>
-                        ))}
-                    </select>
-                    <select className="option" onChange={e => handleFilterChange("area", e.target.value)} value={filters.area}>
-                        <option value="">area</option>
-                        {areas.map(area => (
-                            <option key={area} value={area}>{area}</option>
-                        ))}
-                    </select>
-                    <select className="option" onChange={e => handleFilterChange("distrito", e.target.value)} value={filters.distrito}>
-                        <option value=" ">distrito</option>
-                        {districts.map(district => (
-                            <option key={district} value={district}>{district}</option>
-                        ))}
-                    </select>
-                    <select className="option" onChange={(e) => handleFilterChange("estado", e.target.value)} value={filters.estado}>
-                        <option value=" ">estado</option>
-                        {status.map(status => (
-                            <option key={status} value={status}>{status}</option>
-                        ))}
-                    </select>
+                    <AutocompleteDropdown
+                        label="curso"
+                        options={courseNames}
+                        value={filters.curso}
+                        onValueChange={(value) => handleFilterChange("curso", value)}
+                        className="option"
+                    />
+                    <AutocompleteDropdown
+                        label="instituição"
+                        options={institutionNames}
+                        value={filters.instituicao}
+                        onValueChange={(value) => handleFilterChange("instituicao", value)}
+                        className="option"
+                    />
+                    <AutocompleteDropdown
+                        label="área"
+                        options={areas}
+                        value={filters.area}
+                        onValueChange={(value) => handleFilterChange("area", value)}
+                        className="option"
+                    />
+                    <AutocompleteDropdown
+                        label="distrito"
+                        options={districts}
+                        value={filters.distrito}
+                        onValueChange={(value) => handleFilterChange("distrito", value)}
+                        className="option"
+                    />
+                    <AutocompleteDropdown
+                        label="status"
+                        options={status}
+                        value={filters.estado}
+                        onValueChange={(value) => handleFilterChange("status", value)}
+                        className="option"
+                    />
+
                 </div>
             </div>
 
@@ -173,6 +186,9 @@ function Courses() {
                         value && (
                             <span key={key} className="filter-tag">
                                 {key}: {value}
+                                <span className="filter-tag-remove" onClick={() => handleRemoveFilter(key)}>
+                                    &times;
+                                </span>
                             </span>
                         )
                 )}

@@ -94,13 +94,13 @@ body, html {
 }
 
 .bookmark-icon {
-    width: 22px; /* Ajuste o tamanho conforme necessário */
+    width: 22px;
     height: auto;
     transition: transform 0.2s ease;
 }
 
 .course-card .icon-bookmark:hover .bookmark-icon {
-    transform: scale(1.1); /* Aumenta o ícone ao passar o mouse */
+    transform: scale(1.1);
 }
 
 
@@ -234,6 +234,22 @@ body, html {
     padding: 5px 10px;
     border-radius: 20px;
     font-size: 0.85rem;
+    gap: 3px;
+    display: flex;
+    align-items: center
+}
+
+.filter-tag-remove {
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    color: #666;
+    margin-left: 5px;
+    transition: color 0.2s ease;
+}
+
+.filter-tag-remove:hover {
+    color: #000;
 }
 
 .footer-courses {
