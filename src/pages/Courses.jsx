@@ -1,7 +1,7 @@
 import "../style/Courses.css";
 import React, { useEffect, useState } from "react";
 import Pagination from "../components/generalComponents/Pagination.jsx";
-import {Link} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 import api from "../services/api.js";
 
 function Courses() {
@@ -23,6 +23,19 @@ function Courses() {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
+    const location = useLocation();
+
+    useEffect(() => {
+        // Extrair o filtro da URL
+        const queryParams = new URLSearchParams(location.search);
+        const filtro = queryParams.get('filtro');
+        if (filtro) {
+            setFilters(prevFilters => ({
+                ...prevFilters,
+                area: filtro // Aplicar o filtro à área
+            }));
+        }
+    }, [location]);
 
     useEffect(() => {
         let params = {
