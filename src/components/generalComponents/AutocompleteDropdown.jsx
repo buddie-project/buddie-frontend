@@ -59,7 +59,11 @@ const AutocompleteDropdown = ({
     };
 
     const handleInputFocus = () => {
+        if (inputValue && options.includes(inputValue)) {
+            setInputValue("");
+            onValueChange("");
 
+        }
         setSuggestions(options);
         setIsOpen(true);
     };
