@@ -13,25 +13,23 @@ body, html {
 .filters{
     display: flex;
     justify-content: center;
-    padding-top: 150px;
-    margin-bottom: 0;
+    margin-top: 100px;
+    margin-bottom: 1rem;
 }
+
 
 .filters-box {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 2rem;
+    background: white;
     padding: 1rem 2rem;
-    border-radius: 15px;
-    max-width: 925px;
-    width: 1200px;
-    height: 60px;
-    flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    border: 3px solid white;
-    box-sizing: border-box;
+    border-radius: 50px;
+    max-width: 900px;
+    width: 90%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e0e0e0;
+    font-family: 'Inter', sans-serif;
 }
 
 .filters-box select {
@@ -40,11 +38,25 @@ body, html {
     border: none;
     font-size: 1rem;
     font-family: inherit;
-    min-width: 140px;
+    min-width: 50px;
     height: 25px;
     align-items: center;
     justify-content: center;
     -webkit-appearance: none;
+}
+
+.option {
+    flex: 1;
+    text-align: center;
+    color: #403f3f;
+    font-size: 1rem;
+    font-weight: 500;
+
+}
+
+.filter-title.active {
+    color: #000;
+    font-weight: bolder;
 }
 
 .courses-container {
@@ -118,10 +130,17 @@ body, html {
     margin-top: 2px;
 }
 
-.course-info{
+.course-info {
     display: flex;
     flex-direction: column;
+    color: white;
+}
 
+.course-info a {
+    font-size: 14px;
+    text-decoration: none;
+    font-weight: 600;
+   color: white !important;
 }
 
 
@@ -162,14 +181,6 @@ body, html {
     flex-direction: column;
     align-items: center;
     margin-top: 1rem;
-}
-
-.filters {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-bottom: 1.5rem;
 }
 
 .applied-filters {
