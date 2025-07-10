@@ -32,7 +32,6 @@ function Faqs() {
                         Estas são algumas das questões mais frequentes sobre<br/>
                         o regime de acesso ao ensino superior, dedicado a<br/>
                         maiores de 23 anos.</p>
-                    <p className="more-faqs">Mais FAQ's</p>
                 </div>
 
                 <div className="faqs-right">

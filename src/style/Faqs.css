@@ -14,9 +14,9 @@
     color: black;
     font-family: 'Futura Std', sans-serif;
     text-align: justify;
-    font-size: 15px;
+    font-size: 12px;
     padding: 1rem;
-    margin: 180px 90px 0 0;
+    margin: 120px 100px 0 0;
 }
 
 .faqs-right h1 {
@@ -25,7 +25,7 @@
 }
 
 .faqs-right p {
-    font-size: 1.2rem;
+    font-size: 1rem;
     margin-bottom: 2rem;
 }
 
@@ -91,8 +91,8 @@
 }
 
 .bottom-line {
-    margin-top: 2rem;
-    height: 0.18em;
+    margin-top: 1rem;
+    height: 0.25em;
     width: 100%;
     background: linear-gradient(
             to right,
@@ -121,8 +121,7 @@
     }
 
     .faqs-container {
-        gap: 30px;
-
+        gap: 10px;
     }
 
     .faqs-left {
