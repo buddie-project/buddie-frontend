@@ -85,6 +85,25 @@ body, html {
     text-decoration: none;
 }
 
+.course-card .icon-bookmark {
+    position: absolute;
+    top: 1.3rem;
+    right: 1rem;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.bookmark-icon {
+    width: 22px; /* Ajuste o tamanho conforme necessário */
+    height: auto;
+    transition: transform 0.2s ease;
+}
+
+.course-card .icon-bookmark:hover .bookmark-icon {
+    transform: scale(1.1); /* Aumenta o ícone ao passar o mouse */
+}
+
+
 .red {
     background: rgba(245, 0, 0, 0.80);
 }
