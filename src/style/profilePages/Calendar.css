@@ -27,6 +27,7 @@
     cursor: pointer;
     border-radius: 12px;
     padding: 0.2rem 0.5rem;
+    width: unset;
 }
 
 .react-calendar__month-view__weekdays {
