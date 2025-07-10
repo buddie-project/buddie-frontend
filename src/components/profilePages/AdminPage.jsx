@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { toast } from 'react-toastify';
-import {NavLink} from "react-router-dom";
+import {NavLink, useNavigate} from "react-router-dom";
 import {useUserContext} from "../../services/UserContext.jsx";
 
 function AdminPage() {
@@ -14,6 +14,7 @@ function AdminPage() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const avatarInputRef = useRef(null);
     const context = useUserContext();
+    const navigate = useNavigate();
 
     const cookies = new Cookies();
     const user_id = cookies.get('xyz');
@@ -83,22 +84,14 @@ function AdminPage() {
                             />
                             <div className="avatar-upload-hint">@{context.user.username}</div>
                         </div>
-                        <div className="profile-menu">
+                        <div className="profile-menu-admin">
                             <NavLink to="/admin" className={({isActive}) => isActive ? 'active' : ''}><i
                                 className="icon-user"></i>Administração</NavLink>
-                            <NavLink to="/admin/favoritos" className={({isActive}) => isActive ? 'active' : ''}><i
-                                className="icon-star"></i>Favoritos</NavLink>
-                            <NavLink to="/admin/ver-mais-tarde" className={({isActive}) => isActive ? 'active' : ''}><i
-                                className="icon-bookmark"></i>Ver mais tarde</NavLink>
-                            <NavLink to="/admin/notificacoes" className={({isActive}) => isActive ? 'active' : ''}><i
-                                className="icon-bell"></i>Notificações</NavLink>
-                            <NavLink to="/admin/interacoes" className={({isActive}) => isActive ? 'active' : ''}><i
-                                className="icon-interactions"></i>Interações</NavLink>
-                            <NavLink to="/admin/calendario" className={({isActive}) => isActive ? 'active' : ''}><i
-                                className="icon-calendar"></i>Calendário</NavLink>
-                            <NavLink to="/admin/configuracoes" className={({isActive}) => isActive ? 'active' : ''}><i
-                                className="icon-config"></i>Configurações</NavLink>
-                            <p><i className="icon-logout"></i>Terminar Sessão</p>
+{/*                            <NavLink to="/conta" className={({isActive}) => isActive ? 'active' : ''}><i
+                                className="icon-user"></i>Conta</NavLink>
+                            <NavLink to="/configuracoes" className={({isActive}) => isActive ? 'active' : ''}><i
+                                className="icon-config"></i>Configurações</NavLink>*/}
+                            <button onClick={() => { context.logout(); navigate("/"); }}><i className="icon-logout"></i>Terminar Sessão</button>
                         </div>
                     </div>
                 </div>
@@ -126,7 +119,7 @@ function AdminPage() {
                                 {activeTab === 'GerirUtilizadores' && (
                                     <div className="tab-content">
                                         <input className="search-user" type="text"
-                                               placeholder="Pesquisar por ID, username, email ou role"/>
+                                               placeholder="Pesquisar por email ou username"/>
                                         {/*<i className="icon-search"></i>*/}
                                     </div>
                                     )}

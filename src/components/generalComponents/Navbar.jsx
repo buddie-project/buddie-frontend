@@ -1,13 +1,12 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { useUserContext } from "../../services/UserContext.jsx";
+import {useUserContext} from "../../services/UserContext.jsx";
 
 function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const context = useUserContext();
-
     const navigate = useNavigate();
 
     const handleSearchToggle = () => {
@@ -16,11 +15,7 @@ function Navbar() {
 
     useEffect(() => {
         const handleScroll = () => {
-            if (window.scrollY > 50) {
-                setScrolled(true);
-            } else {
-                setScrolled(false);
-            }
+            setScrolled(window.scrollY > 50); // Verifica se o scroll é maior que 50px
         };
 
         window.addEventListener('scroll', handleScroll);
