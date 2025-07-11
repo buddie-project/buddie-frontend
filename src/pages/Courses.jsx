@@ -233,20 +233,6 @@ function Courses() {
                                     }}
                                     aria-hidden="true"
                                 ></span>
-{/*                                <span
-                                    className={`icon-bookmark ${isBookmarked ? "icon-bookmark-filled" : "icon-bookmark"}`}
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        handleBookmark(course);
-                                    }}
-                                    aria-hidden="true"
-                                >
-                                    {isBookmarked ? (
-                                        <i className="icon-bookmark-filled" aria-hidden="true"></i>
-                                    ) : (
-                                        <i className="icon-bookmark" aria-hidden="true"></i>
-                                    )}
-                                </span>*/}
                             </h3>
                             <section className="course-info">
                                 <h5>{course.fieldOfStudy}</h5>
