@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
+//import axios from "axios";
+import api from "../services/api.js"
 import "../style/InstitutionDetails.css";
 
 function InstitutionDetails() {
@@ -9,7 +10,7 @@ function InstitutionDetails() {
 
     useEffect(() => {
 
-        axios.get(`http://localhost:8080/api/institution/${id}`)
+        api.get(`http://localhost:8080/api/institution/${id}`)
             .then((res) => {
                 setInstitution(res.data);
             })
