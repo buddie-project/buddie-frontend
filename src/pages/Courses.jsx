@@ -221,7 +221,7 @@ function Courses() {
                                 <h5>{course.fieldOfStudy}</h5>
                                 <p>
                                     {course.institutionName ? (
-                                        <Link to={`/institutions/${course.institutionId}`}
+                                        <Link to={`/instituicao/${course.institutionId}`}
                                               style={{textDecorationColor: 'white'}}>
                                             {course.institutionName}
                                         </Link>
