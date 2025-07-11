@@ -1,6 +1,10 @@
+html, body {
+    overflow: hidden;
+    height: 100%;
+}
 .institution-detail-container {
     max-width: 1000px;
-    margin: 150px auto;
+    margin: 110px auto;
     padding: 30px;
     border-radius: 25px;
     border: 4px solid #000;
@@ -115,11 +119,20 @@
     }
 }
 .map-container {
-    width: 100%;
-    height: 400px;
     display: flex;
     text-align: left;
     justify-content: left;
     align-items: flex-start;
     flex-direction: column;
 }
+
+.map-container iframe {
+border: none;
+    border-radius: 15px;
+}
+
+.map-container p {
+    margin-top: 0;
+}
+
+

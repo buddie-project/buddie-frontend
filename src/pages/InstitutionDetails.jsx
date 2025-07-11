@@ -54,8 +54,7 @@ function InstitutionDetails() {
                                     title="Google Map of Institution"
                                     src={institution.googleMapsUrl}
                                     width="100%"
-                                    height="250"
-                                    style={{ border: 0 }}
+                                    height="190"
                                     allowFullScreen=""
                                     loading="lazy"
                                     referrerPolicy="no-referrer-when-downgrade"
