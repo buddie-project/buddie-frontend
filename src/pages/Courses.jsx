@@ -8,6 +8,7 @@ import AutocompleteDropdown from "./../components/generalComponents/Autocomplete
 function Courses() {
     const [bookmarkedCourses, setBookmarkedCourses] = useState([]);
     const [coursesData, setCoursesData] = useState([]);
+    const [institutionData, setInstitutionData] = useState([]);
     const [filters, setFilters] = useState({
         curso: "",
         instituicao: "",
@@ -197,7 +198,7 @@ function Courses() {
             <div className="courses-container">
                 {coursesData.map((course) => {
                     return (
-                        <Link to={`/courses/${course.courseId}`} key={course.courseId}
+                        <Link to={`/cursos/${course.courseId}`} key={course.courseId}
                               className={`course-card ${course.color}`}>
                             <h3 className="course-header">
                                 <span className="course-name">{course.courseName}</span>
