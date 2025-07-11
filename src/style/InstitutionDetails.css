@@ -22,7 +22,7 @@ html, body {
 .institution-title {
     color: rgb(0, 0, 0);
     margin-bottom: 5px;
-    font-size: 40px;
+    font-size: 30px;
     font-style: normal;
     font-weight: 650;
     line-height: normal;
@@ -34,7 +34,7 @@ html, body {
 
 .institution-subtitle {
     color: rgba(0, 0, 0, 0.43);
-    margin-bottom: 30px;
+    margin-bottom: 25px;
     font-size: 25px;
     font-style: normal;
     font-weight: 400;
