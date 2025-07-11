@@ -10,7 +10,7 @@ function Comments() {
     const { id } = useParams();
 
     useEffect(() => {
-        api.get("/api/courses/${id}/comments").then(res => {
+        api.get(`/api/courses/${id}/comments`).then(res => {
             setComments(res.data);
         }).catch(err => {
             console.error("Erro ao encontrar comentários", err);
@@ -19,8 +19,8 @@ function Comments() {
     }, [id]);
 
     const handleSubmit = () => {
-        if(newComment.trim === " ") return;
-        api.post("/api/courses/${id}/comments", null, {
+        if(newComment.trim() === " ") return;
+        api.post(`/api/courses/${id}/comments`, null, {
             params: { commentText: newComment }
         })
             .then(res => {
@@ -43,7 +43,7 @@ function Comments() {
                 <button className="submit-button" onClick={handleSubmit}><i className="icon-send" aria-label="true"/>
                 </button>
             </div>
-            {comments.map((comment) => (<div className="comment-card">
+            {comments.map((comment) => (<div className="comment-card" key={comment.id}>
                 <div className="comment-header">
                     <span className="username">@{comment.user?.username || "utilizador"}</span>
                     <span className="date">{new Date(comment.commentDate).toLocaleDateString()}</span>
