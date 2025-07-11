@@ -90,14 +90,33 @@ function Courses() {
         fetchFilterOptions();
     }, []);
 
+/*    const handleBookmark = (course) => {
+        setBookmarkedCourses((prev) => {
+            const isBookmarked = prev.some((c) => c.courseId === course.courseId);
+            if (isBookmarked) {
+                return prev.filter((c) => c.courseId !== course.courseId);
+            } else {
+                return [...prev, course];
+            }
+        });
+    };*/
+
     const handleBookmark = (course) => {
         setBookmarkedCourses((prev) => {
             const isBookmarked = prev.some((c) => c.courseId === course.courseId);
-            return isBookmarked
-                ? prev.filter((c) => c.courseId !== course.courseId)
-                : [...prev, course];
+            if (isBookmarked) {
+                return prev.filter((c) => c.courseId !== course.courseId);
+            } else {
+                // Atribui cor
+                const colors = ["red", "blue", "green", "orange", "purple", "yellow"];
+                const lastColor = prev.length > 0 ? prev[prev.length - 1].color : "";
+                const availableColors = colors.filter(c => c !== lastColor);
+                const color = availableColors[Math.floor(Math.random() * availableColors.length)];
+                return [...prev, { ...course, color }];
+            }
         });
     };
+
 
     useEffect(() => {
         const stored = localStorage.getItem("bookmarkedCourses");
@@ -266,13 +285,14 @@ function Courses() {
                         rel="noreferrer"
                         className="github-link"
                     >
-                        <img
+                        <i className="icon-github" aria-hidden="true" style={{color: "black", width: "32", height: "auto"}} />
+{/*                        <img
                             src="/images/github-mark.svg"
                             className="github-icon"
                             width="32"
                             height="auto"
                             alt="Github Logo"
-                        />
+                        />*/}
                     </a>
                     <p> | &copy; {new Date().getFullYear()} Buddie. All rights reserved.</p>
                 </div>
