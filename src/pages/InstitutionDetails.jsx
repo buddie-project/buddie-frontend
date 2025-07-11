@@ -1,6 +1,5 @@
-import { useParams } from "react-router-dom";
+import { useParams} from "react-router-dom";
 import { useEffect, useState } from "react";
-//import axios from "axios";
 import api from "../services/api.js"
 import "../style/InstitutionDetails.css";
 
@@ -27,6 +26,7 @@ function InstitutionDetails() {
 
     return (
         <>
+            <h3 className="back-container" onClick={event=>window.history.back()}> <i className="icon-left-arrow" aria-hidden="true"></i>Cursos</h3>
             <div className="institution-detail-container">
                 <h1 className="institution-title">{institution.nomeIes}</h1>
                 <h2 className="institution-subtitle">{institution.unidadeOrganica}</h2>

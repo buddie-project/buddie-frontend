@@ -8,14 +8,17 @@ import AutocompleteDropdown from "./../components/generalComponents/Autocomplete
 function Courses() {
     const [bookmarkedCourses, setBookmarkedCourses] = useState([]);
     const [coursesData, setCoursesData] = useState([]);
-    const [institutionData, setInstitutionData] = useState([]);
-    const [filters, setFilters] = useState({
-        curso: "",
-        instituicao: "",
-        area: "",
-        distrito: "",
-        status: "",
-    });
+
+    const filtersFromQuery = new URLSearchParams(window.location.search);
+    const initialFilters = {
+        curso: filtersFromQuery.get("curso") || "",
+        instituicao: filtersFromQuery.get("instituicao") || "",
+        area: filtersFromQuery.get("area") || "",
+        distrito: filtersFromQuery.get("distrito") || "",
+        status: filtersFromQuery.get("status") || "",
+    }
+
+    const [filters, setFilters] = useState(initialFilters);
 
     const [courseNames, setCourseNames] = useState([]);
     const [institutionNames, setInstitutionNames] = useState([]);
@@ -121,6 +124,17 @@ function Courses() {
 
     useEffect(() => {
         setCurrentPage(1);
+        //modify query search
+        const queryParams = new URLSearchParams(location.search);
+        Object.entries(filters).forEach(([key, value]) => {
+            if (value) {
+                queryParams.set(key, value);
+            } else {
+                queryParams.delete(key);
+            }
+        });
+        // Update the URL with the new filters
+        window.history.replaceState({}, "", `?${queryParams.toString()}`);
     }, [filters]);
 
     const handleFilterChange = (filterName, value) => {

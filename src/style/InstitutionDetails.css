@@ -4,7 +4,7 @@ html, body {
 }
 .institution-detail-container {
     max-width: 1000px;
-    margin: 110px auto;
+    margin: 135px auto;
     padding: 30px;
     border-radius: 25px;
     border: 4px solid #000;
@@ -135,4 +135,18 @@ border: none;
     margin-top: 0;
 }
 
+.back-container {
+    position: relative;
+    top: 120px;
+    left: 229px;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 0;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 1.5rem;
+}
 
+.back-container:hover {
+    cursor: pointer;
+}
