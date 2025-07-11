@@ -211,18 +211,21 @@ function Courses() {
 
             <div className="courses-container">
                 {coursesData.map((course) => {
+                    const isBookmarked = bookmarkedCourses.some(
+                        (c) => c.courseId === course.courseId
+                    );
                     return (
                         <Link to={`/cursos/${course.courseId}`} key={course.courseId}
                               className={`course-card ${course.color}`}>
                             <h3 className="course-header">
                                 <span className="course-name">{course.courseName}</span>
                                 <span
-                                    className={`icon-bookmark ${
+                                    className={`${
                                         bookmarkedCourses.some(
                                             (c) => c.courseId === course.courseId
                                         )
-                                            ? "active"
-                                            : ""
+                                            ? "icon-bookmark-filled"
+                                            : "icon-bookmark"
                                     }`}
                                     onClick={(e) => {
                                         e.preventDefault();
@@ -230,6 +233,20 @@ function Courses() {
                                     }}
                                     aria-hidden="true"
                                 ></span>
+{/*                                <span
+                                    className={`icon-bookmark ${isBookmarked ? "icon-bookmark-filled" : "icon-bookmark"}`}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        handleBookmark(course);
+                                    }}
+                                    aria-hidden="true"
+                                >
+                                    {isBookmarked ? (
+                                        <i className="icon-bookmark-filled" aria-hidden="true"></i>
+                                    ) : (
+                                        <i className="icon-bookmark" aria-hidden="true"></i>
+                                    )}
+                                </span>*/}
                             </h3>
                             <section className="course-info">
                                 <h5>{course.fieldOfStudy}</h5>
