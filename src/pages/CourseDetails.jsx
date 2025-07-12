@@ -1,15 +1,16 @@
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import {Link, useParams} from "react-router-dom";
+import {useEffect, useState} from "react";
 import "../style/CourseDetails.css";
 import Comments from "../components/generalComponents/Comments.jsx";
 import api from "../services/api.js";
+import {useUserContext} from "../services/UserContext.jsx";
 
 function CourseDetails() {
-    const { id: courseId } = useParams();
+    const {id: courseId} = useParams();
     const [course, setCourse] = useState(null);
     const [institution, setInstitution] = useState(null);
     const [isFavorite, setIsFavorite] = useState(false);
-    const userId = 1;
+    const userId = useUserContext().user?.id;
 
     useEffect(() => {
 
@@ -20,7 +21,7 @@ function CourseDetails() {
                     setCourse(firstCourse);
 
                     if (firstCourse.courseDTO?.instituicaoId) {
-                       api.get(`/api/institution/${firstCourse.courseDTO.instituicaoId}`)
+                        api.get(`/api/institution/${firstCourse.courseDTO.instituicaoId}`)
                             .then((instRes) => setInstitution(instRes.data))
                             .catch((err) => console.error("Erro ao encontrar detalhes da instituição:", err));
                     }
@@ -49,7 +50,7 @@ function CourseDetails() {
     const getShiftImage = (shiftValue) => {
 
         if (shiftValue === "Diurno") {
-            return <img src="../../public/icons/day-study.png" alt="Estudo Diurno" className="shift-icon" />;
+            return <img src="../../public/icons/day-study.png" alt="Estudo Diurno" className="shift-icon"/>;
         }
         if (shiftValue === "Pós-laboral") {
             return <img src="../../public/icons/night-study.png" alt="Estudo Noturno" className="shift-icon"/>;
@@ -67,6 +68,8 @@ function CourseDetails() {
                 .catch((err) => console.error("Erro ao adicionar aos favoritos:", err));
         }
     };
+
+    const institutionIdFromCourseDTO = course.courseDTO?.instituicaoId
 
 
     return (
@@ -87,33 +90,50 @@ function CourseDetails() {
                         ></i>
                     </div>
                 </h1>
+                {/*<h2 className="course-subtitle">{institution?.nomeIes || course.institutionName || "A carregar..."}</h2>*/}
+                <h2 className="course-subtitle">
+                    {institutionIdFromCourseDTO ? (
+                        <Link to={`/instituicao/${institutionIdFromCourseDTO}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                            {course.institutionName || institution?.nomeIes || "A carregar..."}
+                        </Link>
+                    ) : (
+                        course.institutionName || "Instituição Desconhecida"
+                    )}
+                </h2>
 
-                <h2 className="course-subtitle">{institution?.nomeIes || course.institutionName || "A carregar..."}</h2>
-
-                {/*//info geral*/}
-                <p><strong>Área de estudo:</strong>{course.courseDTO?.nomeAreaEstudo}</p>
-                <p><strong>Regime de acesso:</strong> {course.accessRegime}</p>
-                <p><strong>Estado do curso:</strong> {course.courseDTO?.estadoCursoDGES}</p>
-
-                {/*//sobre o curso*/}
-                <p><strong>Horário:</strong> {course.shift}</p>
-                <p><strong>Ects:</strong> {course.courseDTO?.ects}</p>
-                <p><strong>Grau:</strong> {course.courseDTO?.grau}</p>
-                <p><strong>Ano académico:</strong> {course.academicYear}</p>
-                <p><strong>Vagas:</strong> {course.vacancies}</p>
-
-                {/*//sobre o concurso*/}
-                <p><strong>Requisitos:</strong> {course.rankingCriteria}</p>
-                <p><strong>Descrição:</strong> {course.description}</p>
+                <div className="course-info-box">
+                    {/*//info geral*/}
+                    <div className="left-column">
+                        <p><strong>Área de estudo:</strong>{course.courseDTO?.nomeAreaEstudo}</p>
+                        <p><strong>Regime de acesso:</strong> {course.accessRegime}</p>
+                        <p><strong>Estado do curso:</strong> {course.courseDTO?.estadoCursoDGES}</p>
 
 
-                <p><strong>Localidade:</strong> {course.courseDTO?.localidade}</p>
-                <p>
-                    <strong>Site da universidade:</strong>{" "}
-                    <a href={course.sourceUrl} target="_blank" rel="noopener noreferrer">
-                        {course.sourceUrl}
-                    </a>
-                </p>
+                        {/*//sobre o curso*/}
+
+                        <p><strong>Horário:</strong> {course.shift}</p>
+                        <p><strong>Ects:</strong> {course.courseDTO?.ects}</p>
+                        <p><strong>Grau:</strong> {course.courseDTO?.grau}</p>
+                        <p><strong>Ano académico:</strong> {course.academicYear}</p>
+                    </div>
+
+                    <div className={"right-column"}>
+
+                        <p><strong>Vagas:</strong> {course.vacancies}</p>
+
+                        {/*//sobre o concurso*/}
+                        <p><strong>Requisitos:</strong> {course.rankingCriteria}</p>
+                        <p><strong>Descrição:</strong> {course.description}</p>
+
+                        <p><strong>Localidade:</strong> {course.courseDTO?.localidade}</p>
+                        <p>
+                            <strong>Site da universidade:</strong>{" "}
+                            <a href={course.sourceUrl} target="_blank" rel="noopener noreferrer">
+                                {course.sourceUrl}
+                            </a>
+                        </p>
+                    </div>
+                </div>
             </div>
 
             <Comments/>
