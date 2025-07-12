@@ -90,17 +90,6 @@ function Courses() {
         fetchFilterOptions();
     }, []);
 
-/*    const handleBookmark = (course) => {
-        setBookmarkedCourses((prev) => {
-            const isBookmarked = prev.some((c) => c.courseId === course.courseId);
-            if (isBookmarked) {
-                return prev.filter((c) => c.courseId !== course.courseId);
-            } else {
-                return [...prev, course];
-            }
-        });
-    };*/
-
     const handleBookmark = (course) => {
         setBookmarkedCourses((prev) => {
             const isBookmarked = prev.some((c) => c.courseId === course.courseId);
