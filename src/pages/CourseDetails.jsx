@@ -8,6 +8,8 @@ function CourseDetails() {
     const { id: courseId } = useParams();
     const [course, setCourse] = useState(null);
     const [institution, setInstitution] = useState(null);
+    const [isFavorite, setIsFavorite] = useState(false);
+    const userId = 1;
 
     useEffect(() => {
 
@@ -28,8 +30,20 @@ function CourseDetails() {
             })
     }, [courseId]);
 
-    if (!course) return <div className="loading">A carregar detalhes ou curso não encontrado...</div>;
+    useEffect(() => {
+        if (courseId) {
+            api.get(`/api/courses/${courseId}/favorites`)
+                .then((res) => {
+                    const favorites = res.data;
+                    const isFav = favorites.some(fav => fav.user.id === userId);
+                    setIsFavorite(isFav);
+                })
+                .catch((err) => console.error("Erro ao obter favoritos:", err));
+        }
+    }, [courseId]);
 
+
+    if (!course) return <div className="loading">A carregar detalhes ou curso não encontrado...</div>;
 
 
     const getShiftImage = (shiftValue) => {
@@ -42,11 +56,23 @@ function CourseDetails() {
         }
     };
 
+    const toggleFavorite = () => {
+        if (isFavorite) {
+            api.post(`/api/courses/${courseId}/favorites/delete`)
+                .then(() => setIsFavorite(false))
+                .catch((err) => console.error("Erro ao remover dos favoritos:", err));
+        } else {
+            api.post(`/api/courses/${courseId}/favorites`)
+                .then(() => setIsFavorite(true))
+                .catch((err) => console.error("Erro ao adicionar aos favoritos:", err));
+        }
+    };
+
 
     return (
         <>
             <div className="course-detail-container">
-                <h1 className="course-title">{course.courseDTO?.nome}
+                <h1 className="course-title" key={course.courseDTO?.nome}>{course.courseDTO?.nome}
                     {course.shift && (
                         <span className="shift-icon-wrapper">
                         {getShiftImage(course.shift)}
@@ -54,7 +80,11 @@ function CourseDetails() {
                     )}
 
                     <div className={"course-title-action"}>
-                        <i onClick={()=>console.log("ola")} className="icon-star" aria-hidden="true"></i>
+                        <i
+                            onClick={toggleFavorite}
+                            className={isFavorite ? "icon-star-filled" : "icon-star"}
+                            aria-hidden="true"
+                        ></i>
                     </div>
                 </h1>
 
