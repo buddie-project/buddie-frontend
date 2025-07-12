@@ -4,9 +4,10 @@ import Pagination from "../components/generalComponents/Pagination.jsx";
 import {Link, useLocation} from "react-router-dom";
 import api from "../services/api.js";
 import AutocompleteDropdown from "./../components/generalComponents/AutocompleteDropdown.jsx";
+import {useUserContext} from "../services/UserContext.jsx";
 
 function Courses() {
-    const [bookmarkedCourses, setBookmarkedCourses] = useState([]);
+    const [savedCourseIds, setSavedCourseIds] = useState(new Set());
     const [coursesData, setCoursesData] = useState([]);
 
     const filtersFromQuery = new URLSearchParams(window.location.search);
@@ -29,6 +30,10 @@ function Courses() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const location = useLocation();
+
+    const {user} = useUserContext();
+    const token = user?.token;
+    const userId = user?.id;
 
     useEffect(() => {
         // Extrair o filtro da URL
@@ -90,33 +95,79 @@ function Courses() {
         fetchFilterOptions();
     }, []);
 
-    const handleBookmark = (course) => {
-        setBookmarkedCourses((prev) => {
-            const isBookmarked = prev.some((c) => c.courseId === course.courseId);
-            if (isBookmarked) {
-                return prev.filter((c) => c.courseId !== course.courseId);
+    const handleSaveCourse = async (course) => {
+        if (!user || !token) {
+            alert("Você precisa estar logado para salvar cursos.");
+            return;
+        }
+
+        const isSaved = savedCourseIds.has(course.courseId);
+
+        try {
+            if (isSaved) {
+                // Remover curso salvo
+                await api.post(`/api/courses/${course.courseId}/saved/delete`, {}, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                setSavedCourseIds((prev) => {
+                    const newSet = new Set(prev);
+                    newSet.delete(course.courseId);
+                    return newSet;
+                });
             } else {
-                // Atribui cor
-                const colors = ["red", "blue", "green", "orange", "purple", "yellow"];
-                const lastColor = prev.length > 0 ? prev[prev.length - 1].color : "";
-                const availableColors = colors.filter(c => c !== lastColor);
-                const color = availableColors[Math.floor(Math.random() * availableColors.length)];
-                return [...prev, { ...course, color }];
+                // Adicionar curso salvo
+                await api.post(`/api/courses/${course.courseId}/saved`, {}, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                setSavedCourseIds((prev) => new Set(prev).add(course.courseId));
             }
-        });
+        } catch (error) {
+            console.error("Erro ao atualizar cursos guardados:", error);
+
+            alert("Erro ao atualizar cursos guardados. Tente novamente.");
+        }
     };
 
 
-    useEffect(() => {
-        const stored = localStorage.getItem("bookmarkedCourses");
-        if (stored) {
-            setBookmarkedCourses(JSON.parse(stored));
-        }
-    }, []);
 
     useEffect(() => {
-        localStorage.setItem("bookmarkedCourses", JSON.stringify(bookmarkedCourses));
-    }, [bookmarkedCourses]);
+        const fetchSavedCourses = async () => {
+            if (!userId || !token) {
+                setSavedCourseIds(new Set());
+                return;
+            }
+            try {
+
+                const res = await api.get(`/api/courses/${userId}/saved`, {
+
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                const savedIds = new Set(res.data.map(savedCourse => savedCourse.course.id));
+
+                setSavedCourseIds(savedIds);
+            } catch (err) {
+                console.error("Erro ao buscar cursos guardados:", err);
+
+                if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+                    setSavedCourseIds(new Set());
+                }
+            }
+        };
+
+        if (token && userId) {
+            fetchSavedCourses();
+        } else {
+            setSavedCourseIds(new Set());
+        }
+    }, [token, userId]);
+
 
     const colors = ["red", "blue", "green", "orange", "purple", "yellow"];
 
@@ -198,7 +249,6 @@ function Courses() {
                         onValueChange={(value) => handleFilterChange("status", value)}
                         className="option"
                     />
-
                 </div>
             </div>
 
@@ -219,25 +269,19 @@ function Courses() {
 
             <div className="courses-container">
                 {coursesData.map((course) => {
-                    const isBookmarked = bookmarkedCourses.some(
-                        (c) => c.courseId === course.courseId
-                    );
+                    const isBookmarked = savedCourseIds.has(course.courseId);
+
                     return (
                         <Link to={`/cursos/${course.courseId}`} key={course.courseId}
                               className={`course-card ${course.color}`}>
                             <h3 className="course-header">
                                 <span className="course-name">{course.courseName}</span>
+
                                 <span
-                                    className={`${
-                                        bookmarkedCourses.some(
-                                            (c) => c.courseId === course.courseId
-                                        )
-                                            ? "icon-bookmark-filled"
-                                            : "icon-bookmark"
-                                    }`}
+                                    className={isBookmarked ? "icon-bookmark-filled" : "icon-bookmark"}
                                     onClick={(e) => {
                                         e.preventDefault();
-                                        handleBookmark(course);
+                                        handleSaveCourse(course);
                                     }}
                                     aria-hidden="true"
                                 ></span>
