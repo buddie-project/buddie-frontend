@@ -7,6 +7,9 @@ function Comments() {
 
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState("");
+    const [showComments, setShowComments] = useState(false);
+    const [visibleComments, setVisibleComments] = useState(5);
+
     const { id } = useParams();
 
     useEffect(() => {
@@ -30,31 +33,62 @@ function Comments() {
             .catch(err => console.error(err));
     };
 
-    return(
+    const toggleComments = () => {
+        setShowComments(prev => !prev);
+    }
+
+    const handleSeeMore = () => {
+        setVisibleComments(prev => prev + 5);
+    }
+
+    return (
         <div className="comments-section">
-            <h2>Comentários</h2>
-
-            <div className="comment-input">
-                <input type="text"
-                       placeholder="Adicionar comentário"
-                       value={newComment}
-                       onChange={e => setNewComment(e.target.value)}
-                />
-                <button className="submit-button" onClick={handleSubmit}><i className="icon-send" aria-label="true"/>
-                </button>
+            <div className="comments-dropdown-header" onClick={toggleComments}>
+                <h2>Comentários</h2>
+                {showComments ? (
+                    <i className="icon-up-arrow" aria-hidden="true" />
+                ) : (
+                    <i className="icon-down-arrow" aria-hidden="true" />
+                )}
             </div>
-            {comments.map((comment) => (<div className="comment-card" key={comment.id}>
-                <div className="comment-header">
-                    <span className="username">@{comment.user?.username || "utilizador"}</span>
-                    <span className="date">{new Date(comment.commentDate).toLocaleDateString()}</span>
-                </div>
-                <p className="comment-text">{comment.commentText}</p>
-            </div>
-            ))}
 
-            <div className="see-more">ver mais</div>
+
+
+
+
+            {showComments && (
+                <>
+                    <div className="comment-input">
+                        <textarea
+                            placeholder="Adicionar comentário"
+                            value={newComment}
+                            onChange={e => setNewComment(e.target.value)}
+                            rows="3"
+                        />
+                        <button className="submit-button" onClick={handleSubmit}>
+                            <i className="icon-send" aria-label="true" />
+                        </button>
+                    </div>
+
+                    {comments.slice(0, visibleComments).map((comment) => (
+                        <div className="comment-card" key={comment.id}>
+                            <div className="comment-header">
+                                <span className="username">@{comment.user?.username || "utilizador"}</span>
+                                <span className="date">{new Date(comment.commentDate).toLocaleDateString()}</span>
+                            </div>
+                            <p className="comment-text">{comment.commentText}</p>
+                        </div>
+                    ))}
+
+                    {visibleComments < comments.length && (
+                        <div className="see-more" onClick={handleSeeMore}>
+                            ver mais
+                        </div>
+                    )}
+                </>
+            )}
         </div>
-    )
+    );
 }
 
 export default Comments;

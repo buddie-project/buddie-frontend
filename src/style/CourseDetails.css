@@ -6,7 +6,7 @@ html, body, #root {
 
 .course-detail-container {
     max-width: 1000px;
-    margin: 150px auto;
+    margin: 150px auto 0 auto;
     padding: 30px;
     border-radius: 25px;
     border: 4px solid #000;
