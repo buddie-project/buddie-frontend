@@ -1,0 +1,68 @@
+.interactions-page {
+    padding: 1rem;
+}
+
+.interactions-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.interaction-card {
+    display: flex;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    padding: 0.8rem;
+    align-items: center;
+    transition: transform 0.2s;
+}
+
+.interaction-card:hover {
+    transform: translateY(-2px);
+}
+
+.avatar-area {
+    flex-shrink: 0;
+    margin-right: 0.8rem;
+}
+
+.avatar {
+    display: inline-flex;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    color: #fff;
+    font-weight: 600;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.content-area {
+    flex: 1;
+}
+
+.interaction-text {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.interaction-date {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 0.8rem;
+    color: #777;
+}
+
+@media (max-width: 600px) {
+    .interaction-card {
+        padding: 0.6rem;
+    }
+    .avatar {
+        width: 38px;
+        height: 38px;
+        font-size: 1rem;
+    }
+}
