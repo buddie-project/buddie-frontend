@@ -1,7 +1,6 @@
 import '../../style/profilePages/ProfileLayout.css';
 import React, {useState, useRef, useEffect} from 'react';
 import {Outlet, NavLink, useNavigate} from 'react-router-dom';
-import axios from 'axios';
 import Cookies from 'universal-cookie';
 import {toast} from 'react-toastify';
 import {useUserContext} from "../../services/UserContext.jsx";
@@ -20,7 +19,7 @@ function ProfileLayout() {
         const fetchUserImages = async () => {
             try {
                 const config = {headers: {"Content-Type": "application/json"}};
-                const avatarResponse = await axios.post(`/api/auth/ImageRetrieve`, {user_id, type: 'avatar'}, config);
+                const avatarResponse = await api.post(`/api/auth/ImageRetrieve`, {user_id, type: 'avatar'}, config);
                 setFormData({avatar: avatarResponse.data.link});
             } catch (error) {
                 toast.error('Error loading images', {theme: 'colored'});
@@ -38,7 +37,7 @@ function ProfileLayout() {
         form.append('type', 'avatar');
         try {
             const config = {headers: {'Content-Type': 'multipart/form-data'}};
-            const {data} = await axios.post(`/api/auth/ImageUpload`, form, config);
+            const {data} = await api.post(`/api/auth/ImageUpload`, form, config);
             toast.success('Image uploaded successfully!', {theme: 'colored'});
             setFormData(prev => ({...prev, avatar: data.link}));
         } catch (error) {
@@ -65,7 +64,7 @@ function ProfileLayout() {
                             <img src={formData.avatar || 'https://placehold.co/150'}
                                  alt="Profile avatar"
                                  className="profile-avatar"
-                            style={{cursor: 'pointer' }}
+                                 style={{cursor: 'pointer' }}
                             />
                             <div className="avatar-upload-hint">@{context.user.username}</div>
                         </div>
@@ -88,7 +87,7 @@ function ProfileLayout() {
                         </div>
                     </div>
                 </div>
-                    <Outlet/>
+                <Outlet/>
             </section>
         </>
     );
