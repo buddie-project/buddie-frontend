@@ -135,7 +135,7 @@ function AdminPage() {
                         <div className="profile-menu-admin">
                             <NavLink to="/admin" className={({isActive}) => isActive ? 'active' : ''}><i
                                 className="icon-user"></i>Administração</NavLink>
-{/*                            <NavLink to="/conta" className={({isActive}) => isActive ? 'active' : ''}><i
+                            {/*                            <NavLink to="/conta" className={({isActive}) => isActive ? 'active' : ''}><i
                                 className="icon-user"></i>Conta</NavLink>
                             <NavLink to="/perfil/configuracoes" className={({isActive}) => isActive ? 'active' : ''}><i
                                 className="icon-config"></i>Configurações</NavLink>*/}
@@ -216,50 +216,32 @@ function AdminPage() {
                                     <div className="tab-content add-course-form">
                                         <select>
                                             <option>- Selecione ou escreva um curso -</option>
-                                            {/*<AutocompleteDropdown
-                                                label="curso"
-                                                options={courseNames}
-                                                value={filters.curso}
-                                                // onValueChange={(value) => handleFilterChange("curso", value)}
-                                                className="option"
-                                            />*/}
+                                            <option>Curso 1</option>
+                                            <option>Curso 2</option>
+                                            <option>Curso 3</option>
+                                            <option>Curso 4</option>
                                         </select>
                                         <select>
                                             <option>- Selecione ou escreva a área do curso -</option>
-{/*                                            <AutocompleteDropdown
-                                                label="área"
-                                                options={areas}
-                                                value={filters.area}
-                                                // onValueChange={(value) => handleFilterChange("area", value)}
-                                                className="option"
-                                            />*/}
+                                            <option>Inglês</option>
+                                            <option>Filosofia</option>
+                                            <option>Português</option>
+                                            <option>Matemática</option>
                                         </select>
                                         <select>
                                             <option>- Selecione ou escreva uma instituição -</option>
-  {/*                                          <AutocompleteDropdown
-                                                label="instituição"
-                                                options={institutionNames}
-                                                value={filters.instituicao}
-                                                // onValueChange={(value) => handleFilterChange("instituicao", value)}
-                                                className="option"
-                                            />*/}
+                                            <option>IADE</option>
+                                            <option>ISCTE</option>
+                                            <option>Universidade Lusíada</option>
+                                            <option>Universidade Católica</option>
                                         </select>
-                                        <select>
-                                            <option>- Selecione o grau -</option>
-                                            <option>Licenciatura 1º Ciclo</option>
-                                            <option>Mestrado Integrado</option>
-                                        </select>
-                                        <input type="location" placeholder="- Localidade -" />
-                                        {/*<input type="number" placeholder="- Número total de vagas -" />*/}
-                                        {/*<input type="date" />*/}
+                                        <input type="number" placeholder="- Número total de vagas -" />
+                                        <input type="date" />
                                         <button className="add-course-btn">Adicionar Curso</button>
                                     </div>
                                 )}
                             </div>
-
                         )}
-                        {activePage === 'Conta Admin' && <div></div>}
-                        {activePage === 'Configurações Admin' && <div></div>}
                     </div>
                 </div>
             </section>

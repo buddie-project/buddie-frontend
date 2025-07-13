@@ -1,7 +1,6 @@
 import '../../style/profilePages/ProfileLayout.css';
 import React, {useState, useRef, useEffect} from 'react';
 import {Outlet, NavLink, useNavigate} from 'react-router-dom';
-import axios from 'axios';
 import Cookies from 'universal-cookie';
 import {toast} from 'react-toastify';
 import {useUserContext} from "../../services/UserContext.jsx";
@@ -65,7 +64,7 @@ function ProfileLayout() {
                             <img src={formData.avatar || 'https://placehold.co/150'}
                                  alt="Profile avatar"
                                  className="profile-avatar"
-                            style={{cursor: 'pointer' }}
+                                 style={{cursor: 'pointer' }}
                             />
                             <div className="avatar-upload-hint">@{context.user.username}</div>
                         </div>
@@ -88,7 +87,7 @@ function ProfileLayout() {
                         </div>
                     </div>
                 </div>
-                    <Outlet/>
+                <Outlet/>
             </section>
         </>
     );
