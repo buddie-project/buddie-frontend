@@ -5,7 +5,7 @@ import api from "../../services/api.js";
 
 function Configurations() {
     const [activePage] = useState('Configurações');
-    const {user, token, logout} = useUserContext();
+    const {user, logout} = useUserContext();
     const [profileData, setProfileData] = useState({
         fullName: '',
         firstName: '',
@@ -28,7 +28,7 @@ function Configurations() {
     const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
-        if (!user || !token) {
+        if (!user) {
             setLoading(false);
             setError("Não estás logado. Por favor, faz login para continuar.");
             return;
@@ -37,11 +37,7 @@ function Configurations() {
             setLoading(true);
             setError(null);
             try {
-                const response = await api.get(`/api/users/profile/${user.id}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+                const response = await api.get(`/api/users/profile/${user.id}`);
                 setProfileData({
                     fullName: response.data.fullName || "",
                     firstName: response.data.firstName || "",
@@ -67,10 +63,10 @@ function Configurations() {
         };
 
         fetchProfile();
-    }, [user, token]);
+    }, [user]);
 
     const handleSaveChanges = async () => {
-        if (!user || !token) {
+        if (!user) {
             alert("Precisas estar logado para guardar alterações.");
             return;
         }
@@ -97,7 +93,6 @@ function Configurations() {
 
             await api.post(`/api/users/profile/${user.id}`, profileDTOToSend, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
             });
@@ -113,17 +108,13 @@ function Configurations() {
 
     // Handler para eliminar conta
     const handleDeleteAccount = async () => {
-        if (!user || !token) {
+        if (!user) {
             alert("Precisas estar logado para eliminar a tua conta.");
             return;
         }
         if (window.confirm("Tem a certeza que deseja eliminar a sua conta? Esta ação é irreversível.")) {
             try {
-                await api.post(`/api/users/profile/${user.id}/delete`, null, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+                await api.post(`/api/users/profile/${user.id}/delete`);
                 alert("Conta eliminada com sucesso!");
                 logout();
             } catch (err) {
@@ -192,12 +183,12 @@ function Configurations() {
                             <div className="line">
                                 <div className="inputs">
                                     <p>Bio</p>
-                                    <textarea
+                                    <input
                                         className="bio"
                                         name="bio"
                                         value={profileData.bio || ""}
                                         onChange={handleInputChange}
-                                        rows="3"
+                                        style={{resize: "none"}}
                                     />
                                 </div>
                                 <div className="inputs">

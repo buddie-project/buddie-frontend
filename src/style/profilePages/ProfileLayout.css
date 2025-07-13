@@ -164,6 +164,16 @@
     color: #ADADAD;
 }
 
+/*.cards .bio-name {*/
+/*    font-size: 0.9rem;*/
+/*    font-weight: 600;*/
+/*    color: #ADADAD;*/
+/*    white-space: nowrap;*/
+/*    overflow: hidden;*/
+/*    text-overflow: ellipsis;*/
+/*    display: inline-block;*/
+/*}*/
+
 .cards .section-two p, .section-three p {
     display: grid;
     justify-content: left;
