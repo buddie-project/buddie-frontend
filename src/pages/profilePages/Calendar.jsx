@@ -76,12 +76,21 @@ function Calendar() {
                         tileClassName={({ date, view }) => {
                             if (view === 'month') {
                                 const isCurrentMonth = date.getMonth() === selectedDate.getMonth();
+                                const isToday = date.toDateString() === new Date().toDateString();
                                 const key = date.toDateString();
+
+                                let classes = '';
                                 if (isCurrentMonth) {
-                                    return dayColors[key] + ' current-month-day';
+                                    classes += dayColors[key] + ' current-month-day';
                                 } else {
-                                    return 'shadow-grey other-month-day';
+                                    classes += 'shadow-grey other-month-day';
                                 }
+
+                                if (isToday) {
+                                    classes += ' today';
+                                }
+
+                                return classes.trim();
                             }
                         }}
                         formatDay={(locale, date) => (

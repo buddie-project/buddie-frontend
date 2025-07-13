@@ -88,13 +88,40 @@
 .shadow-purple { box-shadow: inset 0 0 5px #9C27B0 !important; }
 .shadow-pink   { box-shadow: inset 0 0 5px #E91E63 !important; }
 
-/*!* Dias de outro mês → shadow cinzenta clara *!*/
-/*.shadow-grey   { box-shadow: 0 0 0 2px #D3D3D3 inset !important; }*/
 
-/* Dias de outro mês → shadow cinzento suave + cor de número suavizada */
 .shadow-grey {
     box-shadow: inset 0 0 8px #D3D3D3 !important;
 }
+
+.today .day-number {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: black;
+    padding: 4px 7px;
+    border-radius: 50%;
+    min-width: 28px;
+    min-height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 1.5s infinite;
+}
+
+
+.today .day-number {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255,138,0, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(255,138,0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,138,0, 0); }
+}
+
 
 /* Responsivo */
 @media (max-width: 768px) {
