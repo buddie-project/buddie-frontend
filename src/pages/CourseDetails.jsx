@@ -6,7 +6,7 @@ import api from "../services/api.js";
 import {useUserContext} from "../services/UserContext.jsx";
 
 function CourseDetails() {
-    const {id: courseId} = useParams();
+    const {courseId} = useParams();
     const [course, setCourse] = useState(null);
     const [institution, setInstitution] = useState(null);
     const [isFavorite, setIsFavorite] = useState(false);
@@ -74,6 +74,7 @@ function CourseDetails() {
 
     return (
         <>
+            <h3 className="back-container" onClick={event=>window.history.back()}> <i className="icon-left-arrow" aria-hidden="true"></i>Cursos</h3>
             <div className="course-detail-container">
                 <h1 className="course-title" key={course.courseDTO?.nome}>{course.courseDTO?.nome}
                     {course.shift && (
