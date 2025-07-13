@@ -20,7 +20,7 @@ function ProfileLayout() {
         const fetchUserImages = async () => {
             try {
                 const config = {headers: {"Content-Type": "application/json"}};
-                const avatarResponse = await axios.post(`/api/auth/ImageRetrieve`, {user_id, type: 'avatar'}, config);
+                const avatarResponse = await api.post(`/api/auth/ImageRetrieve`, {user_id, type: 'avatar'}, config);
                 setFormData({avatar: avatarResponse.data.link});
             } catch (error) {
                 toast.error('Error loading images', {theme: 'colored'});
@@ -38,7 +38,7 @@ function ProfileLayout() {
         form.append('type', 'avatar');
         try {
             const config = {headers: {'Content-Type': 'multipart/form-data'}};
-            const {data} = await axios.post(`/api/auth/ImageUpload`, form, config);
+            const {data} = await api.post(`/api/auth/ImageUpload`, form, config);
             toast.success('Image uploaded successfully!', {theme: 'colored'});
             setFormData(prev => ({...prev, avatar: data.link}));
         } catch (error) {

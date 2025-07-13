@@ -1,27 +1,40 @@
-import {Link, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import { useParams, Link } from "react-router-dom"; // Importar Link se ainda não estiver
+import { useEffect, useState } from "react";
 import "../style/CourseDetails.css";
 import Comments from "../components/generalComponents/Comments.jsx";
 import api from "../services/api.js";
-import {useUserContext} from "../services/UserContext.jsx";
+import { useUserContext } from "../services/UserContext.jsx";
+import {toast} from "react-toastify"; // Importar useUserContext
 
 function CourseDetails() {
-    const {courseId} = useParams();
+    // CORREÇÃO ESSENCIAL AQUI: Aceder diretamente ao parâmetro 'courseId' como definido na rota do App.jsx
+    const {courseId } = useParams(); // REMOVER ': id'
     const [course, setCourse] = useState(null);
     const [institution, setInstitution] = useState(null);
     const [isFavorite, setIsFavorite] = useState(false);
-    const userId = useUserContext().user?.id;
+    // Obter userId do contexto do utilizador
+    const { user } = useUserContext(); // Obter 'user' do contexto
+    const userId = user ? user.id : null; // userId será o ID do utilizador logado, ou null se não logado
 
     useEffect(() => {
+        // Apenas faz a chamada se courseId não for undefined ou null
+        if (!courseId) {
+            setCourse(null); // Assegura que o estado é limpo se o ID não for válido
+            return;
+        }
 
         api.get(`/api/courses/${courseId}`)
             .then((res) => {
-                if (res.data.length > 0) {
-                    const firstCourse = res.data[0];
-                    setCourse(firstCourse);
+                // A sua API retorna um array, mas para um único detalhe, seria mais comum retornar um objeto diretamente.
+                // Ajustado para lidar com o primeiro elemento do array se houver, ou a própria data se for um objeto.
+                const courseData = Array.isArray(res.data) && res.data.length > 0 ? res.data[0] : res.data;
 
-                    if (firstCourse.courseDTO?.instituicaoId) {
-                        api.get(`/api/institution/${firstCourse.courseDTO.instituicaoId}`)
+                if (courseData) {
+                    setCourse(courseData);
+
+                    // Acessar instituicaoId do courseData.courseDTO para consistência
+                    if (courseData.courseDTO?.instituicaoId) {
+                        api.get(`/api/institution/${courseData.courseDTO.instituicaoId}`)
                             .then((instRes) => setInstitution(instRes.data))
                             .catch((err) => console.error("Erro ao encontrar detalhes da instituição:", err));
                     }
@@ -29,35 +42,51 @@ function CourseDetails() {
                     setCourse(null);
                 }
             })
-    }, [courseId]);
+            .catch((err) => {
+                console.error("Erro ao carregar detalhes do curso:", err);
+                setCourse(null); // Limpar o curso em caso de erro
+            });
+    }, [courseId]); // Dependência em courseId
 
     useEffect(() => {
-        if (courseId) {
-            api.get(`/api/courses/${courseId}/favorites`)
-                .then((res) => {
-                    const favorites = res.data;
-                    const isFav = favorites.some(fav => fav.user.id === userId);
-                    setIsFavorite(isFav);
-                })
-                .catch((err) => console.error("Erro ao obter favoritos:", err));
+        // Apenas faz a chamada se courseId e userId estiverem disponíveis
+        // Apenas tenta obter favoritos se o utilizador estiver logado (userId existe)
+        if (!courseId || !userId) {
+            setIsFavorite(false); // Não é favorito se não houver ID de curso ou utilizador
+            return;
         }
-    }, [courseId]);
 
+        api.get(`/api/courses/${courseId}/favorites`)
+            .then((res) => {
+                const favorites = res.data;
+                // Certifica-se de que favorites é um array antes de usar .some()
+                const isFav = Array.isArray(favorites) && favorites.some(fav => fav.user?.id === userId); // Acesso seguro a fav.user.id
+                setIsFavorite(isFav);
+            })
+            .catch((err) => console.error("Erro ao obter favoritos:", err));
+    }, [courseId, userId]); // Dependências em courseId e userId
 
+    // Exibir mensagem de carregamento ou "não encontrado"
     if (!course) return <div className="loading">A carregar detalhes ou curso não encontrado...</div>;
 
-
     const getShiftImage = (shiftValue) => {
-
         if (shiftValue === "Diurno") {
-            return <img src="../../public/icons/day-study.png" alt="Estudo Diurno" className="shift-icon"/>;
+            return <img src="/icons/day-study.png" alt="Estudo Diurno" className="shift-icon" />; // CORREÇÃO DO CAMINHO
         }
         if (shiftValue === "Pós-laboral") {
-            return <img src="../../public/icons/night-study.png" alt="Estudo Noturno" className="shift-icon"/>;
+            return <img src="/icons/night-study.png" alt="Estudo Noturno" className="shift-icon"/>; // CORREÇÃO DO CAMINHO
         }
+        return null; // Retorna null se não houver correspondência
     };
 
     const toggleFavorite = () => {
+        // Apenas permite toggle se userId for válido (utilizador logado)
+        if (!userId) {
+            console.warn("Utilizador não autenticado para adicionar/remover favoritos.");
+            toast.info("Por favor, faça login para adicionar aos favoritos.", { theme: "colored" }); // Feedback ao utilizador
+            return;
+        }
+
         if (isFavorite) {
             api.post(`/api/courses/${courseId}/favorites/delete`)
                 .then(() => setIsFavorite(false))
@@ -69,18 +98,18 @@ function CourseDetails() {
         }
     };
 
-    const institutionIdFromCourseDTO = course.courseDTO?.instituicaoId
-
+    const institutionIdFromCourseDTO = course.courseDTO?.instituicaoId;
 
     return (
         <>
             <h3 className="back-container" onClick={event=>window.history.back()}> <i className="icon-left-arrow" aria-hidden="true"></i>Cursos</h3>
             <div className="course-detail-container">
-                <h1 className="course-title" key={course.courseDTO?.nome}>{course.courseDTO?.nome}
+                <h1 className="course-title" key={course.courseDTO?.nome}>
+                    {course.courseDTO?.nome}
                     {course.shift && (
                         <span className="shift-icon-wrapper">
-                        {getShiftImage(course.shift)}
-                    </span>
+                            {getShiftImage(course.shift)}
+                        </span>
                     )}
 
                     <div className={"course-title-action"}>
@@ -91,7 +120,6 @@ function CourseDetails() {
                         ></i>
                     </div>
                 </h1>
-                {/*<h2 className="course-subtitle">{institution?.nomeIes || course.institutionName || "A carregar..."}</h2>*/}
                 <h2 className="course-subtitle">
                     {institutionIdFromCourseDTO ? (
                         <Link to={`/instituicao/${institutionIdFromCourseDTO}`} style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -103,14 +131,10 @@ function CourseDetails() {
                 </h2>
 
                 <div className="course-info-box">
-                    {/*//info geral*/}
                     <div className="left-column">
-                        <p><strong>Área de estudo:</strong>{course.courseDTO?.nomeAreaEstudo}</p>
+                        <p><strong>Área de estudo:</strong> {course.courseDTO?.nomeAreaEstudo}</p>
                         <p><strong>Regime de acesso:</strong> {course.accessRegime}</p>
                         <p><strong>Estado do curso:</strong> {course.courseDTO?.estadoCursoDGES}</p>
-
-
-                        {/*//sobre o curso*/}
 
                         <p><strong>Horário:</strong> {course.shift}</p>
                         <p><strong>Ects:</strong> {course.courseDTO?.ects}</p>
@@ -119,25 +143,27 @@ function CourseDetails() {
                     </div>
 
                     <div className={"right-column"}>
-
                         <p><strong>Vagas:</strong> {course.vacancies}</p>
-
-                        {/*//sobre o concurso*/}
                         <p><strong>Requisitos:</strong> {course.rankingCriteria}</p>
                         <p><strong>Descrição:</strong> {course.description}</p>
 
                         <p><strong>Localidade:</strong> {course.courseDTO?.localidade}</p>
                         <p>
                             <strong>Site da universidade:</strong>{" "}
-                            <a href={course.sourceUrl} target="_blank" rel="noopener noreferrer">
-                                {course.sourceUrl}
-                            </a>
+                            {course.sourceUrl ? (
+                                <a href={course.sourceUrl} target="_blank" rel="noopener noreferrer">
+                                    {course.sourceUrl}
+                                </a>
+                            ) : (
+                                "Não disponível"
+                            )}
                         </p>
                     </div>
                 </div>
             </div>
 
-            <Comments/>
+            {/* CORREÇÃO AQUI: Passar o courseId para o componente Comments */}
+            <Comments courseId={courseId} />
         </>
     );
 }
