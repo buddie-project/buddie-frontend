@@ -2,12 +2,12 @@ import '../../style/profilePages/Configurations.css';
 import React, {useEffect, useState} from "react";
 import {useUserContext} from "../../services/UserContext.jsx";
 import api from "../../services/api.js";
+import {useNavigate} from "react-router-dom";
 
 function Configurations() {
     const [activePage] = useState('Configurações');
     const {user, logout} = useUserContext();
     const [profileData, setProfileData] = useState({
-        fullName: '',
         firstName: '',
         lastName: '',
         age: 0,
@@ -17,15 +17,13 @@ function Configurations() {
         city: '',
         country: '',
         zipCode: '',
-        institution: '',
-        degree: '',
         bio: '',
-        imagePath: '',
     })
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isSaving, setIsSaving] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!user) {
@@ -75,28 +73,25 @@ function Configurations() {
         try {
 
             const profileDTOToSend = {
-                fullName: profileData.fullName,
                 firstName: profileData.firstName,
                 lastName: profileData.lastName,
                 age: profileData.age,
-                gender: profileData.gender,
                 phoneNumber: profileData.phoneNumber,
                 district: profileData.district,
                 city: profileData.city,
                 country: profileData.country,
                 zipCode: profileData.zipCode,
                 bio: profileData.bio,
-                imagePath: profileData.imagePath,
-                institution: profileData.institution,
-                degree: profileData.degree,
             };
 
-            await api.post(`/api/users/profile/${user.id}`, profileDTOToSend, {
+            await api.post(`/api/users/profile/update`, profileDTOToSend, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
             });
             alert("Perfil atualizado com sucesso!");
+            navigate("/perfil/conta");
+
         } catch (err) {
             console.error("Erro ao guardar alterações:", err);
             setError("Não foi possível guardar as alterações.");
