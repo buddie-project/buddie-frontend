@@ -189,6 +189,10 @@
     margin-top: 0.5rem;
 }
 
+.section-two .line {
+    gap: 0.5rem;
+}
+
 .age {
     padding: 0;
     margin: 0;
