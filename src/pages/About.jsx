@@ -57,20 +57,6 @@ function About() {
                     <img src="/images/buddie-logo-wht.png" alt="logo" />
                 </div>
             </section>
-            <footer className="footer-about">
-                <div className="footer-about-content">
-                    <a href="https://github.com/buddie-project"
-                       target="_blank"
-                       rel="noreferrer"
-                       className="github-link">
-                        <img src="/images/github-mark.svg" className="github-icon" width="32" height="auto" alt="Github Logo" />
-                    </a>
-
-                    <p> | &copy; {new Date().getFullYear()} Buddie. All rights reserved. </p>
-
-                </div>
-
-            </footer>
         </>
     );
 }
