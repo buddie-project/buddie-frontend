@@ -3,6 +3,7 @@ import '../../style/profilePages/Favorites.css';
 import React, {useEffect, useMemo, useState} from "react";
 import {Link} from "react-router-dom";
 import Pagination from "../../components/generalComponents/Pagination.jsx";
+import api from "../../services/api.js";
 
 function Favorites() {
 
@@ -13,17 +14,35 @@ function Favorites() {
     const itemsPerPage = 8;
 
     useEffect(() => {
-        const stored = localStorage.getItem("favoriteCourses");
-        if (stored) {
-            const parsed = JSON.parse(stored);
-            setFavoriteCourses(parsed);
-        }
-        setIsLoading(false);
+        const fetchFavorites = async () => {
+            try {
+                const res = await api.get("/api/user/favorites");
+                const mapped = res.data.map(fav => ({
+                    courseId: fav.course.id,
+                    courseName: fav.course.courseName,
+                    fieldOfStudy: fav.course.fieldOfStudy,
+                    color: fav.course.color || "default-color", // define um valor padrão
+                }));
+                setFavoriteCourses(mapped);
+            } catch (error) {
+                console.error("Erro ao buscar favoritos:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchFavorites();
     }, []);
 
     // Remover curso
-    const handleRemoveFavorite = (courseId) => {
-        setFavoriteCourses(prev => prev.filter(c => c.courseId !== courseId));
+    const handleRemoveFavorite = async (courseId) => {
+        try {
+            await api.post(`/api/courses/${courseId}/favorites/delete`);
+            setFavoriteCourses(prev => prev.filter(c => c.courseId !== courseId));
+        } catch (error) {
+            console.error("Erro ao remover favorito:", error);
+            alert("Erro ao remover o curso dos favoritos.");
+        }
     };
 
     const totalPages = useMemo(() => Math.ceil(favoriteCourses.length / itemsPerPage), [favoriteCourses]);

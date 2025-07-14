@@ -12,18 +12,40 @@ function Bookmarks() {
     const itemsPerPage = 8;
 
     useEffect(() => {
-        const stored = localStorage.getItem("bookmarkedCourses");
-        if (stored) {
-            const parsed = JSON.parse(stored);
-            setBookmarkedCourses(parsed);
-        }
-        setIsLoading(false);
+        const fetchSavedCourses = async () => {
+            try {
+                const response = await fetch("/api/user/saved");
+                if (!response.ok) throw new Error("Erro ao buscar cursos guardados.");
+                const data = await response.json();
+                setBookmarkedCourses(data);
+            } catch (error) {
+                console.error("Erro:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchSavedCourses();
     }, []);
 
     // Remover curso
-    const handleRemoveBookmark = (courseId) => {
-        setBookmarkedCourses(prev => prev.filter(c => c.courseId !== courseId));
+    const handleRemoveBookmark = async (courseId) => {
+        try {
+            const response = await fetch(`/api/courses/${courseId}/saved/delete`, {
+                method: "POST",
+            });
+
+            if (!response.ok) {
+                throw new Error("Erro ao remover curso guardado.");
+            }
+
+            // Atualiza o estado após remoção
+            setBookmarkedCourses(prev => prev.filter(c => c.courseId !== courseId));
+        } catch (error) {
+            console.error("Erro:", error);
+        }
     };
+
 
     const totalPages = useMemo(() => Math.ceil(bookmarkedCourses.length / itemsPerPage), [bookmarkedCourses]);
 
