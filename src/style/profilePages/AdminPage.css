@@ -173,33 +173,52 @@
     border-radius: 6px;
     cursor: pointer;
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .add-course-form {
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
-}
-
-.add-course-form select, .add-course-form input {
-    padding: 0.8rem;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-
-    margin-bottom: 0.5rem;
+    gap: 1.2rem;
+    font-family: "Futura Std", sans-serif;
 }
 
 .add-course-form input {
-    max-width: 50%;
+    padding: 0.5rem;
+    border-radius: 10px;
+    border: none;
+    box-shadow: 1px 2px 3px 1px rgba(0, 0, 0, 0.15) inset;
+    font-size: 1rem;
+    font-family: "Futura Std", sans-serif;
+    max-width: 100%;
+    margin-bottom: 0;
+    height: auto;
+}
+
+.add-course-form select {
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 1px 2px 3px 1px rgba(0, 0, 0, 0.15) inset;
+    font-size: 1rem;
+    font-family: "Futura Std", sans-serif;
+}
+
+.autocomplete-dropdown-wrapper {
+    height: auto;
+}
+
+.add-course-form select {
+    width: 100%;
+    height: auto;
+    align-content: center;
+    justify-content: center;
+    font-family: "Futura Std", sans-serif;
 }
 
 .add-course-btn {
     padding: 0.8rem;
     border: none;
-    background: grey;
+    background: #222222;
     color: white;
     border-radius: 8px;
     cursor: pointer;
@@ -208,6 +227,10 @@
     align-items: center;
     display: flex;
     justify-content: center;
+}
+
+.add-course-btn:hover {
+    background: #E67700;
 }
 
 .bottom-gradient-line {
@@ -252,6 +275,27 @@
     font-size: 0.70rem;
     font-weight: 800;
 }
+
+    /* ---------- FORMULÁRIO ADICIONAR CURSOS ---------- */
+
+    .add-course-form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .add-course-form input, .add-course-form select {
+        padding: 0.7rem 1rem;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .add-course-btn:hover {
+        background: #555;
+    }
 
 }
 

@@ -47,11 +47,13 @@ body, html {
 .about .age {
     font-weight: bold;
     margin-left: 5rem;
+    color: #5F5555;
 }
 
-.what-now {
+.about .what-now {
     font-weight: bold;
     margin-right: 1.5rem;
+    color: #5F5555;
 }
 
 .about-section {
@@ -124,7 +126,7 @@ body, html {
     bottom: 40px;
     left: 50%;
     transform: translateX(-50%);
-    color: black;
+    color: white;
     cursor: pointer;
     z-index: 1;
     animation: bounceArrow 1s ease-in-out infinite;
