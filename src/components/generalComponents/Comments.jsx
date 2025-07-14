@@ -35,6 +35,7 @@ function Comments({ courseId }) { // Recebe courseId como prop de CourseDetails
         // Endpoint de GET para comentários, alinhado com o backend CommentsController
         api.get(`/api/courses/${courseId}/comments`)
             .then((res) => {
+                // A resposta agora é uma lista de CommentResponseDTO, que já contém 'username' e 'courseId'.
                 setComments(res.data);
             })
             .catch((err) => {
@@ -70,20 +71,22 @@ function Comments({ courseId }) { // Recebe courseId como prop de CourseDetails
         }
 
         try {
-            // Endpoint POST para comentários, alinhado com o backend CommentsController
+            // Endpoint POST para comentários, alinhado com o backend CommentsController.
             // O backend espera 'commentText' como @RequestParam, por isso é enviado em 'params'.
             // O 'userId' NÃO é enviado explicitamente do frontend para este endpoint,
             // pois o backend deve obtê-lo do contexto de segurança da sessão.
+            // A resposta esperada AGORA é o CommentResponseDTO do comentário recém-criado.
             const response = await api.post(`/api/courses/${courseId}/comments`, null, {
                 params: { commentText: newCommentText }
             });
-            // Adicionar o novo comentário ao início da lista (assumindo que a API retorna o comentário completo após guardar)
+            // Adicionar o novo comentário ao início da lista (assumindo que a API retorna o comentário completo após guardar).
+            // O 'response.data' agora é um CommentResponseDTO.
             setComments(prevComments => [response.data, ...prevComments]);
-            setNewCommentText(""); // Limpar o campo de texto após submissão
+            setNewCommentText(""); // Limpar o campo de texto após submissão.
             toast.success("Comentário adicionado com sucesso!", { theme: "colored" });
         } catch (err) {
             console.error("Erro ao adicionar comentário:", err);
-            // Mensagens de erro mais específicas podem ser adicionadas com base no 'err.response.data'
+            // Mensagens de erro mais específicas podem ser adicionadas com base no 'err.response.data'.
             toast.error("Erro ao adicionar comentário. Por favor, tente novamente.", { theme: "colored" });
         }
     };
@@ -147,8 +150,8 @@ function Comments({ courseId }) { // Recebe courseId como prop de CourseDetails
                         comments.slice(0, visibleComments).map((comment) => (
                             <div className="comment-card" key={comment.id}> {/* 'key' é crucial para listas no React */}
                                 <div className="comment-header">
-                                    {/* Acesso seguro a 'user.username' e formatação da data */}
-                                    <span className="username">@{comment.user?.username || "Utilizador Desconhecido"}</span>
+                                    {/* AGORA: Acessa 'username' diretamente do CommentResponseDTO */}
+                                    <span className="username">@{comment.username || "Utilizador Desconhecido"}</span>
                                     <span className="date">{formatDate(comment.commentDate)}</span>
                                 </div>
                                 <p className="comment-text">{comment.commentText}</p>
