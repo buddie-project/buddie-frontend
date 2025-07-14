@@ -1,4 +1,5 @@
 import "../style/Courses.css";
+import "../style/App.css"
 import React, {useEffect, useState} from "react";
 import Pagination from "../components/generalComponents/Pagination.jsx";
 import {Link, useLocation} from "react-router-dom";

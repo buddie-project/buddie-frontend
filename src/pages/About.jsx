@@ -38,7 +38,7 @@ function About() {
 
             <section className="about-section">
                 <section className="section-text">
-                <h2>Quem somos?</h2>
+                <h2>O Buddie ajuda!</h2>
                 <p>
                     O Buddie é um companheiro para todos os estudantes que pretendam ingressar no ensino superior através do regime +23.
 
