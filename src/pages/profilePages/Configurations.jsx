@@ -152,7 +152,7 @@ function Configurations() {
                                     />
                                 </div>
                                 <div className="inputs">
-                                    <p>Último Nome</p>
+                                    <p>Apelido(s)</p>
                                     <input
                                         type="text"
                                         className="last-name"
@@ -168,7 +168,7 @@ function Configurations() {
                                         className="age"
                                         name="age"
                                         min="15"
-                                        max="100"
+                                        max="99"
                                         value={profileData.age || ""}
                                         onChange={handleInputChange}
                                     />

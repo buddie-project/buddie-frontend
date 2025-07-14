@@ -43,7 +43,7 @@ function Profile() {
                     {activePage === 'Conta' && profileData && (
                         <div className="sections">
                             <div className="section section-one">
-                                <h4>{profileData.fullName}</h4>
+                                <h4>{profileData.firstName} {profileData.lastName}</h4>
                                 <p>{profileData.degree || "Estudante"}</p>
                                 <p>{profileData.city}, {profileData.country}</p>
                             </div>
@@ -56,7 +56,7 @@ function Profile() {
                                         <p>{profileData.firstName}</p>
                                     </div>
                                     <div className="last-name">
-                                        <p>Último Nome</p>
+                                        <p>Apelido(s)</p>
                                         <p>{profileData.lastName}</p>
                                     </div>
                                     <div className="age">
