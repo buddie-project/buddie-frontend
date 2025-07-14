@@ -114,6 +114,10 @@ body, html {
     background: rgba(0, 194, 220, 0.80);
 }
 
+.darkblue {
+    background: rgba(27, 4, 157, 0.50);
+}
+
 .course-card h3 {
     color: white;
     font-size: 18px;
