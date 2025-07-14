@@ -134,7 +134,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 2rem;
+    gap: 1rem;
     width: 100%;
     flex-shrink: 0;
 }
@@ -163,16 +163,6 @@
     font-weight: 600;
     color: #ADADAD;
 }
-
-/*.cards .bio-name {*/
-/*    font-size: 0.9rem;*/
-/*    font-weight: 600;*/
-/*    color: #ADADAD;*/
-/*    white-space: nowrap;*/
-/*    overflow: hidden;*/
-/*    text-overflow: ellipsis;*/
-/*    display: inline-block;*/
-/*}*/
 
 .cards .section-two p, .section-three p {
     display: grid;

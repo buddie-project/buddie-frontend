@@ -183,12 +183,12 @@ function Configurations() {
                             <div className="line">
                                 <div className="inputs">
                                     <p>Bio</p>
-                                    <input
+                                    <textarea
                                         className="bio"
                                         name="bio"
                                         value={profileData.bio || ""}
                                         onChange={handleInputChange}
-                                        style={{resize: "none"}}
+                                        style={{resize: "none", decoration: "none"}}
                                     />
                                 </div>
                                 <div className="inputs">
