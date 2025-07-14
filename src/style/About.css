@@ -177,8 +177,10 @@ body, html {
         padding-top: 30rem;
 
         .age, .what-now {
-            font-size: 40px;
-            margin: 0;
+            font-size: 65px;
+            margin: 5rem 0 0 0;
+            line-height: 10px;
+            color: #E67700;
         }
     }
 

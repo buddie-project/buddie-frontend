@@ -1,14 +1,18 @@
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { useUserContext } from "../../services/UserContext.jsx";
+import {Link, NavLink, useNavigate} from "react-router-dom";
+import {useState, useEffect} from "react";
+import {useUserContext} from "../../services/UserContext.jsx";
+import {useLocation} from "react-router-dom";
 
 function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     // Usar o hook useUserContext para aceder ao contexto do utilizador
-    const { user, logout } = useUserContext(); // Desestruturar user e logout do contexto
+    const {user, logout} = useUserContext(); // Desestruturar user e logout do contexto
     const navigate = useNavigate();
+
+    const location = useLocation();
+    const isCoursesPage = location.pathname.startsWith("/cursos"); // true se estivermos na página de cursos
 
     // Função para alternar a visibilidade da barra de pesquisa
     const handleSearchToggle = () => {
@@ -24,6 +28,7 @@ function Navbar() {
 
     // Efeito para adicionar/remover a classe 'scrolled' com base na posição do scroll
     useEffect(() => {
+
         const handleScroll = () => {
             setScrolled(window.scrollY > 50); // Adiciona 'scrolled' se o scroll for maior que 50px
         };
@@ -34,10 +39,11 @@ function Navbar() {
     }, []); // Executa apenas uma vez ao montar/desmontar o componente
 
     return (
-        <nav className={`nav ${scrolled ? 'scrolled' : ''}`}>
-            <div className="nav-logo">
+        // <nav className={`nav ${scrolled ? 'scrolled' : ''}`}>
+        <nav className={`nav ${scrolled ? 'scrolled' : ''} ${isCoursesPage ? 'courses-navbar' : ''}`}>
+        <div className="nav-logo">
                 <Link to="/">
-                    <img src="/images/buddie-logo.png" alt="Logo" className="logo" />
+                    <img src="/images/buddie-logo.png" alt="Logo" className="logo"/>
                 </Link>
             </div>
 
@@ -66,21 +72,33 @@ function Navbar() {
                         <div className="dropdown-content">
                             {/* Link para a área de administração, visível APENAS para utilizadores com role "ADMIN" */}
                             {user.role === 'ADMIN' && (
-                                <button onClick={() => { navigate("/admin"); setMenuOpen(false); }}>Gerir Plataforma</button>
+                                <button onClick={() => {
+                                    navigate("/admin");
+                                    setMenuOpen(false);
+                                }}>Gerir Plataforma</button>
                             )}
                             {/* Link para a área de conta (perfil base), acessível a todos os utilizadores logados */}
-                            <button onClick={() => { navigate("/perfil/conta"); setMenuOpen(false); }}>Conta</button>
-                            <button onClick={() => { navigate("/perfil/configuracoes"); setMenuOpen(false); }}>Configurações</button>
+                            <button onClick={() => {
+                                navigate("/perfil/conta");
+                                setMenuOpen(false);
+                            }}>Conta
+                            </button>
+                            <button onClick={() => {
+                                navigate("/perfil/configuracoes");
+                                setMenuOpen(false);
+                            }}>Configurações
+                            </button>
                             {/* Botão para terminar a sessão */}
                             <button onClick={handleLogout}>Terminar Sessão</button>
                         </div>
                     </div>
                 ) : ( // Renderização condicional: se o utilizador NÃO estiver logado
-                    <NavLink to="/entrar" className="nav-link" onClick={() => setMenuOpen(false)}>iniciar sessão</NavLink>
+                    <NavLink to="/entrar" className="nav-link" onClick={() => setMenuOpen(false)}>iniciar
+                        sessão</NavLink>
                 )}
                 {/* Ícone e input de pesquisa, mantidos como no seu código original */}
                 <i className="icon-search" onClick={handleSearchToggle} aria-hidden="true"></i>
-                {searchOpen && <input type="text" className="search-input" placeholder="Pesquisar..." />}
+                {searchOpen && <input type="text" className="search-input" placeholder="Pesquisar..."/>}
             </div>
         </nav>
     );
