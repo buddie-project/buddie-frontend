@@ -18,13 +18,30 @@ body, html {
     z-index: 1000;
     box-sizing: border-box;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    height: 12%;
+}
+
+.nav.courses-navbar {
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    /*box-shadow: 0 -2px 8px rgba(0,0,0,0.1);*/
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    height: 12%;
 }
 
 .nav.scrolled {
     position: fixed;
-    background-color: rgba(255, 255, 255, 0.2);
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
-
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+    z-index: 1000;
 }
 
 .logo {
@@ -190,34 +207,41 @@ body, html {
 }
 
 .footer {
-    position: fixed;
-    width: 100%;
+    position: static;
+    width: 100vw;
     background-color: rgba(255, 255, 255, 0.1);
     padding: 20px 20px;
     left: 0;
     top: auto;
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(10px);
     z-index: 2;
     bottom: 0;
+    display: flex;
 }
 
 .footer-content {
-    max-width: 1200px;
+    max-width: 100%;
     margin: auto;
     padding: 0 20px;
     display: flex;
     flex-direction: row;
-    gap: 12px;
+    gap: 5px;
     align-items: center;
     text-align: center;
     overflow: hidden;
-    justify-content: center;
 }
 
 .footer-content p {
     font-size: 13px;
     color: #666;
+}
+
+.footer img {
+    align-items: center;
+    text-align: center;
+    width: 20px;
+    height: auto;
 }
 
 @media (max-width: 768px) {

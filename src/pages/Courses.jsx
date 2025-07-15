@@ -1,10 +1,12 @@
 import "../style/Courses.css";
+import "../style/App.css"
 import React, {useEffect, useState} from "react";
 import Pagination from "../components/generalComponents/Pagination.jsx";
 import {Link, useLocation} from "react-router-dom";
 import api from "../services/api.js";
 import AutocompleteDropdown from "./../components/generalComponents/AutocompleteDropdown.jsx";
 import {useUserContext} from "../services/UserContext.jsx";
+import seedrandom from "seedrandom";
 
 function Courses() {
     const [savedCourseIds, setSavedCourseIds] = useState(new Set());
@@ -32,7 +34,6 @@ function Courses() {
     const location = useLocation();
 
     const {user} = useUserContext();
-    const token = user?.token;
     const userId = user?.id;
 
     useEffect(() => {
@@ -96,7 +97,7 @@ function Courses() {
     }, []);
 
     const handleSaveCourse = async (course) => {
-        if (!user || !token) {
+        if (!userId) {
             alert("Você precisa estar logado para salvar cursos.");
             return;
         }
@@ -105,78 +106,49 @@ function Courses() {
 
         try {
             if (isSaved) {
-                // Remover curso salvo
-                await api.post(`/api/courses/${course.courseId}/saved/delete`, {}, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+                await api.post(`/api/courses/${course.courseId}/saved/delete`);
                 setSavedCourseIds((prev) => {
                     const newSet = new Set(prev);
                     newSet.delete(course.courseId);
                     return newSet;
                 });
             } else {
-                // Adicionar curso salvo
-                await api.post(`/api/courses/${course.courseId}/saved`, {}, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+                await api.post(`/api/courses/${course.courseId}/saved`);
                 setSavedCourseIds((prev) => new Set(prev).add(course.courseId));
             }
         } catch (error) {
             console.error("Erro ao atualizar cursos guardados:", error);
-
             alert("Erro ao atualizar cursos guardados. Tente novamente.");
         }
     };
 
-
-
     useEffect(() => {
         const fetchSavedCourses = async () => {
-            if (!userId || !token) {
+            if (!userId) {
                 setSavedCourseIds(new Set());
                 return;
             }
             try {
-
-                const res = await api.get(`/api/courses/${userId}/saved`, {
-
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-
-                const savedIds = new Set(res.data.map(savedCourse => savedCourse.course.id));
-
+                const res = await api.get(`/api/user/saved`);
+                const savedIds = new Set(res.data.map(savedCourse => savedCourse.courseId));
                 setSavedCourseIds(savedIds);
             } catch (err) {
                 console.error("Erro ao buscar cursos guardados:", err);
-
-                if (err.response && (err.response.status === 401 || err.response.status === 403)) {
-                    setSavedCourseIds(new Set());
-                }
+                setSavedCourseIds(new Set());
             }
         };
 
-        if (token && userId) {
-            fetchSavedCourses();
-        } else {
-            setSavedCourseIds(new Set());
-        }
-    }, [token, userId]);
+        fetchSavedCourses();
+    }, [userId]);
 
 
-    const colors = ["red", "blue", "green", "orange", "purple", "yellow"];
+    const colors = ["red", "blue", "green", "orange", "purple", "yellow", "darkblue"];
 
     const assignColors = (courses) => {
-        let lastColor = "";
         return courses.map((course) => {
-            let availableColors = colors.filter(c => c !== lastColor);
-            let color = availableColors[Math.floor(Math.random() * availableColors.length)];
-            lastColor = color;
+            const rng = seedrandom(course.courseId?.toString() || course.courseName);
+            const colorIndex = Math.floor(rng() * colors.length);
+            const color = colors[colorIndex];
             return {...course, color};
         });
     };
@@ -225,14 +197,14 @@ function Courses() {
                         label="instituição"
                         options={institutionNames}
                         value={filters.instituicao}
-                        onValueChange={(value) => handleFilterChange("instituicao", value)}
+                        onValueChange={(value) => handleFilterChange("instituição", value)}
                         className="option"
                     />
                     <AutocompleteDropdown
                         label="área"
                         options={areas}
                         value={filters.area}
-                        onValueChange={(value) => handleFilterChange("area", value)}
+                        onValueChange={(value) => handleFilterChange("área", value)}
                         className="option"
                     />
                     <AutocompleteDropdown
@@ -245,7 +217,7 @@ function Courses() {
                     <AutocompleteDropdown
                         label="status"
                         options={status}
-                        value={filters.estado}
+                        value={filters.status}
                         onValueChange={(value) => handleFilterChange("status", value)}
                         className="option"
                     />
@@ -309,27 +281,6 @@ function Courses() {
                 totalPages={totalPages}
                 onPageChange={setCurrentPage}
             />
-
-            <footer className="footer-courses">
-                <div className="footer-courses-content">
-                    <a
-                        href="https://github.com/buddie-project"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="github-link"
-                    >
-                        <i className="icon-github" aria-hidden="true" style={{color: "black", width: "32", height: "auto"}} />
-{/*                        <img
-                            src="/images/github-mark.svg"
-                            className="github-icon"
-                            width="32"
-                            height="auto"
-                            alt="Github Logo"
-                        />*/}
-                    </a>
-                    <p> | &copy; {new Date().getFullYear()} Buddie. All rights reserved.</p>
-                </div>
-            </footer>
         </>
     );
 }

@@ -8,12 +8,13 @@ body, html {
     overflow-x: hidden;
     overflow-y: auto;
     font-family: "Futura Std", sans-serif;
+    scroll-behavior: smooth;
 }
 
 .filters{
     display: flex;
     justify-content: center;
-    margin-top: 100px;
+    margin-top: 105px;
     margin-bottom: 1rem;
 }
 
@@ -112,6 +113,10 @@ body, html {
 
 .blue {
     background: rgba(0, 194, 220, 0.80);
+}
+
+.darkblue {
+    background: rgba(27, 4, 157, 0.50);
 }
 
 .course-card h3 {

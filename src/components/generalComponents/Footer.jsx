@@ -4,15 +4,18 @@ function Footer() {
     return (
         <footer className="footer">
             <div className="footer-content">
+
+
                 <a href="https://github.com/buddie-project"
                    target="_blank"
                    rel="noreferrer"
                    className="github-link">
-                    <i className="icon-github" aria-hidden="true" style={{color: "black", width: "32", height: "auto"}} />
-                    {/*<img src="/images/github-mark.svg" className="github-icon" width="32" height="auto" alt="Github Logo" />*/}
+                    <img src="/images/github-mark.svg" className="github-icon" alt="Github Logo" />
                 </a>
+                <p>
 
-                <p> | &copy; {new Date().getFullYear()} Buddie. All rights reserved. </p>
+                    | &copy; {new Date().getFullYear()} Buddie. All rights reserved.
+                </p>
 
             </div>
         </footer>
