@@ -25,11 +25,11 @@ function AdminPage() {
         status: "",
     };
     const [filters, setFilters] = useState(initialFilters);
-    const [ setCourseNames] = useState([]);
+    const [courseNames, setCourseNames] = useState([]);
     const [institutionNames, setInstitutionNames] = useState([]);
     const [areas, setAreas] = useState([]);
     const [districts, setDistricts] = useState([]);
-    const [ setStatusOptions] = useState([]); // caso queiras usar status distintos vindos da API
+    const [statusOptions, setStatusOptions] = useState([]); // caso queiras usar status distintos vindos da API
 
     // Buscar nomes distintos
     useEffect(() => {
@@ -233,15 +233,15 @@ function AdminPage() {
 
                             {activeTab === 'AdicionarCursos' && (
                                 <div className="tab-content add-course-form">
-                                    <input className="curso" placeholder="Adicione o nome do curso"></input>
+                                    <input className="curso" placeholder="Adicione o nome do curso" value={filters.curso} onChange={(e) => handleFilterChange("curso", e.target.value)}></input>
                                     <AutocompleteDropdown
-                                        label="área"
+                                        label="area"
                                         options={areas}
                                         value={filters.area}
                                         onValueChange={(value) => handleFilterChange("area", value)}
                                     />
                                     <AutocompleteDropdown
-                                        label="instituição"
+                                        label="instituicao"
                                         options={institutionNames}
                                         value={filters.instituicao}
                                         onValueChange={(value) => handleFilterChange("instituicao", value)}
@@ -252,7 +252,10 @@ function AdminPage() {
                                         value={filters.distrito}
                                         onValueChange={(value) => handleFilterChange("distrito", value)}
                                     />
-                                    <select>
+                                    <select
+                                        value={filters.status}
+                                        onChange={(e) => handleFilterChange("status", e.target.value)}
+                                    >
                                         <option>- Adicione o tipo de curso -</option>
                                         <option>Licenciatura 1º Ciclo</option>
                                         <option>Mestrado Integrado</option>
