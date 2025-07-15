@@ -4,14 +4,14 @@ import React from 'react';
 
 function Interactions() {
     const interactions = [
-        { id: 1, user: 'André Mendes', action: 'seguiu-te', date: '13/07/2025', color: '#FF8A00' },
+        { id: 1, user: 'André Mendes', action: 'gostou do teu comentário', date: '13/07/2025', color: '#FF8A00' },
         { id: 2, user: 'Beatriz Lopes', action: 'enviou-te uma mensagem', date: '12/07/2025', color: '#007bff' },
-        { id: 3, user: 'Carlos Silva', action: 'partilhou o teu post', date: '12/07/2025', color: '#28a745' },
-        { id: 4, user: 'Diana Ferreira', action: 'comentou na tua foto', date: '11/07/2025', color: '#dc3545' },
-        { id: 5, user: 'Eduardo Costa', action: 'seguiu-te', date: '10/07/2025', color: '#6610f2' },
+        { id: 3, user: 'Carlos Silva', action: 'respondeu ao teu comentário', date: '12/07/2025', color: '#28a745' },
+        { id: 4, user: 'Diana Ferreira', action: 'comentou o novo curso', date: '11/07/2025', color: '#dc3545' },
+        { id: 5, user: 'Eduardo Costa', action: 'gostou do teu comentário', date: '10/07/2025', color: '#6610f2' },
         { id: 6, user: 'Filipa Martins', action: 'enviou-te uma mensagem', date: '09/07/2025', color: '#17a2b8' },
-        { id: 7, user: 'Gonçalo Pires', action: 'partilhou o teu post', date: '08/07/2025', color: '#ffc107' },
-        { id: 8, user: 'Helena Sousa', action: 'comentou na tua foto', date: '07/07/2025', color: '#20c997' },
+        { id: 7, user: 'Gonçalo Pires', action: 'gostou de um novo curso', date: '08/07/2025', color: '#ffc107' },
+        { id: 8, user: 'Helena Sousa', action: 'respondeu ao teu comentário', date: '07/07/2025', color: '#20c997' },
     ];
 
     return (

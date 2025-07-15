@@ -4,13 +4,13 @@ import React from 'react';
 
 function Notifications() {
     const notifications = [
-        { id: 1, type: 'like', message: 'João Silva gostou do teu post.', date: '13/07/2025' },
+        { id: 1, type: 'like', message: 'João Silva gostou do teu comentário.', date: '13/07/2025' },
         { id: 2, type: 'comment', message: 'Maria Costa comentou: "Excelente trabalho!"', date: '12/07/2025' },
-        { id: 3, type: 'alert', message: 'Período de inscrição termina amanhã!', date: '11/07/2025' },
-        { id: 4, type: 'like', message: 'Carlos Matos gostou da tua foto.', date: '10/07/2025' },
+        { id: 3, type: 'alert', message: 'Prazo de inscrição termina amanhã!', date: '11/07/2025' },
+        { id: 4, type: 'like', message: 'Carlos Matos gostou do teu comentário.', date: '10/07/2025' },
         { id: 5, type: 'comment', message: 'Ana Pereira respondeu ao teu comentário.', date: '09/07/2025' },
-        { id: 6, type: 'alert', message: 'Novo teste disponível para ti!', date: '08/07/2025' },
-        { id: 7, type: 'like', message: 'Beatriz Lopes gostou do teu vídeo.', date: '07/07/2025' },
+        { id: 6, type: 'alert', message: 'Nova data de teste disponível!', date: '08/07/2025' },
+        { id: 7, type: 'like', message: 'Beatriz Lopes gostou do teu comentário.', date: '07/07/2025' },
     ];
 
     return (
