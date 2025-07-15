@@ -57,6 +57,7 @@ function App() {
     const isLoginPage = location.pathname === '/entrar';
     const isRegisterPage = location.pathname === '/registar';
     const isFaqsPage = location.pathname === '/faqs';
+    const isInstitutionDetails = location.pathname.startsWith('/instituicao');
    /* const isAboutPage = location.pathname === '/sobre';
     const isCoursesPage = location.pathname === '/cursos' || location.pathname.startsWith('/cursos/'); // Inclui detalhes do curso
 */
@@ -110,7 +111,7 @@ function App() {
                 </Routes>
             </UserProvider>
             {/* Lógica do Footer: Exibe o footer APENAS se não estiver nas páginas listadas */}
-            {!isHomePage && !isProfilePage && !isAdminPage && !isLoginPage && !isRegisterPage && !isFaqsPage && <Footer/>}
+            {!isHomePage && !isProfilePage && !isAdminPage && !isInstitutionDetails && !isLoginPage && !isRegisterPage && !isFaqsPage && <Footer/>}
         </>
     )
 }
