@@ -121,14 +121,39 @@ function Comments({ courseId }) { // Recebe courseId como prop de CourseDetails
         setVisibleComments(prev => prev + 5);
     };
 
+    const handleLike = async (commentId) => {
+        try {
+            // Primeiro, faz o POST para adicionar o like
+            await api.post(`/api/comments/${commentId}/like`);
+
+            // Depois, busca a lista atualizada de likes
+            const res = await api.get(`/api/comments/${commentId}/like`);
+            const updatedLikes = res.data; // Deve ser uma lista de objetos Like
+
+            // Atualiza o comentário no estado com os novos likes
+            setComments(prevComments =>
+                prevComments.map(comment =>
+                    comment.id === commentId
+                        ? { ...comment, likes: updatedLikes.map(like => like.user.id) } // Assumindo que cada Like tem .user.id
+                        : comment
+                )
+            );
+        } catch (error) {
+            console.error("Erro ao dar like:", error);
+            toast.error("Erro ao dar like. Tenta novamente.", { theme: "colored" });
+        }
+    };
+
+
+
     return (
         <div className="comments-section">
             <div className="comments-dropdown-header" onClick={toggleComments}>
                 <h2>Comentários</h2>
                 {showComments ? (
-                    <i className="icon-up-arrow" aria-hidden="true" />
+                    <i className="icon-up-arrow" aria-hidden="true"/>
                 ) : (
-                    <i className="icon-down-arrow" aria-hidden="true" />
+                    <i className="icon-down-arrow" aria-hidden="true"/>
                 )}
             </div>
 
@@ -142,7 +167,7 @@ function Comments({ courseId }) { // Recebe courseId como prop de CourseDetails
                             rows="4" // Aumentar as linhas para melhor experiência de escrita
                         />
                         <button className="submit-button" onClick={handleCommentSubmit}>
-                            <i className="icon-send" aria-label="Enviar comentário" />
+                            <i className="icon-send" aria-label="Enviar comentário"/>
                         </button>
                     </div>
 
@@ -153,6 +178,16 @@ function Comments({ courseId }) { // Recebe courseId como prop de CourseDetails
                                     {/* AGORA: Acessa 'username' diretamente do CommentResponseDTO */}
                                     <span className="username">@{comment.username || "Utilizador Desconhecido"}</span>
                                     <span className="date">{formatDate(comment.commentDate)}</span>
+                                    <span
+                                        className="like-icon"
+                                        onClick={() => handleLike(comment.id)}
+                                    >
+                                    <i
+                                         className={comment.likes?.includes(userId) ? "icon-heart-filled" : "icon-heart"}
+                                         title="like"
+                                    />
+                                        <span className="like-count">{comment.likes?.length || 0}</span>
+                                 </span>
                                 </div>
                                 <p className="comment-text">{comment.commentText}</p>
                                 {/* Exemplo de funcionalidade de Likes (se implementada) */}
@@ -163,7 +198,8 @@ function Comments({ courseId }) { // Recebe courseId como prop de CourseDetails
                         ))
                     ) : (
                         // Mensagem quando não há comentários e não há mais para carregar
-                        !newCommentText.trim() && <p className="no-comments-message">Ainda não há comentários. Seja o primeiro a comentar!</p>
+                        !newCommentText.trim() &&
+                        <p className="no-comments-message">Ainda não há comentários. Seja o primeiro a comentar!</p>
                     )}
 
                     {/* Botão "ver mais" só aparece se houver mais comentários para mostrar */}

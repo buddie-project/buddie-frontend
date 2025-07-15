@@ -92,6 +92,11 @@ function CourseDetails() {
 
     return (
         <>
+            <div className="background-course-details">
+                <div className="background-image">
+                    <img src="/images/background-color.jpg" alt="Background Image" className="background-image"/>
+                </div>
+            </div>
             <h3 className="back-container" onClick={event=>window.history.back()}> <i className="icon-left-arrow" aria-hidden="true"></i>Cursos</h3>
             <div className="course-detail-container">
                 <h1 className="course-title" key={course.courseDTO?.nome}>

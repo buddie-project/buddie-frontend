@@ -108,7 +108,7 @@
     color: #000;
     cursor: pointer;
     text-decoration: underline;
-    padding-bottom: 40px;
+    padding-bottom: 10px;
 }
 
 .comments-dropdown-header {
@@ -151,4 +151,31 @@
     font-size: 24px;
     font-weight: bold;
     color: #222;
+}
+
+.like-icon {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+.icon-heart {
+    color: black;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.icon-heart-filled {
+    color: red;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.like-count {
+    color: black;
+    margin-left: 5px;
+    font-size: 0.9em;
+    vertical-align: middle;
 }

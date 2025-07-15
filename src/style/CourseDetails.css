@@ -6,6 +6,7 @@ html, body, #root {
 
 .course-detail-container {
     max-width: 1000px;
+    width: 90%;
     margin: 135px auto 0 auto;
     padding: 30px;
     border-radius: 25px;
@@ -13,8 +14,7 @@ html, body, #root {
     background: rgba(255, 255, 255, 0.95);
     box-shadow: 3px 3px 6px 2px rgba(0, 0, 0, 0.20);
     font-family: "Futura Std", sans-serif;
-    width: 950px;
-    height: 500px;
+    height: auto;
     text-align: left;
     justify-content: left;
 }
@@ -123,3 +123,78 @@ html, body, #root {
 .course-info a:hover {
     text-decoration: underline;
 }
+
+@media (max-width: 600px) {
+    .course-detail-container .course-title-action {
+        flex: 1;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
+    .course-detail-container .course-title-action i {
+        cursor: pointer;
+    }
+    .course-detail-container {
+        padding: 20px;
+    }
+
+    .course-detail-container h1 {
+        font-size: 22px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        height: auto;
+    }
+
+    .course-detail-container h2 {
+        font-size: 18px;
+    }
+
+    .shift-icon {
+        height: 30px;
+        position: relative;
+        align-items: flex-end;
+    }
+}
+@media (max-width: 1024px) {
+    .course-detail-container {
+        padding: 20px;
+        margin-top: 100px;
+    }
+}
+
+    @media (max-width: 768px) {
+        .course-detail-container .course-title-action {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .course-detail-container .course-title-action i {
+            cursor: pointer;
+        }
+        .course-detail-container {
+            width: 95%;
+            padding: 15px;
+            margin-top: 80px;
+        }
+
+        .course-detail-container h1 {
+            font-size: 22px;
+            flex-direction: column;
+            align-items: flex-start;
+            height: auto;
+        }
+
+        .course-detail-container h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .course-info-box {
+            flex-direction: column;
+            gap: 20px;
+        }
+    }

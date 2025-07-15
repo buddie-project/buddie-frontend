@@ -54,6 +54,9 @@ function App() {
     const isHomePage = location.pathname === '/';
     const isProfilePage = location.pathname.startsWith('/perfil'); // Inclui todas as sub-rotas de perfil
     const isAdminPage = location.pathname.startsWith('/admin'); // Flag para a rota de admin
+    const isLoginPage = location.pathname === '/entrar';
+    const isRegisterPage = location.pathname === '/registar';
+    const isFaqsPage = location.pathname === '/faqs';
    /* const isAboutPage = location.pathname === '/sobre';
     const isCoursesPage = location.pathname === '/cursos' || location.pathname.startsWith('/cursos/'); // Inclui detalhes do curso
 */
@@ -107,7 +110,7 @@ function App() {
                 </Routes>
             </UserProvider>
             {/* Lógica do Footer: Exibe o footer APENAS se não estiver nas páginas listadas */}
-            {!isHomePage && !isProfilePage && !isAdminPage && <Footer/>}
+            {!isHomePage && !isProfilePage && !isAdminPage && !isLoginPage && !isRegisterPage && !isFaqsPage && <Footer/>}
         </>
     )
 }

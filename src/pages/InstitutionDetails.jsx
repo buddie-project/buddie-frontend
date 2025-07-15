@@ -26,6 +26,11 @@ function InstitutionDetails() {
 
     return (
         <>
+            <div className="background-institution-details">
+                <div className="background-image">
+                    <img src="/images/background-bw.jpg" alt="Background Image" className="background-image"/>
+                </div>
+            </div>
             <h3 className="back-container" onClick={event=>window.history.back()}> <i className="icon-left-arrow" aria-hidden="true"></i>Cursos</h3>
             <div className="institution-detail-container">
                 <h1 className="institution-title">{institution.nomeIes}</h1>

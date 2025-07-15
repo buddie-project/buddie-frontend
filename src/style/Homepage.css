@@ -56,7 +56,7 @@
             left: 79vw;
         }
 
-        .geometry {
+        .tech {
             top: 48vh;
             left: 35vw;
 
@@ -67,7 +67,7 @@
             left: 49vw;
         }
 
-        .portuguese {
+        .psychology {
             top: 30vh;
             left: 55vw;
         }
@@ -139,21 +139,21 @@
     font-size: 1.5em;
 }
 
-.english {
+.law {
     color: #E67700;
     top: 66vh;
     left: 25vw;
     font-size: 2.5em;
 }
 
-.portuguese {
+.psychology {
     color: #026CB8;
     top: 23vh;
     left: 55vw;
     font-size: 1.25em;
 }
 
-.geometry {
+.tech {
     color: #03A53F;
     top: 48vh;
     left: 38vw;
