@@ -40,6 +40,7 @@ html, body, #root {
 
 .course-detail-container .course-title-action i {
     cursor: pointer;
+    color: black;
 }
 
 

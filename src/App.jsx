@@ -2,7 +2,8 @@ import './style/App.css';
 import "../public/icons/css/icons.css";
 import "./style/Homepage.css";
 
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom"; // Importar useNavigate
+import { useEffect, useRef } from 'react'; // Importar useRef e useEffect
 
 // Imports de componentes de Páginas
 import SignIn from "./pages/SignIn.jsx";
@@ -29,13 +30,25 @@ import AdminPage from "./components/profilePages/AdminPage.jsx"; // Página de A
 import Navbar from "./components/generalComponents/Navbar.jsx";
 import Footer from "./components/generalComponents/Footer.jsx";
 
-// Importar o UserProvider (provedor do contexto do utilizador)
-import UserProvider from "./services/UserContext.jsx";
+// Importar o UserProvider (provedor do contexto do utilizador) e setUserContextRef
+import UserProvider, { useUserContext } from "./services/UserContext.jsx";
+import { setUserContextRef } from "./services/api.js"; // NOVO: Importar a função para definir a ref
+
 // Importar o ProtectedRoute (componente de proteção de rotas)
 import ProtectedRoute from './routes/ProtectedRoute';
 
 function App() {
     const location = useLocation();
+    const navigate = useNavigate(); // Obter a função navigate
+    const userContext = useUserContext(); // Obter o objeto do contexto
+    const userContextRef = useRef(null);
+
+    // NOVO: Usar useEffect para inicializar a referência do contexto
+    useEffect(() => {
+        // A cada renderização, atualiza a referência para o objeto de contexto atual e a função navigate
+        userContextRef.current = { ...userContext, navigate };
+        setUserContextRef(userContextRef);
+    }, [userContext, navigate]); // Depende do userContext e navigate
 
     // Lógica para renderização condicional do Footer (mantida a sua lógica original)
     const isHomePage = location.pathname === '/';
@@ -86,11 +99,6 @@ function App() {
                     */}
                     <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
                         <Route path="/admin" element={<AdminPage/>}/>
-                        {/* Se AdminPage tiver sub-rotas, elas seriam definidas aqui,
-                            e o index poderia ser usado para redirecionar para uma sub-rota padrão.
-                            A linha <Route index element={<Navigate to="admin" />} /> não faz sentido aqui
-                            porque '/admin' já renderiza AdminPage diretamente.
-                        */}
                     </Route>
 
                     {/* Opcional: Rota para Acesso Negado (caso um utilizador sem permissão tente aceder a uma rota protegida) */}

@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 import {useUserContext} from "../../services/UserContext.jsx";
 import api from "../../services/api.js";
 import {useNavigate} from "react-router-dom";
+import {toast} from 'react-toastify'; // Importar toast
 
 function Configurations() {
     const [activePage] = useState('Configurações');
@@ -26,7 +27,8 @@ function Configurations() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!user) {
+        // user é o objeto UserResponseDTO do UserContext. Se for null, o utilizador não está logado.
+        if (!user || !user.id) { // Adicionado user.id para ser mais explícito
             setLoading(false);
             setError("Não estás logado. Por favor, faz login para continuar.");
             return;
@@ -35,6 +37,7 @@ function Configurations() {
             setLoading(true);
             setError(null);
             try {
+                // Axios com withCredentials já envia o cookie JSESSIONID
                 const response = await api.get(`/api/users/profile/${user.id}`);
                 setProfileData({
                     fullName: response.data.fullName || "",
@@ -54,7 +57,9 @@ function Configurations() {
                 });
             } catch (err) {
                 console.error("Erro ao carregar perfil:", err);
-                setError("Não foi possível carregar o perfil.");
+                setError("Não foi possível carregar o perfil. Por favor, tente novamente mais tarde.");
+                // Usar toast para feedback não-bloqueante
+                toast.error("Erro ao carregar perfil. Por favor, faça login novamente.");
             } finally {
                 setLoading(false);
             }
@@ -63,15 +68,15 @@ function Configurations() {
         fetchProfile();
     }, [user]);
 
+    // CORREÇÃO: A função handleSaveChanges deve ser declarada como 'async'
     const handleSaveChanges = async () => {
-        if (!user) {
-            alert("Precisas estar logado para guardar alterações.");
+        if (!user || !user.id) {
+            toast.error("Precisas estar logado para guardar alterações.");
             return;
         }
         setIsSaving(true);
         setError(null);
         try {
-
             const profileDTOToSend = {
                 firstName: profileData.firstName,
                 lastName: profileData.lastName,
@@ -84,38 +89,50 @@ function Configurations() {
                 bio: profileData.bio,
             };
 
-            await api.post(`/api/users/profile/update`, profileDTOToSend, {
+            // O seu código original tinha duas linhas de api.post, a segunda já estava correta.
+            // Certifique-se que usa apenas uma chamada.
+            // REMOVIDO: Authorization: `Bearer ${token}`
+            // Apenas Content-Type é necessário para indicar que o corpo é JSON
+            await api.post(`/api/users/profile/${user.id}`, profileDTOToSend, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
             });
-            alert("Perfil atualizado com sucesso!");
+            // O alert pode ser substituído por um toast para uma experiência mais moderna.
+            toast.success("Perfil atualizado com sucesso!");
             navigate("/perfil/conta");
 
         } catch (err) {
             console.error("Erro ao guardar alterações:", err);
             setError("Não foi possível guardar as alterações.");
-            alert("Erro ao guardar alterações. Tente novamente.");
+            toast.error("Erro ao guardar alterações. Tente novamente."); // Usar toast
         } finally {
             setIsSaving(false);
         }
     };
 
     // Handler para eliminar conta
+    // CORREÇÃO: A função handleDeleteAccount também deve ser declarada como 'async'
     const handleDeleteAccount = async () => {
-        if (!user) {
-            alert("Precisas estar logado para eliminar a tua conta.");
+        if (!user || !user.id) {
+            toast.error("Precisas estar logado para eliminar a tua conta.");
             return;
         }
         if (window.confirm("Tem a certeza que deseja eliminar a sua conta? Esta ação é irreversível.")) {
             try {
-                await api.post(`/api/users/profile/${user.id}/delete`);
-                alert("Conta eliminada com sucesso!");
-                logout();
+                // MANTIDO como api.post conforme solicitado, mas é semanticamente recomendado usar DELETE
+                await api.post(`/api/users/profile/${user.id}/delete`, null, {
+                    headers: {
+                        // REMOVIDO: Authorization: `Bearer ${token}`
+                        // Certifique-se que o backend tem um @PostMapping para este path
+                    },
+                });
+                toast.success("Conta eliminada com sucesso!"); // Usar toast
+                logout(); // Faz logout no frontend
             } catch (err) {
                 console.error("Erro ao eliminar conta:", err);
                 setError("Não foi possível eliminar a conta.");
-                alert("Erro ao eliminar conta. Tente novamente.");
+                toast.error("Erro ao eliminar conta. Tente novamente."); // Usar toast
             }
         }
     };
@@ -128,15 +145,18 @@ function Configurations() {
         }));
     };
 
-
+    // Renderização condicional para feedback
     if (loading) return <div className="loading-profile">A carregar perfil...</div>;
+    // O erro será exibido aqui se 'error' não for null
     if (error) return <div className="error-profile">{error}</div>;
 
+    // Se não estiver em loading e não tiver erro, renderiza o formulário
     return (
         <>
             <div className="container-card-two">
                 <h2 className="card-two-title">{activePage}</h2>
                 <div className="card-two">
+                    {/* Condição activePage === 'Configurações' sempre será true aqui */}
                     {activePage === 'Configurações' && profileData && (
                         <div className="configurations-section">
                             <div className="section section-one">
@@ -292,5 +312,4 @@ function Configurations() {
     );
 }
 
-
-    export default Configurations;
+export default Configurations;
