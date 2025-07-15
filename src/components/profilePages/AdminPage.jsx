@@ -187,28 +187,53 @@ function AdminPage() {
                             </div>
 
                             {activeTab === 'GerirUtilizadores' && (
-                                <div className="tab-content">
-                                    <input className="search-user"
-                                           type="text"
-                                           placeholder="Pesquisar por email ou username"
-                                           value={searchQuery}
-                                           onChange={handleSearchChange}
+                                <div className="tab-content manage-users-tab">
+                                    <input
+                                        type="text"
+                                        className="search-user"
+                                        placeholder="Pesquisar utilizadores por username ou email..."
+                                        value={searchQuery}
+                                        onChange={handleSearchChange}
                                     />
-                                    {isSearching && <p>Pesquisando...</p>}
-                                    <div className="user-results">
-                                        {searchResults.length > 0 ? (
-                                            searchResults.map(userResult => (
-                                                <div key={userResult.id} className="user-item">
-                                                    <p>@{userResult.username}</p>
+
+                                    {searchResults.length > 0 ? (
+                                        searchResults.map(userResult => (
+                                            <div key={userResult.id} className="user-item">
+                                                <div className="user-info">
+                                                    <p className="user-username">@{userResult.username}</p>
                                                     <p>{userResult.email}</p>
-                                                    <p>Role: {userResult.role}</p>
+                                                    <p>Role atual: <strong>{userResult.role}</strong></p>
                                                 </div>
-                                            ))
-                                        ) : (
-                                            searchQuery.trim() && !isSearching && <p>Nenhum utilizador encontrado.</p>
-                                        )}
-                                    </div>
+                                                <div className="user-actions">
+                                                    <button
+                                                        className={userResult.role === 'ADMIN' ? 'demote-btn' : 'promote-btn'}
+                                                        onClick={async () => {
+                                                            try {
+                                                                const newRole = userResult.role === 'ADMIN' ? 'USER' : 'ADMIN';
+                                                                await api.post(`/api/users/${userResult.id}/role?newRole=${newRole}`);
+                                                                toast.success(`Role de ${userResult.username} atualizada para ${newRole}`, { theme: 'colored' });
+
+                                                                setSearchResults(prevResults =>
+                                                                    prevResults.map(u =>
+                                                                        u.id === userResult.id ? { ...u, role: newRole } : u
+                                                                    )
+                                                                );
+                                                            } catch (error) {
+                                                                console.error("Erro ao atualizar role:", error);
+                                                                toast.error('Erro ao atualizar o role do utilizador.', { theme: 'colored' });
+                                                            }
+                                                        }}
+                                                    >
+                                                        {userResult.role === 'ADMIN' ? 'Remover Admin' : 'Tornar Admin'}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        searchQuery.trim() && !isSearching && <p>Nenhum utilizador encontrado.</p>
+                                    )}
                                 </div>
+
                             )}
 
                             {activeTab === 'AprovacaoComentarios' && (
