@@ -1,6 +1,6 @@
 import "../style/Courses.css";
 import "../style/App.css";
-import React, {useEffect, useState, useCallback, useMemo} from "react";
+import React, {useEffect, useState} from "react";
 import Pagination from "../components/generalComponents/Pagination.jsx";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import api from "../services/api.js";
@@ -305,8 +305,15 @@ function Courses() {
                                 </h3>
                                 <section className="course-info">
                                     <h5>{course.fieldOfStudy}</h5>
-                                    <p>
-                                        {course.institutionName || "Desconhecida"}
+                                    <p
+                                        className="institution-link"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            navigate(`/instituicao/${course.institutionId}`);
+                                        }}
+                                    >
+                                        {course.institutionName}
                                     </p>
                                 </section>
                             </Link>
@@ -322,20 +329,6 @@ function Courses() {
                     onPageChange={handlePageChange}
                 />
             )}
-            {/* REMOVIDO: Este rodapé está duplicado, pois App.jsx já renderiza um rodapé global */}
-            {/* <footer className="footer-courses">
-                <div className="footer-courses-content">
-                    <a
-                        href="https://github.com/buddie-project"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="github-link"
-                    >
-                        <i className="icon-github" aria-hidden="true" style={{color: "black", width: "32", height: "auto"}} />
-                    </a>
-                    <p> | &copy; {new Date().getFullYear()} Buddie. All rights reserved.</p>
-                </div>
-            </footer> */}
         </>
     );
 }

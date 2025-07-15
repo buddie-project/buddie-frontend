@@ -237,6 +237,17 @@ body, html {
     color: #000;
 }
 
+.institution-link {
+    font-family: "Futura Std", sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.institution-link:hover {
+    text-decoration: underline;
+    font-weight: 600;
+}
+
 .footer-courses {
     position: static;
     width: 100vw;
