@@ -1,6 +1,7 @@
 import '../../style/profilePages/ProfileLayout.css';
 import '../../style/profilePages/AdminPage.css';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+// import Cookies from 'universal-cookie'; // REMOVIDO: Não é mais necessário aceder diretamente a 'universal-cookie' aqui
 import { toast } from 'react-toastify';
 import { NavLink, useNavigate } from "react-router-dom";
 import { useUserContext } from "../../services/UserContext.jsx";
@@ -13,6 +14,7 @@ function AdminPage() {
     const [activePage] = useState('Administração');
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const avatarInputRef = useRef(null);
+    // OBTER: 'user' e 'logout' diretamente do contexto do utilizador
     const { user, logout } = useUserContext();
     const navigate = useNavigate();
 
@@ -25,11 +27,11 @@ function AdminPage() {
         status: "",
     };
     const [filters, setFilters] = useState(initialFilters);
-    const [ setCourseNames] = useState([]);
+    const [courseNames, setCourseNames] = useState([]);
     const [institutionNames, setInstitutionNames] = useState([]);
     const [areas, setAreas] = useState([]);
     const [districts, setDistricts] = useState([]);
-    const [ setStatusOptions] = useState([]); // caso queiras usar status distintos vindos da API
+    const [statusOptions, setStatusOptions] = useState([]); // caso queiras usar status distintos vindos da API
 
     // Buscar nomes distintos
     useEffect(() => {
@@ -85,10 +87,16 @@ function AdminPage() {
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (!file || !user_id_from_context) return;
+        // VERIFICAR: Se há um ficheiro E se o ID do utilizador do contexto está disponível.
+        if (!file || !userIdFromContext) { // Verificar se há ficheiro e ID de utilizador
+            toast.warn("Por favor, selecione um ficheiro e certifique-se que está logado.", {theme: 'colored'});
+            return;
+        }
 
         const form = new FormData();
         form.append('image', file);
-        form.append('user_id', user_id_from_context);
+        // USAR: 'userIdFromContext' para a submissão do formulário.
+        form.append('user_id', userIdFromContext);
         form.append('type', 'avatar');
 
         try {
@@ -97,14 +105,22 @@ function AdminPage() {
             toast.success('Imagem enviada com sucesso!', { theme: 'colored' });
             setFormData(prev => ({ ...prev, avatar: data.link }));
         } catch (error) {
-            toast.error('Erro ao enviar imagem', { theme: 'colored' });
+            console.error("Erro ao adicionar imagem:", error);
+            toast.error('Erro ao carregar imagem', { theme: 'colored' });
         }
     };
 
+    // Função para acionar o input de ficheiro de forma programática.
     const triggerFileInput = () => avatarInputRef.current.click();
+    // Função para alternar o estado do menu móvel.
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-    const handleSearchChange = (e) => setSearchQuery(e.target.value);
 
+    // Função para lidar com a mudança no campo de pesquisa
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
+
+    // Função para realizar a pesquisa de utilizadores (memoizada com useCallback)
     const performUserSearch = useCallback(async (query) => {
         if (!query.trim()) {
             setSearchResults([]);
@@ -123,6 +139,7 @@ function AdminPage() {
         }
     }, []);
 
+    // Efeito para debouncing na pesquisa (executa a pesquisa após um pequeno atraso)
     useEffect(() => {
         const handler = setTimeout(() => {
             performUserSearch(searchQuery);
@@ -148,12 +165,14 @@ function AdminPage() {
                                 accept="image/*"
                                 style={{ display: 'none' }}
                             />
+                            {/* EXIBIR: Avatar do formulário ou um placeholder padrão */}
                             <img
                                 src={formData.avatar || 'https://placehold.co/150'}
                                 alt="Profile avatar"
                                 className="profile-avatar"
                                 style={{ cursor: 'pointer' }}
                             />
+                            {/* EXIBIR: Nome de utilizador do contexto. Se 'user' for null, mostra "Carregando..." */}
                             <div className="avatar-upload-hint">@{user ? user.username : 'Carregando...'}</div>
                         </div>
                         <div className="profile-menu-admin">
@@ -258,15 +277,15 @@ function AdminPage() {
 
                             {activeTab === 'AdicionarCursos' && (
                                 <div className="tab-content add-course-form">
-                                    <input className="curso" placeholder="Adicione o nome do curso"></input>
+                                    <input className="curso" placeholder="Adicione o nome do curso" value={filters.curso} onChange={(e) => handleFilterChange("curso", e.target.value)}></input>
                                     <AutocompleteDropdown
-                                        label="área"
+                                        label="area"
                                         options={areas}
                                         value={filters.area}
                                         onValueChange={(value) => handleFilterChange("area", value)}
                                     />
                                     <AutocompleteDropdown
-                                        label="instituição"
+                                        label="instituicao"
                                         options={institutionNames}
                                         value={filters.instituicao}
                                         onValueChange={(value) => handleFilterChange("instituicao", value)}
@@ -277,7 +296,10 @@ function AdminPage() {
                                         value={filters.distrito}
                                         onValueChange={(value) => handleFilterChange("distrito", value)}
                                     />
-                                    <select>
+                                    <select
+                                        value={filters.status}
+                                        onChange={(e) => handleFilterChange("status", e.target.value)}
+                                    >
                                         <option>- Adicione o tipo de curso -</option>
                                         <option>Licenciatura 1º Ciclo</option>
                                         <option>Mestrado Integrado</option>
