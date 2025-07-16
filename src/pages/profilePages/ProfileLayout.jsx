@@ -93,12 +93,12 @@ function ProfileLayout() {
                                    accept="image/*"
                                    style={{display: 'none'}}
                             />
-                            {/* EXIBIR: Avatar do formulário ou um placeholder padrão */}
+                            {/* EXIBIR: Avatar do formulário ou um placeholder padrão
                             <img src={formData.avatar || 'https://placehold.co/150'}
                                  alt="Profile avatar"
                                  className="profile-avatar"
                                  style={{cursor: 'pointer' }}
-                            />
+                            />*/}
                             {/* EXIBIR: Nome de utilizador do contexto. Se 'user' for null, mostra "Carregando..." */}
                             <div className="avatar-upload-hint">@{user ? user.username : 'Carregando...'}</div>
                         </div>
