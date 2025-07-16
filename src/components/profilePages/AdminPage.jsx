@@ -1,6 +1,6 @@
 import '../../style/profilePages/ProfileLayout.css';
 import '../../style/profilePages/AdminPage.css';
-import React, { useState, useEffect, useRef, useCallback } from 'react'; // Certifique-se que useCallback está importado
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { NavLink, useNavigate } from "react-router-dom";
 import { useUserContext } from "../../services/UserContext.jsx";
@@ -16,141 +16,119 @@ function AdminPage() {
     const { user, logout } = useUserContext();
     const navigate = useNavigate();
 
-    const userIdFromContext = user ? user.id : null;
-
-    const initialCourseForm = {
-        nome: "",
-        nomeAreaEstudo: "",
-        nomeInstituicao: "",
+    // ✅ Estados dos filtros e listas
+    const initialFilters = {
+        curso: "",
+        instituicao: "",
+        area: "",
         distrito: "",
-        estadoCursoDGES: "",
-        grau: "",
-        ects: "",
-        localidade: "",
-        courseDescription: "",
-        codigoCurso: ""
+        status: "",
     };
-    const [courseForm, setCourseForm] = useState(initialCourseForm);
+    const [filters, setFilters] = useState(initialFilters);
+    const [ setCourseNames] = useState([]);
+    const [institutionNames, setInstitutionNames] = useState([]);
+    const [areas, setAreas] = useState([]);
+    const [districts, setDistricts] = useState([]);
+    const [ setStatusOptions] = useState([]); // caso queiras usar status distintos vindos da API
 
-    const [courseNamesList, setCourseNamesList] = useState([]);
-    const [institutionNamesList, setInstitutionNamesList] = useState([]);
-    const [areasList, setAreasList] = useState([]);
-    const [districtsList, setDistrictsList] = useState([]);
-    const [statusOptionsList, setStatusOptionsList] = useState([]);
-
+    // Buscar nomes distintos
     useEffect(() => {
         const fetchFilterOptions = async () => {
             try {
                 const coursesNamesRes = await api.get("/api/courses/distinct-names");
-                setCourseNamesList(coursesNamesRes.data);
+                setCourseNames(coursesNamesRes.data);
 
                 const institutionNamesRes = await api.get("/api/institution/distinct-names");
-                setInstitutionNamesList(institutionNamesRes.data);
+                setInstitutionNames(institutionNamesRes.data);
 
                 const areasRes = await api.get("/api/courses/distinct-areas");
-                setAreasList(areasRes.data);
+                setAreas(areasRes.data);
 
                 const districtsRes = await api.get("/api/institution/distinct-districts");
-                setDistrictsList(districtsRes.data);
+                setDistricts(districtsRes.data);
 
                 const statusesRes = await api.get("/api/courses/distinct-statuses");
-                setStatusOptionsList(statusesRes.data);
+                setStatusOptions(statusesRes.data);
             } catch (err) {
                 console.error("Erro ao carregar opções de filtro:", err);
-                toast.error("Erro ao carregar opções de filtro. Algumas opções podem estar indisponíveis.", {theme: "colored"});
             }
         };
         fetchFilterOptions();
     }, []);
 
-    // CORREÇÃO: Envolver handleCourseFormChange com useCallback para estabilizar a referência.
-    const handleCourseFormChange = useCallback((fieldName, value) => {
-        console.log(`Debug: handleCourseFormChange - Field: ${fieldName}, Value: ${value}`);
-        setCourseForm(prev => ({
+    // Handler de alteração dos filtros
+    const handleFilterChange = (filterName, value) => {
+        setFilters(prev => ({
             ...prev,
-            [fieldName]: value
+            [filterName]: value
         }));
-    }, []); // Array de dependências vazio, pois setCourseForm é estável.
-
+    };
 
     // Handler para adicionar curso
-    // Também envolver handleAddCourse com useCallback se for passado para filhos
-    const handleAddCourse = useCallback(async () => {
-        if (!courseForm.nome || !courseForm.nomeInstituicao || !courseForm.nomeAreaEstudo || !courseForm.distrito || !courseForm.estadoCursoDGES || !courseForm.grau) {
-            toast.error("Por favor, preencha todos os campos obrigatórios para o curso.", {theme: "colored"});
-            return;
-        }
-
+    const handleAddCourse = async () => {
         try {
-            let institutionId = null;
-            try {
-                const institutionRes = await api.get(`/api/institution/byName?name=${encodeURIComponent(courseForm.nomeInstituicao)}`);
-                institutionId = institutionRes.data.id;
-            } catch (instErr) {
-                console.error("Erro ao buscar ID da instituição por nome:", instErr);
-                toast.error("Instituição não encontrada. Por favor, selecione uma instituição válida.", {theme: "colored"});
-                return;
-            }
-
-            const courseDTOToSend = {
-                codigoCurso: courseForm.codigoCurso || null,
-                ects: courseForm.ects || null,
-                estadoCursoDGES: courseForm.estadoCursoDGES,
-                grau: courseForm.grau,
-                localidade: courseForm.localidade || null,
-                nome: courseForm.nome,
-                nomeAreaEstudo: courseForm.nomeAreaEstudo,
-                courseDescription: courseForm.courseDescription || null,
-                instituicaoId: institutionId,
-                nomeInstituicao: courseForm.nomeInstituicao,
-            };
-
-            await api.post("/api/courses", courseDTOToSend);
+            await api.post("/api/courses", filters);
             toast.success("Curso adicionado com sucesso!");
-            setCourseForm(initialCourseForm);
+            setFilters(initialFilters); // limpar formulário
         } catch (error) {
             console.error("Erro ao adicionar curso:", error);
-            const errorMessage = error.response?.data?.message || "Erro ao adicionar curso.";
-            toast.error(errorMessage, {theme: "colored"});
+            toast.error("Erro ao adicionar curso.");
         }
-    }, [courseForm]); // Depende de courseForm para garantir que tem o estado mais recente.
+    };
 
-
-    // Código de gestão de utilizadores e upload de imagem (mantido como está)
+    // Pesquisa de utilizadores
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
+    const user_id_from_context = user ? user.id : null;
 
-    // Assegurar que handleImageUpload é também useCallback se user ou userIdFromContext mudam
-    const handleImageUpload = useCallback(async (e) => {
+    const handleImageUpload = async (e) => {
         const file = e.target.files[0];
-        if (!file || !userIdFromContext) {
-            toast.warn("Por favor, selecione um ficheiro e certifique-se que está logado.", {theme: 'colored'});
-            return;
-        }
+        if (!file || !user_id_from_context) return;
 
         const form = new FormData();
         form.append('image', file);
-        form.append('user_id', userIdFromContext);
+        form.append('user_id', user_id_from_context);
         form.append('type', 'avatar');
 
         try {
-            const config = { headers: {'Content-Type': 'multipart/form-data'} };
+            const config = { headers: { 'Content-Type': 'multipart/form-data' } };
             const { data } = await api.post(`/api/auth/ImageUpload`, form, config);
             toast.success('Imagem enviada com sucesso!', { theme: 'colored' });
             setFormData(prev => ({ ...prev, avatar: data.link }));
         } catch (error) {
-            console.error("Erro ao adicionar imagem:", error);
-            toast.error('Erro ao carregar imagem', { theme: 'colored' });
+            toast.error('Erro ao enviar imagem', { theme: 'colored' });
         }
-    }, [userIdFromContext]); // Depende de userIdFromContext
+    };
 
     const triggerFileInput = () => avatarInputRef.current.click();
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-    const handleSearchChange = (e) => { setSearchQuery(e.target.value); };
-    const performUserSearch = useCallback(async (query) => { /* ... */ }, []);
-    useEffect(() => { /* ... */ }, [searchQuery, performUserSearch]);
+    const handleSearchChange = (e) => setSearchQuery(e.target.value);
 
+    const performUserSearch = useCallback(async (query) => {
+        if (!query.trim()) {
+            setSearchResults([]);
+            return;
+        }
+        setIsSearching(true);
+        try {
+            const response = await api.get(`/api/users/search?q=${encodeURIComponent(query)}`);
+            setSearchResults(response.data);
+        } catch (error) {
+            console.error("Erro ao pesquisar utilizadores:", error);
+            toast.error('Erro ao pesquisar utilizadores.', { theme: 'colored' });
+            setSearchResults([]);
+        } finally {
+            setIsSearching(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            performUserSearch(searchQuery);
+        }, 500);
+        return () => clearTimeout(handler);
+    }, [searchQuery, performUserSearch]);
 
     return (
         <>
@@ -190,7 +168,7 @@ function AdminPage() {
                 </div>
 
                 <div className="container-card-two">
-                    <h2 className="card-two-title">{activeTab === 'GerirUtilizadores' ? 'Gerir Utilizadores' : activeTab === 'AprovacaoComentarios' ? 'Aprovação Comentários' : 'Adicionar Cursos'}</h2>
+                    <h2 className="card-two-title">{activePage}</h2>
                     <div className="card-two">
                         <div className="sections">
                             <div className="admin-tabs">
@@ -209,57 +187,57 @@ function AdminPage() {
                             </div>
 
                             {activeTab === 'GerirUtilizadores' && (
-                                <div key="GerirUtilizadores" className="tab-content manage-users-tab">
-                                    <input className="search-user"
-                                           type="text"
-                                           placeholder="Pesquisar por email ou username"
-                                           value={searchQuery}
-                                           onChange={handleSearchChange}
+                                <div className="tab-content manage-users-tab">
+                                    <input
+                                        type="text"
+                                        className="search-user"
+                                        placeholder="Pesquisar utilizadores por username ou email..."
+                                        value={searchQuery}
+                                        onChange={handleSearchChange}
                                     />
-                                    {isSearching && <p>Pesquisando...</p>}
-                                    <div className="user-results">
-                                        {searchResults.length > 0 ? (
-                                            searchResults.map(userResult => (
-                                                <div key={userResult.id} className="user-item">
-                                                    <div className="user-info">
-                                                        <p className="user-username">@{userResult.username}</p>
-                                                        <p>{userResult.email}</p>
-                                                        <p>Role atual: <strong>{userResult.role}</strong></p>
-                                                    </div>
-                                                    <div className="user-actions">
-                                                        <button
-                                                            className={userResult.role === 'ADMIN' ? 'demote-btn' : 'promote-btn'}
-                                                            onClick={async () => {
-                                                                try {
-                                                                    const newRole = userResult.role === 'ADMIN' ? 'USER' : 'ADMIN';
-                                                                    await api.post(`/api/users/${userResult.id}/role?newRole=${newRole}`);
-                                                                    toast.success(`Role de ${userResult.username} atualizada para ${newRole}`, { theme: 'colored' });
 
-                                                                    setSearchResults(prevResults =>
-                                                                        prevResults.map(u =>
-                                                                            u.id === userResult.id ? { ...u, role: newRole } : u
-                                                                        )
-                                                                    );
-                                                                } catch (error) {
-                                                                    console.error("Erro ao atualizar role:", error);
-                                                                    toast.error('Erro ao atualizar o role do utilizador.', { theme: 'colored' });
-                                                                }
-                                                            }}
-                                                        >
-                                                            {userResult.role === 'ADMIN' ? 'Remover Admin' : 'Tornar Admin'}
-                                                        </button>
-                                                    </div>
+                                    {searchResults.length > 0 ? (
+                                        searchResults.map(userResult => (
+                                            <div key={userResult.id} className="user-item">
+                                                <div className="user-info">
+                                                    <p className="user-username">@{userResult.username}</p>
+                                                    <p>{userResult.email}</p>
+                                                    <p>Role atual: <strong>{userResult.role}</strong></p>
                                                 </div>
-                                            ))
-                                        ) : (
-                                            searchQuery.trim() && !isSearching && <p>Nenhum utilizador encontrado.</p>
-                                        )}
-                                    </div>
+                                                <div className="user-actions">
+                                                    <button
+                                                        className={userResult.role === 'ADMIN' ? 'demote-btn' : 'promote-btn'}
+                                                        onClick={async () => {
+                                                            try {
+                                                                const newRole = userResult.role === 'ADMIN' ? 'USER' : 'ADMIN';
+                                                                await api.post(`/api/users/${userResult.id}/role?newRole=${newRole}`);
+                                                                toast.success(`Role de ${userResult.username} atualizada para ${newRole}`, { theme: 'colored' });
+
+                                                                setSearchResults(prevResults =>
+                                                                    prevResults.map(u =>
+                                                                        u.id === userResult.id ? { ...u, role: newRole } : u
+                                                                    )
+                                                                );
+                                                            } catch (error) {
+                                                                console.error("Erro ao atualizar role:", error);
+                                                                toast.error('Erro ao atualizar o role do utilizador.', { theme: 'colored' });
+                                                            }
+                                                        }}
+                                                    >
+                                                        {userResult.role === 'ADMIN' ? 'Remover Admin' : 'Tornar Admin'}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        searchQuery.trim() && !isSearching && <p>Nenhum utilizador encontrado.</p>
+                                    )}
                                 </div>
+
                             )}
 
                             {activeTab === 'AprovacaoComentarios' && (
-                                <div key="AprovacaoComentarios" className="tab-content comments-list">
+                                <div className="tab-content comments-list">
                                     {[1, 2, 3, 4].map((_, index) => (
                                         <div className="comment-item" key={index}>
                                             <div className="comment-info">
@@ -279,78 +257,30 @@ function AdminPage() {
                             )}
 
                             {activeTab === 'AdicionarCursos' && (
-                                <div key="AdicionarCursos" className="tab-content add-course-form">
-                                    {/* Campo de escrita livre para o nome do curso */}
-                                    <input
-                                        className="curso"
-                                        placeholder="Adicione o nome do curso"
-                                        value={courseForm.nome}
-                                        onChange={(e) => handleCourseFormChange("nome", e.target.value)}
-                                    />
-
-                                    {/* NOVO: Input para Código DGES do Curso (agora visível, se aplicável) */}
-                                    <input
-                                        className="codigo-dges"
-                                        placeholder="Código DGES do Curso (opcional)"
-                                        value={courseForm.codigoCurso || ""}
-                                        onChange={(e) => handleCourseFormChange("codigoCurso", e.target.value)}
-                                    />
+                                <div className="tab-content add-course-form">
+                                    <input className="curso" placeholder="Adicione o nome do curso"></input>
                                     <AutocompleteDropdown
-                                        label="área de estudo"
-                                        options={areasList}
-                                        value={courseForm.nomeAreaEstudo}
-                                        onValueChange={(value) => handleCourseFormChange("nomeAreaEstudo", value)}
+                                        label="área"
+                                        options={areas}
+                                        value={filters.area}
+                                        onValueChange={(value) => handleFilterChange("area", value)}
                                     />
                                     <AutocompleteDropdown
                                         label="instituição"
-                                        options={institutionNamesList}
-                                        value={courseForm.nomeInstituicao}
-                                        onValueChange={(value) => handleCourseFormChange("nomeInstituicao", value)}
+                                        options={institutionNames}
+                                        value={filters.instituicao}
+                                        onValueChange={(value) => handleFilterChange("instituicao", value)}
                                     />
                                     <AutocompleteDropdown
                                         label="distrito"
-                                        options={districtsList}
-                                        value={courseForm.distrito}
-                                        onValueChange={(value) => handleCourseFormChange("distrito", value)}
+                                        options={districts}
+                                        value={filters.distrito}
+                                        onValueChange={(value) => handleFilterChange("distrito", value)}
                                     />
-                                     {/*NOVO: Autocomplete para Estado do Curso (Status DGES)
-                                    <AutocompleteDropdown
-                                        label="status DGES"
-                                        options={statusOptionsList}
-                                        value={courseForm.estadoCursoDGES}
-                                        onValueChange={(value) => handleCourseFormChange("estadoCursoDGES", value)}
-                                    />*/}
-                                    {/* NOVOS INPUTS: ECTS, Localidade, Descrição */}
-                                    <input
-                                        className="ects"
-                                        placeholder="ECTS (ex: 60)"
-                                        type="number"
-                                        value={courseForm.ects || ""}
-                                        onChange={(e) => handleCourseFormChange("ects", e.target.value)}
-                                    />
-                                    {/*<input
-                                        className="localidade"
-                                        placeholder="Localidade"
-                                        value={courseForm.localidade || ""}
-                                        onChange={(e) => handleCourseFormChange("localidade", e.target.value)}
-                                    />*/}
-                                    {/*<textarea
-                                        className="course-description"
-                                        placeholder="Descrição do Curso"
-                                        value={courseForm.courseDescription || ""}
-                                        onChange={(e) => handleCourseFormChange("courseDescription", e.target.value)}
-                                        rows="3"
-                                    />*/}
-                                    {/* Select para Grau (Tipo de Curso) */}
-                                    <select
-                                        value={courseForm.grau}
-                                        onChange={(e) => handleCourseFormChange("grau", e.target.value)}
-                                    >
-                                        <option value="">- Selecione o Grau -</option>
-                                        <option value="Licenciatura 1º Ciclo">Licenciatura 1º Ciclo</option>
-                                        <option value="Mestrado Integrado">Mestrado Integrado</option>
-                                        <option value="Mestrado">Mestrado</option>
-                                        <option value="Doutoramento">Doutoramento</option>
+                                    <select>
+                                        <option>- Adicione o tipo de curso -</option>
+                                        <option>Licenciatura 1º Ciclo</option>
+                                        <option>Mestrado Integrado</option>
                                     </select>
                                     <button className="add-course-btn" onClick={handleAddCourse}>Adicionar Curso</button>
                                 </div>
