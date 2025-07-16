@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import "../../style/Autocomplete.css";
 
 /**
@@ -51,14 +51,15 @@ const AutocompleteDropdown = ({
      * Efeito para sincronizar o inputValue com a prop 'value' e controlar o estado 'isOpen'.
      * Fechar o dropdown e redefinir as sugestões se o valor for limpo externamente.
      */
+    // Atualiza inputValue quando a prop "value" muda
     useEffect(() => {
         setInputValue(value || "");
+    }, [value]);
 
-        if (!value && isOpen) {
-            setIsOpen(false);
-            setSuggestions(options);
-        }
-    }, [value, options, isOpen]);
+// Atualiza as sugestões quando as opções mudam
+    useEffect(() => {
+        setSuggestions(options);
+    }, [options]);
 
 
     /**
@@ -106,11 +107,12 @@ const AutocompleteDropdown = ({
      * Define o input com a sugestão selecionada e fecha o dropdown.
      * @param {string} suggestion - A sugestão selecionada.
      */
-    const handleSelectSuggestion = (suggestion) => {
+    const handleSelectSuggestion = useCallback((suggestion) => {
         setInputValue(suggestion);
         onValueChange(suggestion);
         setIsOpen(false);
-    };
+    }, [onValueChange]);
+
 
     /**
      * Lida com o foco no input. Se o input já contiver um valor de uma opção existente,
@@ -125,6 +127,15 @@ const AutocompleteDropdown = ({
         setSuggestions(options);
         setIsOpen(true);
     };
+
+    const renderSuggestionItem = (suggestion, index) => (
+        <li
+            key={suggestion + index}
+            onClick={() => handleSelectSuggestion(suggestion)}
+        >
+            {suggestion}
+        </li>
+    );
 
     return (
         <div className={`autocomplete-dropdown-wrapper ${className}`} ref={wrapperRef}>
@@ -145,9 +156,9 @@ const AutocompleteDropdown = ({
                     ))}
                 </ul>
             )}
-            {isOpen && inputValue.length > 0 && suggestions.length === 0 && (
+            {isOpen && suggestions.length > 0 && (
                 <ul className="autocomplete-dropdown-suggestions">
-                    <li className="no-suggestions">Nenhuma sugestão encontrada</li>
+                    {suggestions.map(renderSuggestionItem)}
                 </ul>
             )}
         </div>
