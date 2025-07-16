@@ -81,7 +81,7 @@ function Favorites() {
     // Remover curso favorito
     const handleRemoveFavorite = async (favoriteEntryId) => {
         try {
-            await api.post(`/api/user/saved/{id}/delete`);
+            await api.post(`/api/user/favorites/{id}/delete`);
             setFavoriteCourses(prev => prev.filter(fc => fc.id !== favoriteEntryId));
             toast.success("Curso removido dos favoritos!", {theme: "colored"});
         } catch (error) {
