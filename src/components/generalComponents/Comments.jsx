@@ -144,7 +144,33 @@ function Comments({ courseId }) { // Recebe courseId como prop de CourseDetails
         }
     };
 
+    // CORREÇÃO 1: NOVO Handler para adicionar likes
+    const handleAddLike = async (commentId) => {
+        if (!userId) {
+            toast.info("É necessário fazer login para dar like.", { theme: "colored" });
+            return;
+        }
+        try {
+            // Chama o endpoint POST para adicionar um like.
+            await api.post(`/api/comments/${commentId}/like`);
+            toast.success("Like adicionado!", { theme: "colored" });
 
+            // ATUALIZAÇÃO LOCAL: Incrementa o totalLikes do comentário no estado.
+            // Isto é otimizado para evitar re-fetch de todos os comentários após cada like.
+            setComments(prevComments =>
+                prevComments.map(comment =>
+                    comment.id === commentId
+                        ? { ...comment, totalLikes: comment.totalLikes + 1 } // Incrementa o totalLikes
+                        : comment
+                )
+            );
+
+        } catch (err) {
+            console.error("Erro ao adicionar like:", err);
+            // A mensagem de erro específica pode ser melhorada se o backend retornar uma mensagem clara para "já deu like".
+            toast.error("Erro ao adicionar like. Tente novamente.", { theme: "colored" });
+        }
+    };
 
     return (
         <div className="comments-section">

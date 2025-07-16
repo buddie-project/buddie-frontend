@@ -34,7 +34,7 @@ function ProfileLayout() {
             try {
                 const config = { headers: {"Content-Type": "application/json"} };
                 // USAR: 'userIdFromContext' para a chamada da API, garantindo que o ID vem do contexto centralizado.
-                const avatarResponse = await api.post(`/api/auth/ImageRetrieve`, {user_id: userIdFromContext, type: 'avatar'}, config);
+                const avatarResponse = await api.post(`/api/ImageRetrieve`, {user_id: userIdFromContext, type: 'avatar'}, config);
                 setFormData({avatar: avatarResponse.data.link});
             } catch (error) {
                 console.error("Erro ao carregar imagens do perfil:", error);

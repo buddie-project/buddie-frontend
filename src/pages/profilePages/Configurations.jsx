@@ -93,7 +93,7 @@ function Configurations() {
             // Certifique-se que usa apenas uma chamada.
             // REMOVIDO: Authorization: `Bearer ${token}`
             // Apenas Content-Type é necessário para indicar que o corpo é JSON
-            await api.post(`/api/users/profile/${user.id}`, profileDTOToSend, {
+            await api.post(`/api/users/profile/update`, profileDTOToSend, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
