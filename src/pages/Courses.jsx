@@ -240,14 +240,14 @@ function Courses() {
                         label="instituição"
                         options={institutionNames}
                         value={filters.instituicao}
-                        onValueChange={(value) => handleFilterChange("instituição", value)}
+                        onValueChange={(value) => handleFilterChange("instituicao", value)}
                         className="option"
                     />
                     <AutocompleteDropdown
                         label="área"
                         options={areas}
                         value={filters.area}
-                        onValueChange={(value) => handleFilterChange("área", value)}
+                        onValueChange={(value) => handleFilterChange("area", value)}
                         className="option"
                     />
                     <AutocompleteDropdown
