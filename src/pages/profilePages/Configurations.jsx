@@ -159,7 +159,6 @@ function Configurations() {
                     {/* Condição activePage === 'Configurações' sempre será true aqui */}
                     {activePage === 'Configurações' && profileData && (
                         <div className="configurations-section">
-                            <div className="section section-one">
                             <h4>Informação Pessoal</h4>
                             <div className="line">
                                 <div className="inputs">
@@ -216,7 +215,6 @@ function Configurations() {
                                         value={profileData.phoneNumber || ""}
                                         onChange={handleInputChange}
                                     />
-                                </div>
                                 </div>
                             </div>
 

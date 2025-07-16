@@ -313,13 +313,13 @@ function AdminPage() {
                                         value={courseForm.distrito}
                                         onValueChange={(value) => handleCourseFormChange("distrito", value)}
                                     />
-                                    {/* NOVO: Autocomplete para Estado do Curso (Status DGES) */}
+                                     {/*NOVO: Autocomplete para Estado do Curso (Status DGES)
                                     <AutocompleteDropdown
                                         label="status DGES"
                                         options={statusOptionsList}
                                         value={courseForm.estadoCursoDGES}
                                         onValueChange={(value) => handleCourseFormChange("estadoCursoDGES", value)}
-                                    />
+                                    />*/}
                                     {/* NOVOS INPUTS: ECTS, Localidade, Descrição */}
                                     <input
                                         className="ects"
@@ -328,19 +328,19 @@ function AdminPage() {
                                         value={courseForm.ects || ""}
                                         onChange={(e) => handleCourseFormChange("ects", e.target.value)}
                                     />
-                                    <input
+                                    {/*<input
                                         className="localidade"
                                         placeholder="Localidade"
                                         value={courseForm.localidade || ""}
                                         onChange={(e) => handleCourseFormChange("localidade", e.target.value)}
-                                    />
-                                    <textarea
+                                    />*/}
+                                    {/*<textarea
                                         className="course-description"
                                         placeholder="Descrição do Curso"
                                         value={courseForm.courseDescription || ""}
                                         onChange={(e) => handleCourseFormChange("courseDescription", e.target.value)}
                                         rows="3"
-                                    />
+                                    />*/}
                                     {/* Select para Grau (Tipo de Curso) */}
                                     <select
                                         value={courseForm.grau}
