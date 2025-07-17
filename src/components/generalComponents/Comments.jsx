@@ -10,6 +10,23 @@ import "../../style/Comments.css";
  */
 
 /**
+ * @typedef {object} CommentResponseData
+ * @property {number} id - O ID do comentário.
+ * @property {number} courseId - O ID do curso associado ao comentário.
+ * @property {string} username - O nome de utilizador do autor do comentário.
+ * @property {string} commentText - O texto do comentário.
+ * @property {string} commentDate - A data e hora do comentário (formato ISO 8601).
+ * @property {number} totalLikes - O número total de likes que o comentário recebeu.
+ * @property {boolean} likedByCurrentUser - Indica se o utilizador autenticado deu like neste comentário.
+ */
+
+/**
+ * @typedef {object} UserContextObject
+ * @property {object|null} user - O objeto do utilizador autenticado, ou `null`.
+ * @property {boolean} loading - Indica se o contexto do utilizador está a carregar.
+ */
+
+/**
  * Componente Comments para exibir e adicionar comentários a um curso.
  *
  * @param {CommentsProps} props - As propriedades passadas para o componente.
@@ -18,7 +35,7 @@ import "../../style/Comments.css";
 function Comments({ courseId }) {
     /**
      * Estado para armazenar a lista de comentários.
-     * @type {Array<object>}
+     * @type {Array<CommentResponseData>}
      */
     const [comments, setComments] = useState([]);
     /**
@@ -39,7 +56,7 @@ function Comments({ courseId }) {
 
     /**
      * Obtém o utilizador logado do contexto.
-     * @type {{user: object|null}}
+     * @type {UserContextObject}
      */
     const { user } = useUserContext();
     /**
@@ -60,7 +77,12 @@ function Comments({ courseId }) {
 
         api.get(`/api/courses/${courseId}/comments`)
             .then((res) => {
-                setComments(res.data);
+                const fetchedComments = res.data.map(comment => ({
+                    ...comment,
+                    totalLikes: comment.totalLikes || 0,
+                    likedByCurrentUser: comment.likedByCurrentUser || false
+                }));
+                setComments(fetchedComments);
             })
             .catch((err) => {
                 console.error("Erro ao carregar comentários:", err);
@@ -143,57 +165,35 @@ function Comments({ courseId }) {
 
     /**
      * Lida com a ação de "gostar" (like) de um comentário.
-     * Envia um pedido para adicionar o like e atualiza a contagem localmente.
-     * @param {number|string} commentId - O ID do comentário ao qual o like será adicionado.
+     * Envia um pedido para adicionar/remover o like e atualiza o estado localmente.
+     *
+     * @param {number|string} commentId - O ID do comentário ao qual o like será adicionado/removido.
+     * @param {boolean} currentLikedStatus - O estado atual de `likedByCurrentUser` para este comentário.
      */
-    const handleLike = async (commentId) => {
+    const handleToggleLike = async (commentId, currentLikedStatus) => {
         if (!userId) {
             toast.info("É necessário fazer login para dar like.", { theme: "colored" });
             return;
         }
         try {
-            await api.post(`/api/comments/${commentId}/like`);
-            toast.success("Like adicionado!", { theme: "colored" });
+            await api.post(`/api/comments/${commentId}/toggleLike`);
 
             setComments(prevComments =>
                 prevComments.map(comment =>
                     comment.id === commentId
-                        ? { ...comment, totalLikes: comment.totalLikes + 1 }
+                        ? {
+                            ...comment,
+                            likedByCurrentUser: !currentLikedStatus,
+                            totalLikes: currentLikedStatus ? (comment.totalLikes || 0) - 1 : (comment.totalLikes || 0) + 1
+                        }
                         : comment
                 )
             );
-        } catch (error) {
-            console.error("Erro ao dar like:", error);
-            toast.error("Erro ao dar like. Tenta novamente.", { theme: "colored" });
-        }
-    };
-
-    /**
-     * Lida com a ação de adicionar "gosto" (like) a um comentário.
-     * Verifica a autenticação do utilizador, envia o pedido para a API
-     * e atualiza a contagem de likes no estado localmente para otimização.
-     * @param {number|string} commentId - O ID do comentário a receber o like.
-     */
-    const handleAddLike = async (commentId) => {
-        if (!userId) {
-            toast.info("É necessário fazer login para dar like.", { theme: "colored" });
-            return;
-        }
-        try {
-            await api.post(`/api/comments/${commentId}/like`);
-            toast.success("Like adicionado!", { theme: "colored" });
-
-            setComments(prevComments =>
-                prevComments.map(comment =>
-                    comment.id === commentId
-                        ? { ...comment, totalLikes: comment.totalLikes + 1 }
-                        : comment
-                )
-            );
+            toast.success(currentLikedStatus ? "Like removido!" : "Like adicionado!", { theme: "colored" });
 
         } catch (err) {
-            console.error("Erro ao adicionar like:", err);
-            toast.error("Erro ao adicionar like. Tente novamente.", { theme: "colored" });
+            console.error("Erro ao alternar like:", err);
+            toast.error("Erro ao alternar like. Tente novamente.", { theme: "colored" });
         }
     };
 
@@ -230,13 +230,13 @@ function Comments({ courseId }) {
                                     <span className="date">{formatDate(comment.commentDate)}</span>
                                     <span
                                         className="like-icon"
-                                        onClick={() => handleLike(comment.id)}
+                                        onClick={() => handleToggleLike(comment.id, comment.likedByCurrentUser)}
                                     >
                                     <i
-                                        className={comment.likes?.includes(userId) ? "icon-heart-filled" : "icon-heart"}
+                                        className={comment.likedByCurrentUser ? "icon-heart-filled" : "icon-heart"}
                                         title="like"
                                     />
-                                        <span className="like-count">{comment.likes?.length || 0}</span>
+                                        <span className="like-count">{comment.totalLikes}</span>
                                  </span>
                                 </div>
                                 <p className="comment-text">{comment.commentText}</p>
