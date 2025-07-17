@@ -8,10 +8,18 @@ import { useUserContext } from "../../services/UserContext.jsx";
 import { toast } from 'react-toastify';
 import seedrandom from "seedrandom";
 
-// CORREÇÃO: Mover 'colors' e 'assignColors' para FORA do componente.
-// Elas são estáticas e não precisam ser recriadas em cada renderização, evitando o loop.
+/**
+ * Cores predefinidas para os cartões de cursos guardados, usadas para atribuição aleatória.
+ * @type {string[]}
+ */
 const BOOKMARKS_COLORS = ["red", "blue", "green", "orange", "purple", "yellow", "darkblue"];
 
+/**
+ * Atribui uma cor aleatória a cada curso guardado numa lista.
+ * A seleção de cor é determinística baseada no courseId ou courseName para consistência visual.
+ * @param {object[]} courses - A lista de objetos de curso.
+ * @returns {object[]} A lista de cursos com a propriedade 'color' adicionada.
+ */
 const assignColorsToBookmarks = (courses) => {
     return courses.map((course) => {
         const rng = seedrandom(course.courseId?.toString() || course.courseName || Date.now());
@@ -21,19 +29,54 @@ const assignColorsToBookmarks = (courses) => {
     });
 };
 
+/**
+ * Componente Bookmarks.
+ * Exibe uma lista paginada de cursos que o utilizador guardou para "Ver mais tarde".
+ * Permite remover cursos da lista de guardados.
+ * @returns {JSX.Element} O componente Bookmarks.
+ */
 function Bookmarks() {
+    /**
+     * Estado para o título da página ativa (fixo como 'Ver mais tarde').
+     * @type {string}
+     */
     const [activePage] = useState('Ver mais tarde');
+    /**
+     * Estado para armazenar a lista de cursos guardados.
+     * @type {object[]}
+     */
     const [savedCourses, setSavedCourses] = useState([]);
+    /**
+     * Estado para a página atual da paginação.
+     * @type {[number, React.Dispatch<React.SetStateAction<number>>]}
+     */
     const [currentPage, setCurrentPage] = useState(1);
+    /**
+     * Estado para indicar se os cursos estão a ser carregados.
+     * @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]}
+     */
     const [isLoading, setIsLoading] = useState(true);
+    /**
+     * Estado para armazenar mensagens de erro caso a carga dos cursos falhe.
+     * @type {[string|null, React.Dispatch<React.SetStateAction<string|null>>]}
+     */
     const [error, setError] = useState(null);
+    /**
+     * Número de itens a serem exibidos por página.
+     * @type {number}
+     */
     const itemsPerPage = 8;
 
+    /**
+     * Hook para aceder ao contexto do utilizador.
+     * @type {{user: object|null}}
+     */
     const { user } = useUserContext();
 
-    // REMOVIDO: A declaração 'const colors = [...]' que estava aqui.
-    // REMOVIDO: A declaração 'const assignColors = useMemo(() => { ... })' que estava aqui.
-
+    /**
+     * Efeito para buscar os cursos guardados do utilizador.
+     * É executado quando o objeto `user` do contexto muda.
+     */
     useEffect(() => {
         const fetchSavedCourses = async () => {
             setIsLoading(true);
@@ -41,7 +84,6 @@ function Bookmarks() {
             try {
                 const response = await api.get(`/api/user/saved`);
 
-                // O mapeamento já estava correto com o filtro e optional chaining.
                 const coursesToProcess = response.data
                     .filter(savedCourseDto => savedCourseDto.course != null)
                     .map(savedCourseDto => ({
@@ -53,26 +95,29 @@ function Bookmarks() {
                         institutionId: savedCourseDto.course?.institutionId
                     }));
 
-                // CORREÇÃO: Aplicar a função global assignColorsToBookmarks.
                 const finalCourses = assignColorsToBookmarks(coursesToProcess);
                 setSavedCourses(finalCourses);
 
-            } catch (err) {
+            }
+            catch (err) {
                 console.error("Erro ao buscar cursos guardados:", err);
                 setError("Não foi possível carregar os cursos guardados. Por favor, tente novamente.");
                 toast.error("Erro ao carregar cursos guardados.", { theme: "colored" });
                 setSavedCourses([]);
-            } finally {
+            }
+            finally {
                 setIsLoading(false);
             }
         };
 
-        // CORREÇÃO: Remover 'assignColors' das dependências do useEffect,
-        // pois ela agora é uma função estática global e não muda.
-        // Adicione 'user' como dependência para que o fetch seja acionado quando o estado de login muda.
         fetchSavedCourses();
-    }, [user]); // Dependências: 'user' (assignColorsToBookmarks é global)
+    }, [user]);
 
+    /**
+     * Lida com a remoção de um curso da lista "Ver mais tarde".
+     * Envia um pedido para a API para remover o curso e atualiza o estado localmente.
+     * @param {number|string} savedCourseEntryId - O ID da entrada do curso guardado a ser removida.
+     */
     const handleRemoveBookmark = async (savedCourseEntryId) => {
         try {
             await api.post(`/api/user/saved/{id}/delete`);
@@ -85,8 +130,18 @@ function Bookmarks() {
         }
     };
 
+    /**
+     * Calcula o número total de páginas com base na quantidade de cursos e itens por página.
+     * Memoizado para evitar recálculos desnecessários.
+     * @type {number}
+     */
     const totalPages = useMemo(() => Math.ceil(savedCourses.length / itemsPerPage), [savedCourses]);
 
+    /**
+     * Calcula a sub-lista de cursos a serem exibidos na página atual.
+     * Memoizado para evitar recálculos desnecessários.
+     * @type {object[]}
+     */
     const displayedCourses = useMemo(() => {
         const start = (currentPage - 1) * itemsPerPage;
         return savedCourses.slice(start, start + itemsPerPage);
@@ -106,7 +161,6 @@ function Bookmarks() {
                     ) : (
                         <div className="courses-container-profile">
                             {displayedCourses.map((course) => (
-                                // Renderizar o card apenas se course.courseId for válido
                                 <div key={course.id} className={`course-card-profile ${course.color || "default-color"}`}>
                                     <Link to={`/cursos/${course.courseId}`} className="course-link">
                                         <h3 className="course-name">{course.courseName}</h3>

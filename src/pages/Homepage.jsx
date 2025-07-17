@@ -1,6 +1,12 @@
-import "../style/Homepage.css"
+import "../style/Homepage.css";
 import {Link} from "react-router-dom";
 
+/**
+ * Componente Homepage.
+ * Representa a página inicial da aplicação, exibindo um mapa interativo
+ * com links para cursos por área de estudo.
+ * @returns {JSX.Element} O componente Homepage.
+ */
 function Homepage() {
 
     return (

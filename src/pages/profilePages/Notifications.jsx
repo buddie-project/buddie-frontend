@@ -2,7 +2,17 @@ import '../../style/profilePages/ProfileLayout.css';
 import '../../style/profilePages/Notifications.css';
 import React from 'react';
 
+/**
+ * Componente Notifications.
+ * Exibe uma lista estática de notificações de exemplo para o utilizador.
+ * @returns {JSX.Element} O componente Notifications.
+ */
 function Notifications() {
+    /**
+     * Array de objetos de notificação de exemplo.
+     * Atualmente, os dados são estáticos.
+     * @type {Array<object>}
+     */
     const notifications = [
         { id: 1, type: 'like', message: 'João Silva gostou do teu comentário.', date: '13/07/2025' },
         { id: 2, type: 'comment', message: 'Maria Costa comentou: "Excelente trabalho!"', date: '12/07/2025' },

@@ -1,26 +1,41 @@
 import axios from 'axios';
-import { toast } from 'react-toastify'; // Importar toast para notificações
-// Importar useUserContext para aceder ao contexto do utilizador no interceptor
-// Nota: Este import é um truque para evitar dependências cíclicas em alguns bundlers.
-// Em um projeto maior, você pode usar uma solução de inversão de controlo ou um router history object.
+import { toast } from 'react-toastify';
+
+/**
+ * Referência mutável para o objeto de contexto do utilizador.
+ * Usado para permitir que o interceptor de Axios aceda a funções do contexto (como logout e navigate)
+ * sem criar dependências cíclicas.
+ * @type {object|null}
+ */
 let userContextRef = null;
+
+/**
+ * Define a referência para o objeto de contexto do utilizador.
+ * Esta função é chamada a partir do componente `App.jsx` para inicializar a referência.
+ * @param {object} ref - O objeto de referência que contém o contexto do utilizador e a função de navegação.
+ */
 export const setUserContextRef = (ref) => {
     userContextRef = ref;
 };
 
+/**
+ * Instância configurada do Axios para fazer requisições HTTP.
+ * Define a URL base e configura o envio de credenciais (cookies de sessão).
+ */
 const api = axios.create({
-    // URL base da nossa API Spring Boot
     baseURL: 'http://localhost:8080',
-    // Envia os cookies de sessão em cada requisição
     withCredentials: true
 });
 
-// NOVO: Adicionar um interceptor de resposta global
+/**
+ * Interceptor de resposta global para o Axios.
+ * Interceta respostas de erro para lidar com autenticação e autorização (401/403).
+ * Se detetar uma sessão inválida ou acesso não autorizado, exibe uma notificação,
+ * chama a função de logout do contexto do utilizador e redireciona para a página de login.
+ */
 api.interceptors.response.use(
-    response => response, // Se a resposta for bem-sucedida, apenas a devolve
+    response => response,
     async error => {
-        // Se a resposta de erro tiver um status 401 (Unauthorized) ou 403 (Forbidden)
-        // e não for a rota de login ou logout (para evitar loops)
         if (error.response &&
             (error.response.status === 401 || error.response.status === 403) &&
             !error.config.url.includes('/api/login') &&
@@ -29,13 +44,12 @@ api.interceptors.response.use(
             console.error("Intercepted 401/403. Session might be invalid or unauthorized access attempt.", error.response);
             toast.error("Sessão expirada ou acesso não autorizado. Por favor, faça login novamente.", { theme: "colored" });
 
-            // Se o UserContext estiver disponível (através da ref)
             if (userContextRef && userContextRef.current) {
-                userContextRef.current.logout(); // Chama a função de logout do UserContext
-                userContextRef.current.navigate('/entrar'); // Redireciona para a página de login
+                userContextRef.current.logout();
+                userContextRef.current.navigate('/entrar');
             }
         }
-        return Promise.reject(error); // Rejeita a promise de erro para que os blocos .catch() continuem a funcionar
+        return Promise.reject(error);
     }
 );
 

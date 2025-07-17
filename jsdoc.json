@@ -1,0 +1,22 @@
+{
+  "source": {
+    "include": ["src"],
+    "includePattern": ".+\\.(js|jsx)$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "opts": {
+    "destination": "./docs/jsdoc/",
+    "encoding": "utf8",
+    "readme": "./README.md",
+    "recurse": true,
+    "verbose": true,
+    "template": "node_modules/minami"
+  },
+  "plugins": [
+    "plugins/markdown"
+  ],
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false
+  }
+}

@@ -3,15 +3,55 @@ import api from "../../services/api.js";
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 
+/**
+ * Componente Register.
+ * Permite que novos utilizadores se registem na aplicação.
+ * Realiza validação de password e envia os dados para o backend.
+ * @returns {JSX.Element} O componente Register.
+ */
 function Register() {
+    /**
+     * Estado para o primeiro nome do utilizador.
+     * @type {[string, React.Dispatch<React.SetStateAction<string>>]}
+     */
     const [firstName, setFirstName] = useState('');
+    /**
+     * Estado para o apelido do utilizador.
+     * @type {[string, React.Dispatch<React.SetStateAction<string>>]}
+     */
     const [lastName, setLastName] = useState('');
+    /**
+     * Estado para o email do utilizador.
+     * @type {[string, React.Dispatch<React.SetStateAction<string>>]}
+     */
     const [email, setEmail] = useState('');
+    /**
+     * Estado para o nome de utilizador.
+     * @type {[string, React.Dispatch<React.SetStateAction<string>>]}
+     */
     const [username, setUsername] = useState('');
+    /**
+     * Estado para a nova palavra-passe.
+     * @type {[string, React.Dispatch<React.SetStateAction<string>>]}
+     */
     const [newPassword, setNewPassword] = useState('');
+    /**
+     * Estado para repetir a palavra-passe.
+     * @type {[string, React.Dispatch<React.SetStateAction<string>>]}
+     */
     const [repeatPassword, setRepeatPassword] = useState('');
+    /**
+     * Hook para navegação programática.
+     * @type {import('react-router-dom').NavigateFunction}
+     */
     const navigate = useNavigate();
 
+    /**
+     * Lida com a submissão do formulário de registo.
+     * Valida as passwords, constrói o objeto de dados do utilizador e envia para a API.
+     * Exibe alertas para feedback ao utilizador.
+     * @param {Event} e - O evento de submissão do formulário.
+     */
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -28,44 +68,36 @@ function Register() {
         };
 
         try {
-            // CORREÇÃO: Endpoint para /api/signup
             await api.post("/api/signup", userData);
-            alert("Registo efetuado com sucesso! Redirecionando para a página de login..."); // Usar alert() em vez de toast
+            alert("Registo efetuado com sucesso! Redirecionando para a página de login...");
             setTimeout(() => {
-                navigate('/entrar'); // Redirecionar para a página de login
+                navigate('/entrar');
             }, 2000);
         } catch (error) {
             console.error('Erro ao registar:', error);
 
-            // --- TRATAMENTO DE ERROS MAIS DETALHADO (sem react-toastify) ---
             if (error.response) {
-                // O servidor respondeu com um status de erro (e.g., 4xx, 5xx)
                 const status = error.response.status;
-                // Tenta extrair uma mensagem do corpo da resposta, se disponível
                 const errorMessage = error.response.data && error.response.data.message
                     ? error.response.data.message
                     : "Ocorreu um erro desconhecido.";
 
                 switch (status) {
-                    case 400: // Bad Request (erro de validação, e.g., campos em falta ou formato errado)
+                    case 400:
                         alert("Dados de registo inválidos: " + errorMessage);
                         break;
-                    case 409: // Conflict (username/email já existe)
-                        // Mensagem específica para utilizador já existente
+                    case 409:
                         alert("Erro no registo: " + (errorMessage.includes("já existe") ? errorMessage : "Este nome de utilizador ou email já está em uso. Por favor, escolha outro."));
                         break;
-                    case 500: // Internal Server Error
+                    case 500:
                         alert("Erro interno no servidor. Por favor, tente novamente mais tarde.");
                         break;
                     default:
-                        // Captura quaisquer outros status de erro inesperados
                         alert("Ocorreu um erro inesperado: " + errorMessage);
                 }
             } else if (error.request) {
-                // O pedido foi feito mas não houve resposta (problema de rede ou CORS grave)
                 alert("Não foi possível conectar ao servidor. Verifique sua conexão ou o status do backend.");
             } else {
-                // Algo aconteceu na configuração do pedido que desencadeou um erro
                 alert("Ocorreu um erro inesperado ao processar o pedido.");
             }
         }
@@ -79,12 +111,12 @@ function Register() {
                 </div>
             </div>
 
-            <section id="contact"> {/* ID #contact para estilização */}
-                <div className="contact-container"> {/* Classe para o container do formulário */}
+            <section id="contact">
+                <div className="contact-container">
                     <h3>registo</h3>
-                    <form id="form" className="topBefore" onSubmit={handleSubmit}> {/* IDs e classes para o formulário */}
-                        <div className="form-columns"> {/* Container para as duas colunas */}
-                            <div className="column left-column"> {/* Primeira coluna */}
+                    <form id="form" className="topBefore" onSubmit={handleSubmit}>
+                        <div className="form-columns">
+                            <div className="column left-column">
                                 <label htmlFor="firstName"></label>
                                 <input
                                     id="firstName"
@@ -116,7 +148,7 @@ function Register() {
                                 />
                             </div>
 
-                            <div className="column right-column"> {/* Segunda coluna */}
+                            <div className="column right-column">
                                 <label htmlFor="lastName"></label>
                                 <input
                                     id="lastName"

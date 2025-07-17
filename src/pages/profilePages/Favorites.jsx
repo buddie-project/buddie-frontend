@@ -1,18 +1,25 @@
 import '../../style/profilePages/ProfileLayout.css';
 import '../../style/profilePages/Favorites.css';
-import React, {useEffect, useMemo, useState} from "react";
-import {Link} from "react-router-dom";
+import React, { useEffect, useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import Pagination from "../../components/generalComponents/Pagination.jsx";
 import api from "../../services/api.js";
 import seedrandom from "seedrandom";
-import {toast} from "react-toastify";
-import {useUserContext} from "../../services/UserContext.jsx";
+import { toast } from "react-toastify";
+import { useUserContext } from "../../services/UserContext.jsx";
 
-// CORREÇÃO: Mover 'colors' e 'assignColors' para FORA do componente.
-// Elas são estáticas e não precisam ser recriadas em cada renderização, evitando o loop.
+/**
+ * Cores predefinidas para os cartões de cursos favoritos, usadas para atribuição aleatória.
+ * @type {string[]}
+ */
 const FAVORITES_COLORS = ["red", "blue", "green", "orange", "purple", "yellow", "darkblue"];
 
-// Esta função agora é estática e não precisa de useMemo/useCallback no interior do componente.
+/**
+ * Atribui uma cor aleatória a cada curso favorito numa lista.
+ * A seleção de cor é determinística baseada no `courseId` ou `courseName` para consistência visual.
+ * @param {object[]} courses - A lista de objetos de curso.
+ * @returns {object[]} A lista de cursos com a propriedade 'color' adicionada.
+ */
 const assignColorsToFavorites = (courses) => {
     return courses.map((course) => {
         const rng = seedrandom(course.courseId?.toString() || course.courseName);
@@ -22,63 +29,92 @@ const assignColorsToFavorites = (courses) => {
     });
 };
 
+/**
+ * Componente Favorites.
+ * Exibe uma lista paginada de cursos que o utilizador marcou como favoritos.
+ * Permite remover cursos da lista de favoritos.
+ * @returns {JSX.Element} O componente Favorites.
+ */
 function Favorites() {
-
+    /**
+     * Estado para o título da página ativa (fixo como 'Favoritos').
+     * @type {string}
+     */
     const [activePage] = useState('Favoritos');
+    /**
+     * Estado para armazenar a lista de cursos favoritos.
+     * @type {object[]}
+     */
     const [favoriteCourses, setFavoriteCourses] = useState([]);
+    /**
+     * Estado para a página atual da paginação.
+     * @type {[number, React.Dispatch<React.SetStateAction<number>>]}
+     */
     const [currentPage, setCurrentPage] = useState(1);
+    /**
+     * Estado para indicar se os cursos estão a ser carregados.
+     * @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]}
+     */
     const [isLoading, setIsLoading] = useState(true);
+    /**
+     * Número de itens a serem exibidos por página.
+     * @type {number}
+     */
     const itemsPerPage = 8;
 
+    /**
+     * Hook para aceder ao contexto do utilizador.
+     * @type {{user: object|null}}
+     */
     const { user } = useUserContext();
 
-    // REMOVIDO: A declaração 'const colors = [...]' que estava aqui.
-    // REMOVIDO: A declaração 'const assignColors = useMemo(() => { ... })' que estava aqui.
-
+    /**
+     * Efeito para buscar os cursos favoritos do utilizador.
+     * É executado quando o objeto `user` do contexto muda.
+     */
     useEffect(() => {
         const fetchFavorites = async () => {
             setIsLoading(true);
             try {
-                // Verificar se o utilizador está logado antes de tentar buscar dados privados
                 if (!user || !user.id) {
                     setIsLoading(false);
-                    setFavoriteCourses([]); // Limpar favoritos se não houver utilizador
+                    setFavoriteCourses([]);
                     toast.info("Faça login para ver os seus favoritos.", { theme: "colored" });
                     return;
                 }
 
                 const res = await api.get("/api/user/favorites");
 
-                // CORREÇÃO: Adicionado filtro e optional chaining para mapeamento seguro.
                 const mappedCourses = res.data
-                    .filter(favDto => favDto.course != null) // Filtra objetos onde 'course' é nulo
+                    .filter(favDto => favDto.course != null)
                     .map(favDto => ({
-                        id: favDto.id, // ID da entidade FavoriteCourse
-                        courseId: favDto.course?.courseId, // Acesso seguro com optional chaining
+                        id: favDto.id,
+                        courseId: favDto.course?.courseId,
                         courseName: favDto.course?.courseName,
                         fieldOfStudy: favDto.course?.fieldOfStudy,
                         institutionName: favDto.course?.institutionName,
                         institutionId: favDto.course?.institutionId
                     }));
 
-                // CORREÇÃO: Chamar a função global assignColorsToFavorites.
                 const finalCourses = assignColorsToFavorites(mappedCourses);
                 setFavoriteCourses(finalCourses);
             } catch (error) {
                 console.error("Erro ao buscar favoritos:", error);
                 toast.error("Erro ao carregar favoritos. Tente novamente.", { theme: "colored" });
-                setFavoriteCourses([]); // Limpar em caso de erro na requisição
+                setFavoriteCourses([]);
             } finally {
                 setIsLoading(false);
             }
         };
 
-        // CORREÇÃO: As dependências são agora 'user'.
-        // A função assignColorsToFavorites é global e não causa loops.
         fetchFavorites();
-    }, [user]); // Depende do objeto 'user' (para re-executar quando o estado de login muda)
+    }, [user]);
 
-    // Remover curso favorito
+    /**
+     * Lida com a remoção de um curso da lista de favoritos.
+     * Envia um pedido para a API para remover a entrada do favorito e atualiza o estado localmente.
+     * @param {number|string} favoriteEntryId - O ID da entrada do curso favorito a ser removida.
+     */
     const handleRemoveFavorite = async (favoriteEntryId) => {
         try {
             await api.post(`/api/user/favorites/{id}/delete`);
@@ -91,8 +127,18 @@ function Favorites() {
         }
     };
 
+    /**
+     * Calcula o número total de páginas com base na quantidade de cursos favoritos e itens por página.
+     * Memoizado para evitar recálculos desnecessários.
+     * @type {number}
+     */
     const totalPages = useMemo(() => Math.ceil(favoriteCourses.length / itemsPerPage), [favoriteCourses]);
 
+    /**
+     * Calcula a sub-lista de cursos favoritos a serem exibidos na página atual.
+     * Memoizado para evitar recálculos desnecessários.
+     * @type {object[]}
+     */
     const displayedCourses = useMemo(() => {
         const start = (currentPage - 1) * itemsPerPage;
         return favoriteCourses.slice(start, start + itemsPerPage);
@@ -110,7 +156,6 @@ function Favorites() {
                     ) : (
                         <div className="courses-container-profile">
                             {displayedCourses.map((course) => (
-                                // Garante que course.courseId existe antes de renderizar
                                 course.courseId && (
                                     <div key={course.id} className={`course-card-profile ${course.color || "default-color"}`}>
                                         <Link to={`/cursos/${course.courseId}`} className="course-link">

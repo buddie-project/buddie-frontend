@@ -3,21 +3,57 @@ import React, { useEffect, useState } from "react";
 import { useUserContext } from "../../services/UserContext.jsx";
 import api from "../../services/api.js";
 
+/**
+ * Componente Profile.
+ * Exibe as informações de perfil do utilizador logado, como dados pessoais e morada.
+ * Permite uma visualização consolidada dos detalhes do perfil.
+ * @returns {JSX.Element} O componente Profile.
+ */
 function Profile() {
+    /**
+     * Estado para o título da página ativa (fixo como 'Conta').
+     * @type {string}
+     */
     const [activePage] = useState('Conta');
+    /**
+     * Hook para aceder ao contexto do utilizador, contendo informações do utilizador logado.
+     * @type {{user: object|null}}
+     */
     const { user } = useUserContext();
+    /**
+     * Estado para armazenar os dados do perfil do utilizador.
+     * @type {[object|null, React.Dispatch<React.SetStateAction<object|null>>]}
+     */
     const [profileData, setProfileData] = useState(null);
+    /**
+     * Estado para indicar se os dados do perfil estão a ser carregados.
+     * @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]}
+     */
     const [loading, setLoading] = useState(true);
+    /**
+     * Estado para armazenar mensagens de erro caso a carga do perfil falhe.
+     * @type {[string|null, React.Dispatch<React.SetStateAction<string|null>>]}
+     */
     const [error, setError] = useState(null);
 
+    /**
+     * Efeito para buscar os dados do perfil do utilizador.
+     * É executado sempre que o objeto `user` do contexto muda.
+     */
     useEffect(() => {
+        // Verifica se o utilizador está logado antes de tentar buscar o perfil.
         if (!user) {
             setLoading(false);
             setError("Não estás logado. Por favor, faz login para continuar.");
             return;
         }
 
+        /**
+         * Função assíncrona para buscar os dados do perfil do utilizador a partir da API.
+         */
         const fetchProfile = async () => {
+            setLoading(true);
+            setError(null);
             try {
                 const response = await api.get(`/api/users/profile/${user.id}`);
                 setProfileData(response.data);
@@ -32,7 +68,9 @@ function Profile() {
         fetchProfile();
     }, [user]);
 
+    // Exibe mensagem de carregamento enquanto os dados estão a ser buscados.
     if (loading) return <div className="loading-profile">A carregar perfil...</div>;
+    // Exibe mensagem de erro se ocorreu um problema ao carregar o perfil.
     if (error) return <div className="error-profile">{error}</div>;
 
     return (
@@ -40,7 +78,7 @@ function Profile() {
             <div className="container-card-two">
                 <h2 className="card-two-title">{activePage}</h2>
                 <div className="card-two">
-                    {activePage === 'Conta' && profileData && (
+                    {profileData && (
                         <div className="sections">
                             <div className="section section-one">
                                 <h4>{profileData.firstName} {profileData.lastName}</h4>

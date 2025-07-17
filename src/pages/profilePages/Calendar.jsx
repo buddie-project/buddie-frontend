@@ -2,72 +2,110 @@ import '../../style/profilePages/ProfileLayout.css';
 import '../../style/profilePages/Calendar.css';
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
-// import Cookies from 'universal-cookie'; // REMOVIDO: Não é mais necessário aceder diretamente a 'universal-cookie' aqui
 import CalendarLib from 'react-calendar';
 import seedrandom from 'seedrandom';
 import 'react-calendar/dist/Calendar.css';
 import { toast } from 'react-toastify';
-import { useUserContext } from "../../services/UserContext.jsx"; // NOVO: Importar o UserContext
+import { useUserContext } from "../../services/UserContext.jsx";
 
+/**
+ * Componente Calendar.
+ * Exibe um calendário onde os eventos públicos e privados do utilizador são marcados.
+ * Eventos que duram vários dias preencherão todas as datas do seu período.
+ * @returns {JSX.Element} O componente Calendar.
+ */
 function Calendar() {
+    /**
+     * Estado para o título da página atual (fixo como 'Calendário').
+     * @type {string}
+     */
     const [activePage] = useState('Calendário');
+    /**
+     * Estado para a data selecionada atualmente no calendário.
+     * @type {[Date, React.Dispatch<React.SetStateAction<Date>>]}
+     */
     const [selectedDate, setSelectedDate] = useState(new Date());
-    // A variável 'setEvents' não estava a ser usada diretamente, mas sim como um placeholder.
-    // Alterada para 'events' e 'setEvents' para ser consistente com o uso de estado.
+    /**
+     * Estado para armazenar todos os eventos (públicos e privados) obtidos do backend.
+     * @type {[Array<object>, React.Dispatch<React.SetStateAction<Array<object>>>]}
+     */
     const [events, setEvents] = useState([]);
+    /**
+     * Estado para mapear datas (formato 'YYYY-MM-DD') a arrays de eventos que ocorrem nesse dia.
+     * Facilita a aplicação de estilos e a exibição de conteúdo.
+     * @type {{[key: string]: Array<object>}}
+     */
+    const [datesWithEvents, setDatesWithEvents] = useState({});
+    /**
+     * Estado para armazenar cores aleatórias para cada dia do mês, para fins estéticos.
+     * @type {{[key: string]: string}}
+     */
     const [dayColors, setDayColors] = useState({});
 
-    // NOVO: Obter o objeto 'user' do contexto.
-    const { user, loading } = useUserContext(); // Incluí 'loading' para melhor gestão do estado
+    /**
+     * Hook para obter o objeto 'user' do contexto, bem como o estado de carregamento.
+     * @type {{user: object|null, loading: boolean}}
+     */
+    const { user, loading } = useUserContext();
 
-    // REMOVIDO: Acesso direto a cookies
-    // const cookies = new Cookies();
-    // const user_id = cookies.get('xyz');
-
-    // Lista de classes de sombras coloridas
+    /**
+     * Lista de classes CSS para sombras coloridas aleatórias nos dias do calendário.
+     * @type {string[]}
+     */
     const colorList = [
         'shadow-red', 'shadow-orange', 'shadow-yellow',
         'shadow-green', 'shadow-blue', 'shadow-purple', 'shadow-pink'
     ];
 
+    /**
+     * Efeito para buscar e processar eventos do calendário.
+     * É executado sempre que o objeto `user` ou o estado `loading` mudam.
+     */
     useEffect(() => {
         const fetchEvents = async () => {
-            // VERIFICAR: Se o utilizador está carregado e autenticado (user.id existe)
             if (loading || !user || !user.id) {
-                // Se ainda está a carregar, ou se não há utilizador logado, não tenta ir buscar eventos privados
-                // Apenas busca eventos públicos neste caso ou exibe um estado de carregamento.
-                // Ou, se os eventos privados devem depender do login, ajusta a lógica aqui.
-                if (!user || !user.id) {
-                    setEvents([]); // Limpa eventos se não houver utilizador
-                    // Opcional: toast.info("Faça login para ver os seus eventos privados.");
-                }
+                setEvents([]);
+                setDatesWithEvents({});
                 return;
             }
 
             try {
-                // USAR: user.id diretamente do contexto para eventos privados
-                // NOTA: O backend não precisa do userId como @RequestParam se a autenticação for baseada em sessão.
-                // A chamada `/api/calendar/private` no backend já usa SecurityContextHolder para obter o utilizador logado.
-                // Se o endpoint `/api/calendar/private` realmente esperar um query param `userId`,
-                // é uma má prática de segurança e deve ser alterado no backend para confiar APENAS na sessão.
-                // Assumindo que o backend é seguro e obtém o ID da sessão, o `?userId=${user.id}` pode ser removido aqui.
-                // Para manter compatibilidade com o código atual do backend que pode (erroneamente) depender dele, mantemos por enquanto.
-                // O ideal é que `axios.get(`/api/calendar/private`);` seja suficiente.
-                const privateRes = await axios.get(`/api/calendar/private?userId=${user.id}`); //
-                const publicRes = await axios.get(`/api/calendar/public`); //
-                setEvents([...privateRes.data, ...publicRes.data]);
+                const privateRes = await axios.get(`/api/calendar/private?userId=${user.id}`);
+                const publicRes = await axios.get(`/api/calendar/public`);
+                const fetchedEvents = [...privateRes.data, ...publicRes.data];
+                setEvents(fetchedEvents);
+
+                const newDatesWithEvents = {};
+                fetchedEvents.forEach(event => {
+                    const startDate = new Date(event.startDate);
+                    const endDate = new Date(event.endDate);
+
+                    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+                        const dateString = d.toISOString().slice(0, 10);
+                        if (!newDatesWithEvents[dateString]) {
+                            newDatesWithEvents[dateString] = [];
+                        }
+                        newDatesWithEvents[dateString].push(event);
+                    }
+                });
+                setDatesWithEvents(newDatesWithEvents);
+
             } catch (error) {
                 console.error('Erro ao carregar eventos:', error);
                 toast.error('Erro ao carregar eventos.', { theme: "colored" });
-                setEvents([]); // Limpar eventos em caso de erro
+                setEvents([]);
+                setDatesWithEvents({});
             }
         };
-        // Dependências ATUALIZADAS: O efeito re-executa quando 'user' ou 'loading' mudam.
-        // 'user_id' removido das dependências, pois agora dependemos do objeto 'user' completo.
         fetchEvents();
     }, [user, loading]);
 
-    // Gera cores aleatórias para os dias do mês, sem repetições consecutivas.
+    /**
+     * Gera cores aleatórias para os dias do mês, garantindo que não se repetem consecutivamente.
+     * As cores são baseadas na data para consistência dentro de um determinado dia.
+     * @param {Date[]} monthDates - Um array de objetos Date para os dias do mês.
+     * @returns {{[key: string]: string}} Um objeto mapeando a representação da data (string) para uma classe de cor.
+     */
     const generateColorsForMonth = (monthDates) => {
         const colors = {};
         let prevColor = '';
@@ -83,7 +121,9 @@ function Calendar() {
         return colors;
     };
 
-    // Efeito para gerar as cores dos dias sempre que o mês selecionado muda.
+    /**
+     * Efeito para gerar as cores estéticas dos dias sempre que o mês selecionado muda.
+     */
     useEffect(() => {
         const monthDates = [];
         const month = selectedDate.getMonth();
@@ -107,12 +147,12 @@ function Calendar() {
                         onClickDay={setSelectedDate}
                         showFixedNumberOfWeeks={true}
                         tileClassName={({ date, view }) => {
+                            let classes = '';
                             if (view === 'month') {
                                 const isCurrentMonth = date.getMonth() === selectedDate.getMonth();
                                 const isToday = date.toDateString() === new Date().toDateString();
                                 const key = date.toDateString();
 
-                                let classes = '';
                                 if (isCurrentMonth) {
                                     classes += dayColors[key] + ' current-month-day';
                                 } else {
@@ -123,12 +163,32 @@ function Calendar() {
                                     classes += ' today';
                                 }
 
-                                return classes.trim();
+                                const dateStringYMD = date.toISOString().slice(0, 10);
+                                if (datesWithEvents[dateStringYMD] && datesWithEvents[dateStringYMD].length > 0) {
+                                    classes += ' has-event';
+                                }
                             }
+                            return classes.trim();
                         }}
                         formatDay={(locale, date) => (
                             <div className="day-number">{date.getDate()}</div>
                         )}
+                        tileContent={({ date, view }) => {
+                            if (view === 'month') {
+                                const dateStringYMD = date.toISOString().slice(0, 10);
+                                const eventsOnThisDay = datesWithEvents[dateStringYMD];
+                                if (eventsOnThisDay && eventsOnThisDay.length > 0) {
+                                    return (
+                                        <div className="events-indicator">
+                                            {eventsOnThisDay.map((event, index) => (
+                                                <div key={index} className="event-dot" title={event.description}></div>
+                                            ))}
+                                        </div>
+                                    );
+                                }
+                            }
+                            return null;
+                        }}
                     />
                 </div>
             </div>

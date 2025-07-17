@@ -1,10 +1,28 @@
 import React, {useEffect, useState} from "react";
 import "../style/Faqs.css";
 
+/**
+ * Componente Faqs.
+ * Exibe uma lista de Perguntas Frequentes (FAQs) com funcionalidade de expandir/colapsar.
+ * Busca as FAQs de uma API local.
+ * @returns {JSX.Element} O componente Faqs.
+ */
 function Faqs() {
+    /**
+     * Estado para armazenar a lista de FAQs.
+     * @type {[Array<object>, React.Dispatch<React.SetStateAction<Array<object>>>]}
+     */
     const [faqs, setFaqs] = useState([]);
+    /**
+     * Estado para controlar o índice da FAQ atualmente aberta (expandida).
+     * `null` se nenhuma FAQ estiver aberta.
+     * @type {[number|null, React.Dispatch<React.SetStateAction<number|null>>]}
+     */
     const [openIndex, setOpenIndex] = useState(null);
 
+    /**
+     * Efeito para buscar as FAQs do backend quando o componente é montado.
+     */
     useEffect(() => {
         fetch("http://localhost:8080/api/faqs")
             .then((response) => response.json())
@@ -16,6 +34,11 @@ function Faqs() {
             });
     }, []);
 
+    /**
+     * Alterna a visibilidade da resposta de uma FAQ específica.
+     * Se a FAQ clicada já estiver aberta, ela será fechada; caso contrário, será aberta.
+     * @param {number} index - O índice da FAQ a ser alternada.
+     */
     const toggleFaq = (index) => {
         setOpenIndex(openIndex === index ? null : index);
     };

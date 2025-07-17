@@ -2,7 +2,17 @@ import '../../style/profilePages/ProfileLayout.css';
 import '../../style/profilePages/Interactions.css';
 import React from 'react';
 
+/**
+ * Componente Interactions.
+ * Exibe uma lista de interações de exemplo do utilizador, como "likes" ou mensagens.
+ * Nota: Os dados são estáticos e apenas para demonstração.
+ * @returns {JSX.Element} O componente Interactions.
+ */
 function Interactions() {
+    /**
+     * Array de objetos de interação de exemplo.
+     * @type {Array<object>}
+     */
     const interactions = [
         { id: 1, user: 'André Mendes', action: 'gostou do teu comentário', date: '13/07/2025', color: '#FF8A00' },
         { id: 2, user: 'Beatriz Lopes', action: 'enviou-te uma mensagem', date: '12/07/2025', color: '#007bff' },

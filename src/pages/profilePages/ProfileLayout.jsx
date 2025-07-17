@@ -1,55 +1,86 @@
 import '../../style/profilePages/ProfileLayout.css';
 import React, {useState, useRef, useEffect} from 'react';
 import {Outlet, NavLink, useNavigate} from 'react-router-dom';
-// import Cookies from 'universal-cookie'; // REMOVIDO: Não é mais necessário aceder diretamente a 'universal-cookie' aqui
 import {toast} from 'react-toastify';
 import {useUserContext} from "../../services/UserContext.jsx";
-import api from "../../services/api.js"; // Importar api para as chamadas de API
+import api from "../../services/api.js";
 
+/**
+ * Componente ProfileLayout.
+ * Este layout é a estrutura base para as páginas de perfil do utilizador.
+ * Contém a navegação lateral do perfil e uma área para renderizar o conteúdo das sub-rotas.
+ * Gere o upload e exibição do avatar do utilizador e o estado do menu móvel.
+ * @returns {JSX.Element} O componente ProfileLayout.
+ */
 function ProfileLayout() {
+    /**
+     * Estado para armazenar os dados do formulário, incluindo o URL do avatar.
+     * @type {[object, React.Dispatch<React.SetStateAction<object>>]}
+     */
     const [formData, setFormData] = useState({avatar: ''});
+    /**
+     * Estado para controlar a abertura/fecho do menu de navegação móvel do perfil.
+     * @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]}
+     */
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    /**
+     * Referência para o input de ficheiro do avatar (oculto).
+     * Usado para acionar o clique programaticamente.
+     * @type {React.RefObject<HTMLInputElement>}
+     */
     const avatarInputRef = useRef(null);
-    // OBTER: 'user' e 'logout' diretamente do contexto do utilizador
+    /**
+     * Hook para aceder ao contexto do utilizador, contendo o objeto de utilizador logado e a função de logout.
+     * @type {{user: object|null, logout: () => Promise<void>}}
+     */
     const { user, logout } = useUserContext();
+    /**
+     * Hook para navegação programática.
+     * @type {import('react-router-dom').NavigateFunction}
+     */
     const navigate = useNavigate();
 
-    // REMOVIDO: Acesso direto a cookies
-    // const cookies = new Cookies();
-    // const user_id = cookies.get('xyz');
-
-    // NOVO: Obter o ID do utilizador diretamente do objeto 'user' do contexto.
-    // Usamos 'user?.id' para acesso seguro, caso o objeto 'user' seja null (ex: durante o carregamento inicial).
+    /**
+     * O ID do utilizador do contexto, usado para fazer chamadas de API relacionadas ao utilizador.
+     * É null se o objeto `user` for null (ex: durante o carregamento inicial ou se não houver utilizador logado).
+     * @type {number|null}
+     */
     const userIdFromContext = user?.id;
 
+    /**
+     * Efeito para buscar e carregar a imagem de perfil do utilizador.
+     * É executado sempre que `userIdFromContext` muda.
+     */
     useEffect(() => {
+        /**
+         * Função assíncrona para buscar o URL da imagem de perfil do utilizador.
+         * Define um avatar padrão se o utilizador não estiver logado ou se houver um erro.
+         */
         const fetchUserImages = async () => {
-            // VERIFICAR: Se o ID do utilizador do contexto está disponível antes de fazer a chamada da API.
             if (!userIdFromContext) {
-                // Se não há ID, pode significar que o utilizador não está logado ou ainda está a carregar.
-                // Exibir um avatar padrão neste caso.
                 setFormData({ avatar: 'https://placehold.co/150' });
                 return;
             }
             try {
                 const config = { headers: {"Content-Type": "application/json"} };
-                // USAR: 'userIdFromContext' para a chamada da API, garantindo que o ID vem do contexto centralizado.
                 const avatarResponse = await api.post(`/api/ImageRetrieve`, {user_id: userIdFromContext, type: 'avatar'}, config);
                 setFormData({avatar: avatarResponse.data.link});
             } catch (error) {
                 console.error("Erro ao carregar imagens do perfil:", error);
                 toast.error('Erro ao carregar imagens', {theme: 'colored'});
-                // Em caso de erro, voltar para o avatar padrão.
                 setFormData({ avatar: 'https://placehold.co/150' });
             }
         };
-        // Dependência ATUALIZADA: O efeito só re-executa quando 'userIdFromContext' muda (ou seja, o utilizador muda ou faz login/logout).
         fetchUserImages();
     }, [userIdFromContext]);
 
+    /**
+     * Lida com o upload de um novo ficheiro de imagem para o avatar.
+     * Envia o ficheiro para a API e atualiza o URL do avatar no estado local.
+     * @param {React.ChangeEvent<HTMLInputElement>} e - O evento de mudança do input de ficheiro.
+     */
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
-        // VERIFICAR: Se há um ficheiro E se o ID do utilizador do contexto está disponível.
         if (!file || !userIdFromContext) {
             toast.warn("Por favor, faça login para carregar imagens ou selecione um ficheiro válido.", {theme: 'colored'});
             return;
@@ -57,7 +88,6 @@ function ProfileLayout() {
 
         const form = new FormData();
         form.append('image', file);
-        // USAR: 'userIdFromContext' para a submissão do formulário.
         form.append('user_id', userIdFromContext);
         form.append('type', 'avatar');
 
@@ -72,9 +102,14 @@ function ProfileLayout() {
         }
     };
 
-    // Função para acionar o input de ficheiro de forma programática.
+    /**
+     * Aciona programaticamente o clique no input de ficheiro do avatar.
+     * Isso permite que o utilizador selecione um ficheiro clicando na imagem do avatar.
+     */
     const triggerFileInput = () => avatarInputRef.current.click();
-    // Função para alternar o estado do menu móvel.
+    /**
+     * Alterna o estado de abertura/fecho do menu de navegação móvel do perfil.
+     */
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
     return (
@@ -93,13 +128,12 @@ function ProfileLayout() {
                                    accept="image/*"
                                    style={{display: 'none'}}
                             />
-                            {/* EXIBIR: Avatar do formulário ou um placeholder padrão
+                            {/* O avatar real é exibido aqui, usando `formData.avatar` ou um placeholder */}
                             <img src={formData.avatar || 'https://placehold.co/150'}
                                  alt="Profile avatar"
                                  className="profile-avatar"
                                  style={{cursor: 'pointer' }}
-                            />*/}
-                            {/* EXIBIR: Nome de utilizador do contexto. Se 'user' for null, mostra "Carregando..." */}
+                            />
                             <div className="avatar-upload-hint">@{user ? user.username : 'Carregando...'}</div>
                         </div>
                         <div className="profile-menu">
@@ -117,12 +151,11 @@ function ProfileLayout() {
                                 className="icon-calendar"></i>Calendário</NavLink>
                             <NavLink to="/perfil/configuracoes" className={({isActive}) => isActive ? 'active' : ''}><i
                                 className="icon-config"></i>Configurações</NavLink>
-                            {/* Botão de terminar sessão, utiliza a função 'logout' do contexto */}
                             <button onClick={() => { logout(); navigate("/"); }}><i className="icon-logout"></i>Terminar Sessão</button>
                         </div>
                     </div>
                 </div>
-                {/* O Outlet renderiza os componentes filhos das rotas aninhadas */}
+                {/* O Outlet renderiza os componentes filhos das rotas aninhadas, como Conta, Favoritos, etc. */}
                 <Outlet/>
             </section>
         </>

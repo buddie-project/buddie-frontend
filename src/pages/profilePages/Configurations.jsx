@@ -3,11 +3,29 @@ import React, {useEffect, useState} from "react";
 import {useUserContext} from "../../services/UserContext.jsx";
 import api from "../../services/api.js";
 import {useNavigate} from "react-router-dom";
-import {toast} from 'react-toastify'; // Importar toast
+import {toast} from 'react-toastify';
 
+/**
+ * Componente Configurations.
+ * Permite ao utilizador visualizar e atualizar as suas informações de perfil, como dados pessoais e morada.
+ * Inclui também a opção de eliminar a conta.
+ * @returns {JSX.Element} O componente Configurations.
+ */
 function Configurations() {
+    /**
+     * Estado para o título da página ativa (fixo como 'Configurações').
+     * @type {string}
+     */
     const [activePage] = useState('Configurações');
+    /**
+     * Hook para aceder ao contexto do utilizador, contendo o objeto de utilizador logado e a função de logout.
+     * @type {{user: object|null, logout: () => Promise<void>}}
+     */
     const {user, logout} = useUserContext();
+    /**
+     * Estado para armazenar e gerir os dados do perfil do utilizador.
+     * @type {[object, React.Dispatch<React.SetStateAction<object>>]}
+     */
     const [profileData, setProfileData] = useState({
         firstName: '',
         lastName: '',
@@ -19,25 +37,48 @@ function Configurations() {
         country: '',
         zipCode: '',
         bio: '',
-    })
+    });
 
+    /**
+     * Estado para indicar se os dados do perfil estão a ser carregados.
+     * @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]}
+     */
     const [loading, setLoading] = useState(true);
+    /**
+     * Estado para armazenar mensagens de erro.
+     * @type {[string|null, React.Dispatch<React.SetStateAction<string|null>>]}
+     */
     const [error, setError] = useState(null);
+    /**
+     * Estado para indicar se as alterações do perfil estão a ser guardadas.
+     * @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]}
+     */
     const [isSaving, setIsSaving] = useState(false);
+    /**
+     * Hook para navegação programática.
+     * @type {import('react-router-dom').NavigateFunction}
+     */
     const navigate = useNavigate();
 
+    /**
+     * Efeito para buscar os dados do perfil do utilizador.
+     * É executado sempre que o objeto `user` do contexto muda.
+     */
     useEffect(() => {
-        // user é o objeto UserResponseDTO do UserContext. Se for null, o utilizador não está logado.
-        if (!user || !user.id) { // Adicionado user.id para ser mais explícito
+        // Verifica se o utilizador está logado antes de tentar buscar o perfil.
+        if (!user || !user.id) {
             setLoading(false);
             setError("Não estás logado. Por favor, faz login para continuar.");
             return;
         }
+        /**
+         * Função assíncrona para buscar os dados completos do perfil a partir da API.
+         * Popula o estado `profileData` com os dados recebidos.
+         */
         const fetchProfile = async () => {
             setLoading(true);
             setError(null);
             try {
-                // Axios com withCredentials já envia o cookie JSESSIONID
                 const response = await api.get(`/api/users/profile/${user.id}`);
                 setProfileData({
                     fullName: response.data.fullName || "",
@@ -58,7 +99,6 @@ function Configurations() {
             } catch (err) {
                 console.error("Erro ao carregar perfil:", err);
                 setError("Não foi possível carregar o perfil. Por favor, tente novamente mais tarde.");
-                // Usar toast para feedback não-bloqueante
                 toast.error("Erro ao carregar perfil. Por favor, faça login novamente.");
             } finally {
                 setLoading(false);
@@ -68,7 +108,10 @@ function Configurations() {
         fetchProfile();
     }, [user]);
 
-    // CORREÇÃO: A função handleSaveChanges deve ser declarada como 'async'
+    /**
+     * Lida com a submissão das alterações do perfil.
+     * Envia os dados atualizados para a API e exibe notificações de sucesso/erro.
+     */
     const handleSaveChanges = async () => {
         if (!user || !user.id) {
             toast.error("Precisas estar logado para guardar alterações.");
@@ -89,30 +132,27 @@ function Configurations() {
                 bio: profileData.bio,
             };
 
-            // O seu código original tinha duas linhas de api.post, a segunda já estava correta.
-            // Certifique-se que usa apenas uma chamada.
-            // REMOVIDO: Authorization: `Bearer ${token}`
-            // Apenas Content-Type é necessário para indicar que o corpo é JSON
             await api.post(`/api/users/profile/update`, profileDTOToSend, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
             });
-            // O alert pode ser substituído por um toast para uma experiência mais moderna.
             toast.success("Perfil atualizado com sucesso!");
             navigate("/perfil/conta");
 
         } catch (err) {
             console.error("Erro ao guardar alterações:", err);
             setError("Não foi possível guardar as alterações.");
-            toast.error("Erro ao guardar alterações. Tente novamente."); // Usar toast
+            toast.error("Erro ao guardar alterações. Tente novamente.");
         } finally {
             setIsSaving(false);
         }
     };
 
-    // Handler para eliminar conta
-    // CORREÇÃO: A função handleDeleteAccount também deve ser declarada como 'async'
+    /**
+     * Lida com a eliminação da conta do utilizador.
+     * Pede confirmação ao utilizador e, se confirmada, envia o pedido de eliminação à API.
+     */
     const handleDeleteAccount = async () => {
         if (!user || !user.id) {
             toast.error("Precisas estar logado para eliminar a tua conta.");
@@ -120,23 +160,24 @@ function Configurations() {
         }
         if (window.confirm("Tem a certeza que deseja eliminar a sua conta? Esta ação é irreversível.")) {
             try {
-                // MANTIDO como api.post conforme solicitado, mas é semanticamente recomendado usar DELETE
                 await api.post(`/api/users/profile/${user.id}/delete`, null, {
-                    headers: {
-                        // REMOVIDO: Authorization: `Bearer ${token}`
-                        // Certifique-se que o backend tem um @PostMapping para este path
-                    },
+                    headers: {},
                 });
-                toast.success("Conta eliminada com sucesso!"); // Usar toast
-                logout(); // Faz logout no frontend
+                toast.success("Conta eliminada com sucesso!");
+                logout();
             } catch (err) {
                 console.error("Erro ao eliminar conta:", err);
                 setError("Não foi possível eliminar a conta.");
-                toast.error("Erro ao eliminar conta. Tente novamente."); // Usar toast
+                toast.error("Erro ao eliminar conta. Tente novamente.");
             }
         }
     };
 
+    /**
+     * Lida com a mudança nos inputs do formulário de perfil.
+     * Atualiza o estado `profileData` com os novos valores.
+     * @param {React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement>} e - O evento de mudança do input.
+     */
     const handleInputChange = (e) => {
         const {name, value} = e.target;
         setProfileData(prevData => ({
@@ -145,19 +186,17 @@ function Configurations() {
         }));
     };
 
-    // Renderização condicional para feedback
+    // Exibe mensagem de carregamento enquanto os dados estão a ser buscados.
     if (loading) return <div className="loading-profile">A carregar perfil...</div>;
-    // O erro será exibido aqui se 'error' não for null
+    // Exibe mensagem de erro se ocorreu um problema ao carregar o perfil.
     if (error) return <div className="error-profile">{error}</div>;
 
-    // Se não estiver em loading e não tiver erro, renderiza o formulário
     return (
         <>
             <div className="container-card-two">
                 <h2 className="card-two-title">{activePage}</h2>
                 <div className="card-two">
-                    {/* Condição activePage === 'Configurações' sempre será true aqui */}
-                    {activePage === 'Configurações' && profileData && (
+                    {profileData && (
                         <div className="configurations-section">
                             <h4>Informação Pessoal</h4>
                             <div className="line">
