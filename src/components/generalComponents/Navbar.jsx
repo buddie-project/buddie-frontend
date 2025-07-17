@@ -3,6 +3,18 @@ import { useState, useEffect } from "react";
 import { useUserContext } from "../../services/UserContext.jsx";
 
 /**
+ * @typedef {object} UserContextObject
+ * @property {object|null} user - O objeto do utilizador autenticado, ou `null`.
+ * @property {function(): Promise<void>} logout - Função para terminar a sessão do utilizador.
+ */
+
+/**
+ * @typedef {function(...*): void} NavigateFunction
+ * Representa a função de navegação do React Router DOM.
+ * @see https://reactrouter.com/docs/en/v6/hooks/use-navigate
+ */
+
+/**
  * Componente Navbar.
  * Representa a barra de navegação principal da aplicação.
  * Gere a abertura/fecho do menu móvel, a visibilidade da barra de pesquisa,
@@ -13,27 +25,27 @@ import { useUserContext } from "../../services/UserContext.jsx";
 function Navbar() {
     /**
      * Estado para controlar a abertura/fecho do menu de navegação móvel.
-     * @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]}
+     * @type {boolean}
      */
     const [menuOpen, setMenuOpen] = useState(false);
     /**
      * Estado para controlar a visibilidade da barra de pesquisa.
-     * @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]}
+     * @type {boolean}
      */
     const [searchOpen, setSearchOpen] = useState(false);
     /**
      * Estado para controlar se a página foi scrollada (para aplicar estilos diferentes).
-     * @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]}
+     * @type {boolean}
      */
     const [scrolled, setScrolled] = useState(false);
     /**
      * Hook para aceder ao contexto do utilizador, contendo informações do utilizador logado e a função de logout.
-     * @type {{user: object|null, logout: () => Promise<void>}}
+     * @type {UserContextObject}
      */
     const { user, logout } = useUserContext();
     /**
      * Hook para navegação programática.
-     * @type {import('react-router-dom').NavigateFunction}
+     * @type {NavigateFunction}
      */
     const navigate = useNavigate();
 
@@ -62,6 +74,7 @@ function Navbar() {
     useEffect(() => {
         /**
          * Lida com o evento de scroll da janela, atualizando o estado `scrolled`.
+         * @param {Event} event - O evento de scroll.
          */
         const handleScroll = () => {
             setScrolled(window.scrollY > 50);

@@ -9,6 +9,34 @@ import { toast } from 'react-toastify';
 import { useUserContext } from "../../services/UserContext.jsx";
 
 /**
+ * @typedef {object} UserContextObject
+ * @property {object|null} user - O objeto do utilizador autenticado, ou `null`.
+ * @property {boolean} loading - Indica se o contexto do utilizador está a carregar.
+ */
+
+/**
+ * @typedef {object} EventObject
+ * @property {number|string} id - O ID do evento.
+ * @property {string} description - A descrição do evento.
+ * @property {string} startDate - A data de início do evento (formato ISO 8601).
+ * @property {string} endDate - A data de fim do evento (formato ISO 8601).
+ * @property {string} [courseName] - O nome do curso associado ao evento.
+ * @property {string} [institutionName] - O nome da instituição associada ao evento.
+ * @property {number|string} [courseId] - O ID do curso associado ao evento.
+ * @property {number|string} [contestId] - O ID do concurso associado ao evento.
+ */
+
+/**
+ * @typedef {object} DatesWithEventsMap
+ * @property {Array<EventObject>} [key] - Um array de objetos de evento para uma data específica (formato 'YYYY-MM-DD').
+ */
+
+/**
+ * @typedef {object} DayColorsMap
+ * @property {string} [key] - A classe de cor para uma data específica (formato de string de data).
+ */
+
+/**
  * Componente Calendar.
  * Exibe um calendário onde os eventos públicos e privados do utilizador são marcados.
  * Eventos que duram vários dias preencherão todas as datas do seu período.
@@ -22,29 +50,29 @@ function Calendar() {
     const [activePage] = useState('Calendário');
     /**
      * Estado para a data selecionada atualmente no calendário.
-     * @type {[Date, React.Dispatch<React.SetStateAction<Date>>]}
+     * @type {Date}
      */
     const [selectedDate, setSelectedDate] = useState(new Date());
     /**
      * Estado para armazenar todos os eventos (públicos e privados) obtidos do backend.
-     * @type {[Array<object>, React.Dispatch<React.SetStateAction<Array<object>>>]}
+     * @type {Array<EventObject>}
      */
     const [events, setEvents] = useState([]);
     /**
      * Estado para mapear datas (formato 'YYYY-MM-DD') a arrays de eventos que ocorrem nesse dia.
      * Facilita a aplicação de estilos e a exibição de conteúdo.
-     * @type {{[key: string]: Array<object>}}
+     * @type {DatesWithEventsMap}
      */
     const [datesWithEvents, setDatesWithEvents] = useState({});
     /**
      * Estado para armazenar cores aleatórias para cada dia do mês, para fins estéticos.
-     * @type {{[key: string]: string}}
+     * @type {DayColorsMap}
      */
     const [dayColors, setDayColors] = useState({});
 
     /**
      * Hook para obter o objeto 'user' do contexto, bem como o estado de carregamento.
-     * @type {{user: object|null, loading: boolean}}
+     * @type {UserContextObject}
      */
     const { user, loading } = useUserContext();
 
@@ -70,7 +98,9 @@ function Calendar() {
             }
 
             try {
-                const privateRes = await axios.get(`/api/calendar/private?userId=${user.id}`);
+                // Removido o parâmetro userId da URL, conforme a prática de segurança recomendada.
+                // O backend deve obter o userId do SecurityContextHolder.
+                const privateRes = await axios.get(`/api/calendar/private`);
                 const publicRes = await axios.get(`/api/calendar/public`);
                 const fetchedEvents = [...privateRes.data, ...publicRes.data];
                 setEvents(fetchedEvents);
@@ -104,7 +134,7 @@ function Calendar() {
      * Gera cores aleatórias para os dias do mês, garantindo que não se repetem consecutivamente.
      * As cores são baseadas na data para consistência dentro de um determinado dia.
      * @param {Date[]} monthDates - Um array de objetos Date para os dias do mês.
-     * @returns {{[key: string]: string}} Um objeto mapeando a representação da data (string) para uma classe de cor.
+     * @returns {DayColorsMap} Um objeto mapeando a representação da data (string) para uma classe de cor.
      */
     const generateColorsForMonth = (monthDates) => {
         const colors = {};

@@ -4,6 +4,12 @@ import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 
 /**
+ * @typedef {function(...*): void} NavigateFunction
+ * Representa a função de navegação do React Router DOM.
+ * @see https://reactrouter.com/docs/en/v6/hooks/use-navigate
+ */
+
+/**
  * Componente Register.
  * Permite que novos utilizadores se registem na aplicação.
  * Realiza validação de password e envia os dados para o backend.
@@ -12,37 +18,37 @@ import {useState} from "react";
 function Register() {
     /**
      * Estado para o primeiro nome do utilizador.
-     * @type {[string, React.Dispatch<React.SetStateAction<string>>]}
+     * @type {string}
      */
     const [firstName, setFirstName] = useState('');
     /**
      * Estado para o apelido do utilizador.
-     * @type {[string, React.Dispatch<React.SetStateAction<string>>]}
+     * @type {string}
      */
     const [lastName, setLastName] = useState('');
     /**
      * Estado para o email do utilizador.
-     * @type {[string, React.Dispatch<React.SetStateAction<string>>]}
+     * @type {string}
      */
     const [email, setEmail] = useState('');
     /**
      * Estado para o nome de utilizador.
-     * @type {[string, React.Dispatch<React.SetStateAction<string>>]}
+     * @type {string}
      */
     const [username, setUsername] = useState('');
     /**
      * Estado para a nova palavra-passe.
-     * @type {[string, React.Dispatch<React.SetStateAction<string>>]}
+     * @type {string}
      */
     const [newPassword, setNewPassword] = useState('');
     /**
      * Estado para repetir a palavra-passe.
-     * @type {[string, React.Dispatch<React.SetStateAction<string>>]}
+     * @type {string}
      */
     const [repeatPassword, setRepeatPassword] = useState('');
     /**
      * Hook para navegação programática.
-     * @type {import('react-router-dom').NavigateFunction}
+     * @type {NavigateFunction}
      */
     const navigate = useNavigate();
 

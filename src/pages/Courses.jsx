@@ -31,6 +31,36 @@ const assignColorsToCourses = (courses) => {
 };
 
 /**
+ * @typedef {object} FiltersObject
+ * @property {string} curso - Filtro para o nome do curso.
+ * @property {string} instituicao - Filtro para o nome da instituição.
+ * @property {string} area - Filtro para a área de estudo.
+ * @property {string} distrito - Filtro para o distrito.
+ * @property {string} status - Filtro para o status do curso.
+ */
+
+/**
+ * @typedef {object} UserContextObject
+ * @property {object|null} user - O objeto do utilizador autenticado, ou `null`.
+ * @property {boolean} loading - Indica se o contexto do utilizador está a carregar.
+ */
+
+/**
+ * @typedef {object} LocationObject
+ * @property {string} pathname - O caminho da URL atual.
+ * @property {string} search - A string de query da URL atual.
+ * @property {string} hash - O fragmento de hash da URL atual.
+ * @property {string} key - A chave única para a localização.
+ * @property {object} state - O estado associado à localização.
+ */
+
+/**
+ * @typedef {function(...*): void} NavigateFunction
+ * Representa a função de navegação do React Router DOM.
+ * @see https://reactrouter.com/docs/en/v6/hooks/use-navigate
+ */
+
+/**
  * Componente Courses.
  * Exibe uma lista paginada e filtrável de cursos. Permite aos utilizadores pesquisar,
  * filtrar cursos por várias categorias e guardar/remover cursos dos favoritos.
@@ -56,7 +86,7 @@ function Courses() {
     const filtersFromQuery = new URLSearchParams(window.location.search);
     /**
      * Objeto de filtros iniciais, com base nos parâmetros da URL.
-     * @type {object}
+     * @type {FiltersObject}
      */
     const initialFilters = {
         curso: filtersFromQuery.get("curso") || "",
@@ -68,7 +98,7 @@ function Courses() {
 
     /**
      * Estado para armazenar os filtros atualmente aplicados.
-     * @type {[object, React.Dispatch<React.SetStateAction<object>>]}
+     * @type {FiltersObject}
      */
     const [filters, setFilters] = useState(initialFilters);
 
@@ -100,28 +130,28 @@ function Courses() {
 
     /**
      * Estado para a página atual da paginação.
-     * @type {[number, React.Dispatch<React.SetStateAction<number>>]}
+     * @type {number}
      */
     const [currentPage, setCurrentPage] = useState(1);
     /**
      * Estado para o número total de páginas da paginação.
-     * @type {[number, React.Dispatch<React.SetStateAction<number>>]}
+     * @type {number}
      */
     const [totalPages, setTotalPages] = useState(0);
     /**
      * Hook para obter o objeto de localização atual, usado para extrair query params.
-     * @type {import('react-router-dom').Location}
+     * @type {LocationObject}
      */
     const location = useLocation();
     /**
      * Hook para navegação programática.
-     * @type {import('react-router-dom').NavigateFunction}
+     * @type {NavigateFunction}
      */
     const navigate = useNavigate();
 
     /**
      * Hook para aceder ao contexto do utilizador, contendo informações do utilizador logado e o estado de carregamento.
-     * @type {{user: object|null, loading: boolean}}
+     * @type {UserContextObject}
      */
     const {user, loading: userContextLoading} = useUserContext();
     /**
@@ -132,7 +162,7 @@ function Courses() {
 
     /**
      * Estado para indicar se os cursos estão a ser carregados.
-     * @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]}
+     * @type {boolean}
      */
     const [isLoading, setIsLoading] = useState(true);
 

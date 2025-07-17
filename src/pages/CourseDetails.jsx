@@ -7,6 +7,39 @@ import { useUserContext } from "../services/UserContext.jsx";
 import {toast} from "react-toastify";
 
 /**
+ * @typedef {object} CourseDetailsData
+ * @property {object} courseDTO - Objeto com os detalhes básicos do curso (nome, área, estado, etc.).
+ * @property {string} [courseDTO.nome] - Nome do curso.
+ * @property {string} [courseDTO.nomeAreaEstudo] - Nome da área de estudo.
+ * @property {string} [courseDTO.estadoCursoDGES] - Estado do curso na DGES.
+ * @property {number} [courseDTO.instituicaoId] - ID da instituição.
+ * @property {number} [courseDTO.ects] - Créditos ECTS do curso.
+ * @property {string} [courseDTO.grau] - Grau académico do curso.
+ * @property {string} [courseDTO.localidade] - Localidade do curso.
+ * @property {string} [accessRegime] - Regime de acesso ao curso.
+ * @property {string} [shift] - Turno do curso (Diurno, Pós-laboral).
+ * @property {string} [academicYear] - Ano académico do curso.
+ * @property {number} [vacancies] - Número de vagas.
+ * @property {string} [rankingCriteria] - Critérios de seriação.
+ * @property {string} [description] - Descrição do curso.
+ * @property {string} [sourceUrl] - URL da fonte (site da universidade).
+ * @property {string} [institutionName] - Nome da instituição (pode vir diretamente com o curso).
+ */
+
+/**
+ * @typedef {object} InstitutionData
+ * @property {number} id - ID da instituição.
+ * @property {string} nomeIes - Nome da instituição.
+ * // ... outras propriedades da instituição
+ */
+
+/**
+ * @typedef {object} UserContextObject
+ * @property {object|null} user - O objeto do utilizador autenticado, ou `null`.
+ * @property {boolean} loading - Indica se o contexto do utilizador está a carregar.
+ */
+
+/**
  * Componente CourseDetails.
  * Exibe os detalhes completos de um curso específico, incluindo informações da instituição,
  * dados do concurso (se aplicável) e a funcionalidade de adicionar/remover dos favoritos.
@@ -21,22 +54,22 @@ function CourseDetails() {
     const {courseId } = useParams();
     /**
      * Estado para armazenar os dados detalhados do curso.
-     * @type {[object|null, React.Dispatch<React.SetStateAction<object|null>>]}
+     * @type {CourseDetailsData|null}
      */
     const [course, setCourse] = useState(null);
     /**
      * Estado para armazenar os dados da instituição associada ao curso.
-     * @type {[object|null, React.Dispatch<React.SetStateAction<object|null>>]}
+     * @type {InstitutionData|null}
      */
     const [institution, setInstitution] = useState(null);
     /**
      * Estado para indicar se o curso atual é favorito do utilizador logado.
-     * @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]}
+     * @type {boolean}
      */
     const [isFavorite, setIsFavorite] = useState(false);
     /**
      * Hook para aceder ao contexto do utilizador.
-     * @type {{user: object|null}}
+     * @type {UserContextObject}
      */
     const { user } = useUserContext();
     /**

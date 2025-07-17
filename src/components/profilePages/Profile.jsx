@@ -4,6 +4,30 @@ import { useUserContext } from "../../services/UserContext.jsx";
 import api from "../../services/api.js";
 
 /**
+ * @typedef {object} UserContextObject
+ * @property {object|null} user - O objeto do utilizador autenticado, ou `null`.
+ * @property {boolean} loading - Indica se o contexto do utilizador está a carregar.
+ */
+
+/**
+ * @typedef {object} ProfileData
+ * @property {string} [fullName] - Nome completo do utilizador.
+ * @property {string} [firstName] - Primeiro nome do utilizador.
+ * @property {string} [lastName] - Apelido(s) do utilizador.
+ * @property {number} [age] - Idade do utilizador.
+ * @property {string} [gender] - Género do utilizador.
+ * @property {string} [phoneNumber] - Número de telefone do utilizador.
+ * @property {string} [district] - Distrito de residência.
+ * @property {string} [city] - Cidade de residência.
+ * @property {string} [country] - País de residência.
+ * @property {string} [zipCode] - Código postal.
+ * @property {string} [bio] - Biografia do utilizador.
+ * @property {string} [imagePath] - Caminho da imagem de perfil.
+ * @property {string} [institution] - Instituição de ensino.
+ * @property {string} [degree] - Grau de ensino.
+ */
+
+/**
  * Componente Profile.
  * Exibe as informações de perfil do utilizador logado, como dados pessoais e morada.
  * Permite uma visualização consolidada dos detalhes do perfil.
@@ -16,23 +40,23 @@ function Profile() {
      */
     const [activePage] = useState('Conta');
     /**
-     * Hook para aceder ao contexto do utilizador, contendo informações do utilizador logado.
-     * @type {{user: object|null}}
+     * Hook para aceder ao contexto do utilizador.
+     * @type {UserContextObject}
      */
     const { user } = useUserContext();
     /**
      * Estado para armazenar os dados do perfil do utilizador.
-     * @type {[object|null, React.Dispatch<React.SetStateAction<object|null>>]}
+     * @type {ProfileData|null}
      */
     const [profileData, setProfileData] = useState(null);
     /**
      * Estado para indicar se os dados do perfil estão a ser carregados.
-     * @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]}
+     * @type {boolean}
      */
     const [loading, setLoading] = useState(true);
     /**
      * Estado para armazenar mensagens de erro caso a carga do perfil falhe.
-     * @type {[string|null, React.Dispatch<React.SetStateAction<string|null>>]}
+     * @type {string|null}
      */
     const [error, setError] = useState(null);
 
@@ -56,10 +80,25 @@ function Profile() {
             setError(null);
             try {
                 const response = await api.get(`/api/users/profile/${user.id}`);
-                setProfileData(response.data);
+                setProfileData({
+                    fullName: response.data.fullName || "",
+                    firstName: response.data.firstName || "",
+                    lastName: response.data.lastName || "",
+                    age: response.data.age || 0,
+                    gender: response.data.gender || "",
+                    phoneNumber: response.data.phoneNumber || "",
+                    district: response.data.district || "",
+                    city: response.data.city || "",
+                    country: response.data.country || "",
+                    zipCode: response.data.zipCode || "",
+                    bio: response.data.bio || "",
+                    imagePath: response.data.imagePath || "",
+                    institution: response.data.institution || "",
+                    degree: response.data.degree || "",
+                });
             } catch (err) {
-                console.error("Erro ao carregar o perfil:", err);
-                setError("Erro ao carregar perfil.");
+                console.error("Erro ao carregar perfil:", err);
+                setError("Não foi possível carregar o perfil. Por favor, tente novamente mais tarde.");
             } finally {
                 setLoading(false);
             }

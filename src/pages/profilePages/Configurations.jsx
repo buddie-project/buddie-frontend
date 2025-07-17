@@ -6,6 +6,37 @@ import {useNavigate} from "react-router-dom";
 import {toast} from 'react-toastify';
 
 /**
+ * @typedef {object} UserContextObject
+ * @property {object|null} user - O objeto do utilizador autenticado, ou `null`.
+ * @property {function(): Promise<void>} logout - Função para terminar a sessão do utilizador.
+ */
+
+/**
+ * @typedef {function(...*): void} NavigateFunction
+ * Representa a função de navegação do React Router DOM.
+ * @see https://reactrouter.com/docs/en/v6/hooks/use-navigate
+ */
+
+/**
+ * @typedef {object} ProfileData
+ * @property {string} firstName - Primeiro nome do utilizador.
+ * @property {string} lastName - Apelido(s) do utilizador.
+ * @property {number} age - Idade do utilizador.
+ * @property {string} gender - Género do utilizador.
+ * @property {string} phoneNumber - Número de telefone do utilizador.
+ * @property {string} district - Distrito de residência.
+ * @property {string} city - Cidade de residência.
+ * @property {string} country - País de residência.
+ * @property {string} zipCode - Código postal.
+ * @property {string} bio - Biografia do utilizador.
+ * @property {string} [fullName] - Nome completo do utilizador (opcional).
+ * @property {string} [imagePath] - Caminho da imagem de perfil (opcional).
+ * @property {string} [institution] - Instituição de ensino (opcional).
+ * @property {string} [degree] - Grau de ensino (opcional).
+ * @property {boolean} [showProfilePicture] - Indica se a foto de perfil deve ser exibida (opcional).
+ */
+
+/**
  * Componente Configurations.
  * Permite ao utilizador visualizar e atualizar as suas informações de perfil, como dados pessoais e morada.
  * Inclui também a opção de eliminar a conta.
@@ -19,12 +50,12 @@ function Configurations() {
     const [activePage] = useState('Configurações');
     /**
      * Hook para aceder ao contexto do utilizador, contendo o objeto de utilizador logado e a função de logout.
-     * @type {{user: object|null, logout: () => Promise<void>}}
+     * @type {UserContextObject}
      */
     const {user, logout} = useUserContext();
     /**
      * Estado para armazenar e gerir os dados do perfil do utilizador.
-     * @type {[object, React.Dispatch<React.SetStateAction<object>>]}
+     * @type {ProfileData}
      */
     const [profileData, setProfileData] = useState({
         firstName: '',
@@ -41,22 +72,22 @@ function Configurations() {
 
     /**
      * Estado para indicar se os dados do perfil estão a ser carregados.
-     * @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]}
+     * @type {boolean}
      */
     const [loading, setLoading] = useState(true);
     /**
      * Estado para armazenar mensagens de erro.
-     * @type {[string|null, React.Dispatch<React.SetStateAction<string|null>>]}
+     * @type {string|null}
      */
     const [error, setError] = useState(null);
     /**
      * Estado para indicar se as alterações do perfil estão a ser guardadas.
-     * @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]}
+     * @type {boolean}
      */
     const [isSaving, setIsSaving] = useState(false);
     /**
      * Hook para navegação programática.
-     * @type {import('react-router-dom').NavigateFunction}
+     * @type {NavigateFunction}
      */
     const navigate = useNavigate();
 

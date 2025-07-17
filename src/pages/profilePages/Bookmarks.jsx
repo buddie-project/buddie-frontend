@@ -30,6 +30,12 @@ const assignColorsToBookmarks = (courses) => {
 };
 
 /**
+ * @typedef {object} UserContextObject
+ * @property {object|null} user - O objeto do utilizador autenticado, ou `null`.
+ * @property {boolean} loading - Indica se o contexto do utilizador está a carregar.
+ */
+
+/**
  * Componente Bookmarks.
  * Exibe uma lista paginada de cursos que o utilizador guardou para "Ver mais tarde".
  * Permite remover cursos da lista de guardados.
@@ -48,17 +54,17 @@ function Bookmarks() {
     const [savedCourses, setSavedCourses] = useState([]);
     /**
      * Estado para a página atual da paginação.
-     * @type {[number, React.Dispatch<React.SetStateAction<number>>]}
+     * @type {number}
      */
     const [currentPage, setCurrentPage] = useState(1);
     /**
      * Estado para indicar se os cursos estão a ser carregados.
-     * @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]}
+     * @type {boolean}
      */
     const [isLoading, setIsLoading] = useState(true);
     /**
      * Estado para armazenar mensagens de erro caso a carga dos cursos falhe.
-     * @type {[string|null, React.Dispatch<React.SetStateAction<string|null>>]}
+     * @type {string|null}
      */
     const [error, setError] = useState(null);
     /**
@@ -69,7 +75,7 @@ function Bookmarks() {
 
     /**
      * Hook para aceder ao contexto do utilizador.
-     * @type {{user: object|null}}
+     * @type {UserContextObject}
      */
     const { user } = useUserContext();
 
@@ -120,7 +126,8 @@ function Bookmarks() {
      */
     const handleRemoveBookmark = async (savedCourseEntryId) => {
         try {
-            await api.post(`/api/user/saved/{id}/delete`);
+            // BUG CORRIGIDO: O {id} na string do URL agora é substituído pelo valor da variável.
+            await api.post(`/api/user/saved/${savedCourseEntryId}/delete`);
             setSavedCourses(prev => prev.filter(sc => sc.id !== savedCourseEntryId));
             toast.success("Curso removido da lista 'Ver mais tarde'!", { theme: "colored" });
         } catch (error) {

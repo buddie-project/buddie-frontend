@@ -3,9 +3,9 @@ import "../../style/Pagination.css";
 
 /**
  * @typedef {object} PaginationProps
+ * @property {function(number): void} onPageChange - Função de callback para ser chamada quando a página muda.
  * @property {number} currentPage - A página atual.
  * @property {number} totalPages - O número total de páginas.
- * @property {(page: number) => void} onPageChange - Função de callback para ser chamada quando a página muda.
  */
 
 /**
@@ -18,7 +18,7 @@ import "../../style/Pagination.css";
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     /**
      * Estado para o valor do input da página.
-     * @type {[string, React.Dispatch<React.SetStateAction<string>>]}
+     * @type {string}
      */
     const [inputPage, setInputPage] = useState(currentPage.toString());
 

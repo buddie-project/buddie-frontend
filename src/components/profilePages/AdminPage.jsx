@@ -8,6 +8,28 @@ import api from "../../services/api.js";
 import AutocompleteDropdown from "../generalComponents/AutocompleteDropdown.jsx";
 
 /**
+ * @typedef {object} NavigateFunction
+ * Representa a função de navegação do React Router DOM.
+ * @see https://reactrouter.com/docs/en/v6/hooks/use-navigate
+ */
+
+/**
+ * @typedef {object} UserContextObject
+ * @property {object|null} user - O objeto do utilizador autenticado, ou `null`.
+ * @property {function(): Promise<void>} logout - Função para terminar a sessão do utilizador.
+ * @property {boolean} loading - Indica se o contexto do utilizador está a carregar.
+ */
+
+/**
+ * @typedef {object} FiltersObject
+ * @property {string} curso - Filtro para o nome do curso.
+ * @property {string} instituicao - Filtro para o nome da instituição.
+ * @property {string} area - Filtro para a área de estudo.
+ * @property {string} distrito - Filtro para o distrito.
+ * @property {string} status - Filtro para o status do curso.
+ */
+
+/**
  * Componente AdminPage.
  * Esta página permite aos administradores gerir utilizadores, aprovar comentários e adicionar novos cursos.
  * @returns {JSX.Element} O componente AdminPage.
@@ -16,12 +38,12 @@ function AdminPage() {
     /**
      * Estado para controlar a aba ativa na área de administração.
      * Pode ser 'GerirUtilizadores', 'AprovacaoComentarios' ou 'AdicionarCursos'.
-     * @type {[string, React.Dispatch<React.SetStateAction<string>>]}
+     * @type {string}
      */
     const [activeTab, setActiveTab] = useState('GerirUtilizadores');
     /**
      * Estado para armazenar dados de formulário, como o avatar do utilizador.
-     * @type {[object, React.Dispatch<React.SetStateAction<object>>]}
+     * @type {object}
      */
     const [formData, setFormData] = useState({ avatar: '' });
     /**
@@ -31,7 +53,7 @@ function AdminPage() {
     const [activePage] = useState('Administração');
     /**
      * Estado para controlar a abertura/fecho do menu de navegação móvel do perfil.
-     * @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]}
+     * @type {boolean}
      */
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     /**
@@ -42,18 +64,18 @@ function AdminPage() {
     const avatarInputRef = useRef(null);
     /**
      * Hook para aceder ao contexto do utilizador, contendo informações do utilizador logado e a função de logout.
-     * @type {{user: object|null, logout: () => Promise<void>}}
+     * @type {UserContextObject}
      */
     const { user, logout } = useUserContext();
     /**
      * Hook para navegação programática entre rotas.
-     * @type {import('react-router-dom').NavigateFunction}
+     * @type {NavigateFunction}
      */
     const navigate = useNavigate();
 
     /**
      * Objeto de estado inicial para os filtros de curso, usado no formulário de adicionar cursos.
-     * @type {object}
+     * @type {FiltersObject}
      */
     const initialFilters = {
         curso: "",
@@ -64,32 +86,32 @@ function AdminPage() {
     };
     /**
      * Estado para os dados do formulário de adição de cursos.
-     * @type {[object, React.Dispatch<React.SetStateAction<object>>]}
+     * @type {FiltersObject}
      */
     const [filters, setFilters] = useState(initialFilters);
     /**
      * Estado para armazenar a lista de nomes de cursos distintos para o AutocompleteDropdown.
-     * @type {[string[], React.Dispatch<React.SetStateAction<string[]>>]}
+     * @type {string[]}
      */
     const [courseNames, setCourseNames] = useState([]);
     /**
      * Estado para armazenar a lista de nomes de instituições distintas para o AutocompleteDropdown.
-     * @type {[string[], React.Dispatch<React.SetStateAction<string[]>>]}
+     * @type {string[]}
      */
     const [institutionNames, setInstitutionNames] = useState([]);
     /**
      * Estado para armazenar a lista de áreas de estudo distintas para o AutocompleteDropdown.
-     * @type {[string[], React.Dispatch<React.SetStateAction<string[]>>]}
+     * @type {string[]}
      */
     const [areas, setAreas] = useState([]);
     /**
      * Estado para armazenar a lista de distritos distintos para o AutocompleteDropdown.
-     * @type {[string[], React.Dispatch<React.SetStateAction<string[]>>]}
+     * @type {string[]}
      */
     const [districts, setDistricts] = useState([]);
     /**
      * Estado para armazenar a lista de opções de status de cursos distintos para o AutocompleteDropdown.
-     * @type {[string[], React.Dispatch<React.SetStateAction<string[]>>]}
+     * @type {string[]}
      */
     const [statusOptions, setStatusOptions] = useState([]);
 
@@ -125,7 +147,7 @@ function AdminPage() {
     /**
      * Lida com a mudança nos campos do formulário de adição de curso.
      * @param {string} filterName - O nome do campo do formulário a ser atualizado.
-     * @param {string|number} value - O novo valor do campo.
+     * @param {string} value - O novo valor do campo.
      */
     const handleFilterChange = (filterName, value) => {
         setFilters(prev => ({
@@ -139,7 +161,6 @@ function AdminPage() {
      * Valida os campos obrigatórios e envia os dados para a API.
      */
     const handleAddCourse = async () => {
-        // Validação básica dos campos do formulário
         if (!filters.curso || !filters.instituicao || !filters.area || !filters.distrito || !filters.status) {
             toast.error("Por favor, preencha todos os campos obrigatórios para o curso.", {theme: "colored"});
             return;
@@ -148,7 +169,7 @@ function AdminPage() {
         try {
             await api.post("/api/courses", filters);
             toast.success("Curso adicionado com sucesso!");
-            setFilters(initialFilters); // Limpa o formulário após sucesso
+            setFilters(initialFilters);
         } catch (error) {
             console.error("Erro ao adicionar curso:", error);
             toast.error("Erro ao adicionar curso.");
@@ -157,17 +178,17 @@ function AdminPage() {
 
     /**
      * Estado para a query de pesquisa de utilizadores.
-     * @type {[string, React.Dispatch<React.SetStateAction<string>>]}
+     * @type {string}
      */
     const [searchQuery, setSearchQuery] = useState('');
     /**
      * Estado para os resultados da pesquisa de utilizadores.
-     * @type {[Array<object>, React.Dispatch<React.SetStateAction<Array<object>>>]}
+     * @type {Array<object>}
      */
     const [searchResults, setSearchResults] = useState([]);
     /**
      * Estado para indicar se a pesquisa de utilizadores está em andamento.
-     * @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]}
+     * @type {boolean}
      */
     const [isSearching, setIsSearching] = useState(false);
     /**
@@ -184,8 +205,6 @@ function AdminPage() {
      */
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
-        // Verifica se um ficheiro foi selecionado e se o ID do utilizador está disponível.
-        // Assume-se que 'user_id_from_context' é a fonte de verdade para o ID do utilizador.
         if (!file || !user_id_from_context) {
             toast.warn("Por favor, selecione um ficheiro e certifique-se que está logado.", {theme: 'colored'});
             return;
@@ -202,9 +221,8 @@ function AdminPage() {
             toast.success('Imagem enviada com sucesso!', { theme: 'colored' });
             setFormData(prev => ({ ...prev, avatar: data.link }));
         } catch (error) {
-            // Log do erro completo para depuração, mas apenas exibe uma mensagem genérica ao utilizador
-            console.error("Erro ao enviar imagem:", error);
-            toast.error('Erro ao enviar imagem', { theme: 'colored' });
+            console.error("Erro ao adicionar imagem:", error);
+            toast.error('Erro ao carregar imagem', { theme: 'colored' });
         }
     };
 

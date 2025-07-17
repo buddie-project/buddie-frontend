@@ -1,8 +1,14 @@
 import '../../style/LoginAndRegister.css';
 import api from "../../services/api.js";
 import {useNavigate} from "react-router-dom";
-import {useUserContext} from "../../services/UserContext.jsx";
+import {useUserContext} from "../../services/UserContext.jsx"; // <<< ADICIONAR ESTA LINHA
 import {useState} from "react";
+
+/**
+ * @typedef {function(...*): void} NavigateFunction
+ * Representa a função de navegação do React Router DOM.
+ * @see https://reactrouter.com/docs/en/v6/hooks/use-navigate
+ */
 
 /**
  * Componente de login (Login).
@@ -12,22 +18,22 @@ import {useState} from "react";
 function Login() {
     /**
      * Estado para armazenar o email do utilizador.
-     * @type {[string, React.Dispatch<React.SetStateAction<string>>]}
+     * @type {string}
      */
     const [email, setEmail] = useState("");
     /**
      * Estado para armazenar a password do utilizador.
-     * @type {[string, React.Dispatch<React.SetStateAction<string>>]}
+     * @type {string}
      */
     const [password, setPassword] = useState("");
     /**
      * Contexto do utilizador para aceder a funções de autenticação e estado do utilizador.
      * @type {object}
      */
-    const context = useUserContext();
+    const context = useUserContext(); // Esta linha causava o erro
     /**
      * Hook para navegação programática entre rotas.
-     * @type {import('react-router-dom').NavigateFunction}
+     * @type {NavigateFunction}
      */
     const navigate = useNavigate();
 

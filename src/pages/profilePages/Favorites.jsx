@@ -30,6 +30,12 @@ const assignColorsToFavorites = (courses) => {
 };
 
 /**
+ * @typedef {object} UserContextObject
+ * @property {object|null} user - O objeto do utilizador autenticado, ou `null`.
+ * @property {boolean} loading - Indica se o contexto do utilizador está a carregar.
+ */
+
+/**
  * Componente Favorites.
  * Exibe uma lista paginada de cursos que o utilizador marcou como favoritos.
  * Permite remover cursos da lista de favoritos.
@@ -48,12 +54,12 @@ function Favorites() {
     const [favoriteCourses, setFavoriteCourses] = useState([]);
     /**
      * Estado para a página atual da paginação.
-     * @type {[number, React.Dispatch<React.SetStateAction<number>>]}
+     * @type {number}
      */
     const [currentPage, setCurrentPage] = useState(1);
     /**
      * Estado para indicar se os cursos estão a ser carregados.
-     * @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]}
+     * @type {boolean}
      */
     const [isLoading, setIsLoading] = useState(true);
     /**
@@ -64,7 +70,7 @@ function Favorites() {
 
     /**
      * Hook para aceder ao contexto do utilizador.
-     * @type {{user: object|null}}
+     * @type {UserContextObject}
      */
     const { user } = useUserContext();
 
@@ -117,7 +123,8 @@ function Favorites() {
      */
     const handleRemoveFavorite = async (favoriteEntryId) => {
         try {
-            await api.post(`/api/user/favorites/{id}/delete`);
+            // BUG CORRIGIDO: O {id} na string do URL agora é substituído pelo valor da variável.
+            await api.post(`/api/user/favorites/${favoriteEntryId}/delete`);
             setFavoriteCourses(prev => prev.filter(fc => fc.id !== favoriteEntryId));
             toast.success("Curso removido dos favoritos!", {theme: "colored"});
         } catch (error) {

@@ -38,6 +38,30 @@ import { setUserContextRef } from "./services/api.js";
 import ProtectedRoute from './routes/ProtectedRoute';
 
 /**
+ * @typedef {object} LocationObject
+ * @property {string} pathname - O caminho da URL atual.
+ * @property {string} search - A string de query da URL atual.
+ * @property {string} hash - O fragmento de hash da URL atual.
+ * @property {string} key - A chave única para a localização.
+ * @property {object} state - O estado associado à localização.
+ */
+
+/**
+ * @typedef {function(...*): void} NavigateFunction
+ * Representa a função de navegação do React Router DOM.
+ * @see https://reactrouter.com/docs/en/v6/hooks/use-navigate
+ */
+
+/**
+ * @typedef {object} UserContextValue
+ * @property {object|null} user - O objeto do utilizador autenticado, ou `null`.
+ * @property {function(object|null): void} setUser - Função para definir o objeto do utilizador.
+ * @property {boolean} loading - Indica se o contexto do utilizador está a carregar.
+ * @property {function(string, string): Promise<boolean>} login - Função para realizar o login.
+ * @property {function(): Promise<void>} logout - Função para realizar o logout.
+ */
+
+/**
  * Componente principal da aplicação.
  * Configura as rotas da aplicação, gerencia o estado global do utilizador através do UserContext,
  * e controla a renderização condicional da Navbar e do Footer.
@@ -46,18 +70,18 @@ import ProtectedRoute from './routes/ProtectedRoute';
 function App() {
     /**
      * Hook para obter o objeto de localização atual, usado para determinar a rota.
-     * @type {import('react-router-dom').Location}
+     * @type {LocationObject}
      */
     const location = useLocation();
     /**
      * Hook para navegação programática.
-     * @type {import('react-router-dom').NavigateFunction}
+     * @type {NavigateFunction}
      */
     const navigate = useNavigate();
     /**
      * Objeto de contexto do utilizador obtido via hook `useUserContext`.
      * Contém o estado do utilizador e funções de autenticação.
-     * @type {object}
+     * @type {UserContextValue}
      */
     const userContext = useUserContext();
     /**
@@ -153,7 +177,7 @@ function App() {
                         <Route path="/admin" element={<AdminPage/>}/>
                     </Route>
 
-                    {/* Rota Opcional para Acesso Negado:
+                    {/* Rota para Acesso Negado:
                         Exibida caso um utilizador sem permissão tente aceder a uma rota protegida. */}
                     <Route path="/acesso-negado" element={<div>Acesso Negado. Você não tem permissão para ver esta página.</div>} />
 
