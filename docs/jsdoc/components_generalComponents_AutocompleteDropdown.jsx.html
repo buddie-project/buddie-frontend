@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/generalComponents/AutocompleteDropdown.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/generalComponents/AutocompleteDropdown.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, {useState, useEffect, useRef, useCallback} from 'react';
+import "../../style/Autocomplete.css";
+
+/**
+ * @typedef {object} AutocompleteDropdownProps
+ * @property {string} label - O texto do placeholder para o input.
+ * @property {string} value - O valor atual do input.
+ * @property {string[]} options - Uma matriz de strings para as opções de sugestão.
+ * @property {(value: string) => void} onValueChange - Função de callback para ser chamada quando o valor do input muda.
+ * @property {string} [className=""] - Classes CSS adicionais para o componente wrapper.
+ */
+
+/**
+ * Um componente de dropdown de autocomplete reutilizável.
+ * Permite aos utilizadores escrever um texto e ver sugestões filtradas
+ * de uma lista de opções fornecida.
+ *
+ * @param {AutocompleteDropdownProps} props - As propriedades do componente.
+ * @returns {JSX.Element} O componente AutocompleteDropdown.
+ */
+const AutocompleteDropdown = ({
+                                  label,
+                                  value,
+                                  options,
+                                  onValueChange,
+                                  className = "",
+                              }) => {
+    /**
+     * Estado para o valor atual do input do campo de texto.
+     * @type {[string, React.Dispatch&lt;React.SetStateAction&lt;string>>]}
+     */
+    const [inputValue, setInputValue] = useState(value || "");
+    /**
+     * Estado para as sugestões filtradas exibidas no dropdown.
+     * @type {[string[], React.Dispatch&lt;React.SetStateAction&lt;string[]>>]}
+     */
+    const [suggestions, setSuggestions] = useState(options);
+    /**
+     * Estado para controlar a visibilidade do dropdown de sugestões.
+     * @type {[boolean, React.Dispatch&lt;React.SetStateAction&lt;boolean>>]}
+     */
+    const [isOpen, setIsOpen] = useState(false);
+    /**
+     * Ref para o elemento DOM do wrapper do componente.
+     * Usado para detectar cliques fora do componente.
+     * @type {React.RefObject&lt;HTMLDivElement>}
+     */
+    const wrapperRef = useRef(null);
+
+    /**
+     * Efeito para sincronizar o inputValue com a prop 'value' e controlar o estado 'isOpen'.
+     * Fechar o dropdown e redefinir as sugestões se o valor for limpo externamente.
+     */
+    // Atualiza inputValue quando a prop "value" muda
+    useEffect(() => {
+        setInputValue(value || "");
+    }, [value]);
+
+// Atualiza as sugestões quando as opções mudam
+    useEffect(() => {
+        setSuggestions(options);
+    }, [options]);
+
+
+    /**
+     * Efeito para adicionar e remover um event listener para detetar cliques fora do componente,
+     * o que fecha o dropdown de sugestões.
+     */
+    useEffect(() => {
+        /**
+         * Lida com cliques fora do componente para fechar o dropdown.
+         * @param {MouseEvent} event - O evento de clique.
+         */
+        const handleClickOutside = (event) => {
+            if (wrapperRef.current &amp;&amp; !wrapperRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [wrapperRef]);
+
+    /**
+     * Lida com a mudança do input de texto, filtra as sugestões e abre o dropdown.
+     * @param {React.ChangeEvent&lt;HTMLInputElement>} e - O evento de mudança do input.
+     */
+    const handleInputChange = (e) => {
+        const newValue = e.target.value;
+        setInputValue(newValue);
+        onValueChange(newValue);
+
+        if (newValue.length > 0) {
+            const filtered = options.filter(option =>
+                option.toLowerCase().includes(newValue.toLowerCase())
+            );
+            setSuggestions(filtered);
+        } else {
+            setSuggestions(options);
+        }
+        setIsOpen(true);
+    };
+
+    /**
+     * Lida com a seleção de uma sugestão no dropdown.
+     * Define o input com a sugestão selecionada e fecha o dropdown.
+     * @param {string} suggestion - A sugestão selecionada.
+     */
+    const handleSelectSuggestion = useCallback((suggestion) => {
+        setInputValue(suggestion);
+        onValueChange(suggestion);
+        setIsOpen(false);
+    }, [onValueChange]);
+
+
+    /**
+     * Lida com o foco no input. Se o input já contiver um valor de uma opção existente,
+     * limpa o input para permitir uma nova pesquisa. Abre o dropdown.
+     */
+    const handleInputFocus = () => {
+        if (inputValue &amp;&amp; options.includes(inputValue)) {
+            setInputValue("");
+            onValueChange("");
+
+        }
+        setSuggestions(options);
+        setIsOpen(true);
+    };
+
+    const renderSuggestionItem = (suggestion, index) => (
+        &lt;li
+            key={suggestion + index}
+            onClick={() => handleSelectSuggestion(suggestion)}
+        >
+            {suggestion}
+        &lt;/li>
+    );
+
+    return (
+        &lt;div className={`autocomplete-dropdown-wrapper ${className}`} ref={wrapperRef}>
+            &lt;input
+                type="text"
+                placeholder={label}
+                value={inputValue}
+                onChange={handleInputChange}
+                onFocus={handleInputFocus}
+                className="autocomplete-dropdown-input"
+            />
+            {isOpen &amp;&amp; suggestions.length > 0 &amp;&amp; (
+                &lt;ul className="autocomplete-dropdown-suggestions">
+                    {suggestions.map((suggestion, index) => (
+                        &lt;li key={suggestion + index} onClick={() => handleSelectSuggestion(suggestion)}>
+                            {suggestion}
+                        &lt;/li>
+                    ))}
+                &lt;/ul>
+            )}
+            {isOpen &amp;&amp; suggestions.length > 0 &amp;&amp; (
+                &lt;ul className="autocomplete-dropdown-suggestions">
+                    {suggestions.map(renderSuggestionItem)}
+                &lt;/ul>
+            )}
+        &lt;/div>
+    );
+};
+
+export default AutocompleteDropdown;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#About">About</a></li><li><a href="global.html#AdminPage">AdminPage</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#AutocompleteDropdown">AutocompleteDropdown</a></li><li><a href="global.html#BOOKMARKS_COLORS">BOOKMARKS_COLORS</a></li><li><a href="global.html#Bookmarks">Bookmarks</a></li><li><a href="global.html#COLORS">COLORS</a></li><li><a href="global.html#Calendar">Calendar</a></li><li><a href="global.html#Comments">Comments</a></li><li><a href="global.html#Configurations">Configurations</a></li><li><a href="global.html#CourseDetails">CourseDetails</a></li><li><a href="global.html#Courses">Courses</a></li><li><a href="global.html#FAVORITES_COLORS">FAVORITES_COLORS</a></li><li><a href="global.html#Faqs">Faqs</a></li><li><a href="global.html#Favorites">Favorites</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#Homepage">Homepage</a></li><li><a href="global.html#InstitutionDetails">InstitutionDetails</a></li><li><a href="global.html#Interactions">Interactions</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#Notifications">Notifications</a></li><li><a href="global.html#Pagination">Pagination</a></li><li><a href="global.html#Profile">Profile</a></li><li><a href="global.html#ProfileLayout">ProfileLayout</a></li><li><a href="global.html#ProtectedRoute">ProtectedRoute</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#SignIn">SignIn</a></li><li><a href="global.html#SignUp">SignUp</a></li><li><a href="global.html#UserContext">UserContext</a></li><li><a href="global.html#UserProvider">UserProvider</a></li><li><a href="global.html#api">api</a></li><li><a href="global.html#assignColorsToBookmarks">assignColorsToBookmarks</a></li><li><a href="global.html#assignColorsToCourses">assignColorsToCourses</a></li><li><a href="global.html#assignColorsToFavorites">assignColorsToFavorites</a></li><li><a href="global.html#setUserContextRef">setUserContextRef</a></li><li><a href="global.html#useUserContext">useUserContext</a></li><li><a href="global.html#userContextRef">userContextRef</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu Jul 17 2025 23:05:57 GMT+0100 (Hora de verão da Europa Ocidental)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

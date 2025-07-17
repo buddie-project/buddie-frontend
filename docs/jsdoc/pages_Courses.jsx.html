@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pages/Courses.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pages/Courses.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import "../style/Courses.css";
+import "../style/App.css";
+import React, {useEffect, useState} from "react";
+import Pagination from "../components/generalComponents/Pagination.jsx";
+import {Link, useLocation, useNavigate} from "react-router-dom";
+import api from "../services/api.js";
+import AutocompleteDropdown from "./../components/generalComponents/AutocompleteDropdown.jsx";
+import {useUserContext} from "../services/UserContext.jsx";
+import {toast} from 'react-toastify';
+import seedrandom from "seedrandom";
+
+/**
+ * Cores predefinidas para os cartões de curso, usadas para atribuição aleatória.
+ * @type {string[]}
+ */
+const COLORS = ["red", "blue", "green", "orange", "purple", "yellow", "darkblue"];
+
+/**
+ * Atribui uma cor aleatória a cada curso numa lista, garantindo que a cor anterior não é repetida.
+ * A seleção de cor é determinística baseada no courseId ou courseName para consistência visual.
+ * @param {object[]} courses - A lista de objetos de curso.
+ * @returns {object[]} A lista de cursos com a propriedade 'color' adicionada.
+ */
+const assignColorsToCourses = (courses) => {
+    return courses.map((course) => {
+        const rng = seedrandom(course.courseId?.toString() || course.courseName);
+        const colorIndex = Math.floor(rng() * COLORS.length);
+        const color = COLORS[colorIndex];
+        return {...course, color};
+    });
+};
+
+/**
+ * @typedef {object} FiltersObject
+ * @property {string} curso - Filtro para o nome do curso.
+ * @property {string} instituicao - Filtro para o nome da instituição.
+ * @property {string} area - Filtro para a área de estudo.
+ * @property {string} distrito - Filtro para o distrito.
+ * @property {string} status - Filtro para o status do curso.
+ */
+
+/**
+ * @typedef {object} UserContextObject
+ * @property {object|null} user - O objeto do utilizador autenticado, ou `null`.
+ * @property {boolean} loading - Indica se o contexto do utilizador está a carregar.
+ */
+
+/**
+ * @typedef {object} LocationObject
+ * @property {string} pathname - O caminho da URL atual.
+ * @property {string} search - A string de query da URL atual.
+ * @property {string} hash - O fragmento de hash da URL atual.
+ * @property {string} key - A chave única para a localização.
+ * @property {object} state - O estado associado à localização.
+ */
+
+/**
+ * @typedef {function(...*): void} NavigateFunction
+ * Representa a função de navegação do React Router DOM.
+ * @see https://reactrouter.com/docs/en/v6/hooks/use-navigate
+ */
+
+/**
+ * Componente Courses.
+ * Exibe uma lista paginada e filtrável de cursos. Permite aos utilizadores pesquisar,
+ * filtrar cursos por várias categorias e guardar/remover cursos dos favoritos.
+ * @returns {JSX.Element} O componente Courses.
+ */
+function Courses() {
+    /**
+     * Estado para armazenar os IDs dos cursos guardados pelo utilizador.
+     * @type {Set&lt;string|number>}
+     */
+    const [savedCourseIds, setSavedCourseIds] = useState(new Set());
+    /**
+     * Estado para armazenar os dados dos cursos a serem exibidos.
+     * Inclui a cor atribuída para o cartão.
+     * @type {object[]}
+     */
+    const [coursesData, setCoursesData] = useState([]);
+
+    /**
+     * Extrai os filtros iniciais da URL da página.
+     * @type {URLSearchParams}
+     */
+    const filtersFromQuery = new URLSearchParams(window.location.search);
+    /**
+     * Objeto de filtros iniciais, com base nos parâmetros da URL.
+     * @type {FiltersObject}
+     */
+    const initialFilters = {
+        curso: filtersFromQuery.get("curso") || "",
+        instituicao: filtersFromQuery.get("instituicao") || "",
+        area: filtersFromQuery.get("area") || "",
+        distrito: filtersFromQuery.get("distrito") || "",
+        status: filtersFromQuery.get("status") || "",
+    };
+
+    /**
+     * Estado para armazenar os filtros atualmente aplicados.
+     * @type {FiltersObject}
+     */
+    const [filters, setFilters] = useState(initialFilters);
+
+    /**
+     * Estado para armazenar a lista de nomes de cursos distintos para o AutocompleteDropdown.
+     * @type {string[]}
+     */
+    const [courseNames, setCourseNames] = useState([]);
+    /**
+     * Estado para armazenar a lista de nomes de instituições distintas para o AutocompleteDropdown.
+     * @type {string[]}
+     */
+    const [institutionNames, setInstitutionNames] = useState([]);
+    /**
+     * Estado para armazenar a lista de áreas de estudo distintas para o AutocompleteDropdown.
+     * @type {string[]}
+     */
+    const [areas, setAreas] = useState([]);
+    /**
+     * Estado para armazenar a lista de distritos distintos para o AutocompleteDropdown.
+     * @type {string[]}
+     */
+    const [districts, setDistricts] = useState([]);
+    /**
+     * Estado para armazenar a lista de opções de status de cursos distintos para o AutocompleteDropdown.
+     * @type {string[]}
+     */
+    const [status, setStatus] = useState([]);
+
+    /**
+     * Estado para a página atual da paginação.
+     * @type {number}
+     */
+    const [currentPage, setCurrentPage] = useState(1);
+    /**
+     * Estado para o número total de páginas da paginação.
+     * @type {number}
+     */
+    const [totalPages, setTotalPages] = useState(0);
+    /**
+     * Hook para obter o objeto de localização atual, usado para extrair query params.
+     * @type {LocationObject}
+     */
+    const location = useLocation();
+    /**
+     * Hook para navegação programática.
+     * @type {NavigateFunction}
+     */
+    const navigate = useNavigate();
+
+    /**
+     * Hook para aceder ao contexto do utilizador, contendo informações do utilizador logado e o estado de carregamento.
+     * @type {UserContextObject}
+     */
+    const {user, loading: userContextLoading} = useUserContext();
+    /**
+     * O ID do utilizador logado, ou null se não estiver autenticado.
+     * @type {string|number|null}
+     */
+    const userId = user?.id;
+
+    /**
+     * Estado para indicar se os cursos estão a ser carregados.
+     * @type {boolean}
+     */
+    const [isLoading, setIsLoading] = useState(true);
+
+    /**
+     * Efeito para extrair o filtro 'area' da URL quando o componente monta ou a URL muda.
+     * Também ajusta a página atual se um parâmetro 'page' estiver na URL.
+     */
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const filtro = queryParams.get('filtro');
+        if (filtro) {
+            setFilters(prevFilters => ({
+                ...prevFilters,
+                area: filtro
+            }));
+        }
+        const pageParam = queryParams.get('page');
+        if (pageParam) {
+            setCurrentPage(parseInt(pageParam));
+        }
+    }, [location.search]);
+
+
+    /**
+     * Efeito para buscar cursos com base na página atual e nos filtros aplicados.
+     * É executado sempre que `currentPage` ou `filters` mudam.
+     */
+    useEffect(() => {
+        const fetchCourses = async () => {
+            setIsLoading(true);
+            const params = {
+                page: currentPage - 1,
+                numResults: 9,
+                ...filters
+            };
+
+            try {
+                const res = await api.get("/api/courses", {params});
+                const coursesWithColors = assignColorsToCourses(res.data.courses);
+                setCoursesData(coursesWithColors);
+                setTotalPages(res.data.totalPages);
+            } catch (err) {
+                console.error("Erro ao procurar cursos:", err);
+                toast.error("Erro ao carregar cursos. Tente novamente.", {theme: "colored"});
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchCourses();
+    }, [currentPage, filters]);
+
+    /**
+     * Efeito para buscar as opções de filtro para os AutocompleteDropdowns (nomes de cursos, instituições, áreas, distritos, status).
+     * É executado uma vez no carregamento inicial do componente.
+     */
+    useEffect(() => {
+        const fetchFilterOptions = async () => {
+            try {
+                const coursesNamesRes = await api.get("/api/courses/distinct-names");
+                setCourseNames(coursesNamesRes.data);
+
+                const institutionNamesRes = await api.get("/api/institution/distinct-names");
+                setInstitutionNames(institutionNamesRes.data);
+
+                const areasRes = await api.get("/api/courses/distinct-areas");
+                setAreas(areasRes.data);
+
+                const districtsRes = await api.get("/api/institution/distinct-districts");
+                setDistricts(districtsRes.data);
+
+                const statusesRes = await api.get("/api/courses/distinct-statuses");
+                setStatus(statusesRes.data);
+            } catch (err) {
+                console.error("Erro ao carregar opções de filtro:", err);
+                toast.error("Erro ao carregar opções de filtro. Algumas opções podem estar indisponíveis.", {theme: "colored"});
+            }
+        };
+        fetchFilterOptions();
+    }, []);
+
+    /**
+     * Lida com a ação de guardar/remover um curso da lista "Ver mais tarde".
+     * Requer que o utilizador esteja autenticado.
+     * @param {object} course - O objeto do curso a ser guardado/removido.
+     */
+    const handleSaveCourse = async (course) => {
+        if (!userId) {
+            toast.info("Você precisa estar logado para salvar cursos.", {theme: "colored"});
+            return;
+        }
+
+        const isSaved = savedCourseIds.has(course.courseId);
+
+        try {
+            if (isSaved) {
+                await api.post(`/api/courses/${course.courseId}/saved/delete`);
+                setSavedCourseIds((prev) => {
+                    const newSet = new Set(prev);
+                    newSet.delete(course.courseId);
+                    return newSet;
+                });
+                toast.success("Curso removido da lista 'Ver mais tarde'!", {theme: "colored"});
+            } else {
+                await api.post(`/api/courses/${course.courseId}/saved`);
+                setSavedCourseIds((prev) => new Set(prev).add(course.courseId));
+                toast.success("Curso adicionado à lista 'Ver mais tarde'!", {theme: "colored"});
+            }
+        } catch (error) {
+            console.error("Erro ao atualizar cursos guardados:", error);
+            const errorMessage = error.response?.data?.message || "Erro ao atualizar cursos guardados. Tente novamente.";
+            toast.error(errorMessage, {theme: "colored"});
+        }
+    };
+
+    /**
+     * Efeito para buscar os cursos guardados pelo utilizador logado.
+     * É executado quando o objeto `user` ou o estado `userContextLoading` mudam.
+     */
+    useEffect(() => {
+        const fetchSavedCourses = async () => {
+            if (userContextLoading) {
+                return;
+            }
+
+            if (!user || !user.id) {
+                setSavedCourseIds(new Set());
+                return;
+            }
+            try {
+                const res = await api.get(`/api/user/saved`);
+                const savedCourseData = res.data
+                    .filter(savedCourseDto => savedCourseDto.course != null)
+                    .map(savedCourseDto => savedCourseDto.course?.courseId);
+
+                setSavedCourseIds(new Set(savedCourseData));
+            } catch (err) {
+                console.error("Erro ao buscar cursos guardados:", err);
+                setSavedCourseIds(new Set());
+                toast.error("Não foi possível carregar cursos guardados.", {theme: "colored"});
+            }
+        };
+
+        fetchSavedCourses();
+    }, [user, userContextLoading]);
+
+
+    /**
+     * Efeito para atualizar os parâmetros de query na URL sempre que os filtros mudam.
+     * Redefine a página atual para 1 para novas pesquisas com filtros.
+     */
+    useEffect(() => {
+        setCurrentPage(1);
+        const queryParams = new URLSearchParams();
+        Object.entries(filters).forEach(([key, value]) => {
+            if (value) {
+                queryParams.set(key, value);
+            } else {
+                queryParams.delete(key);
+            }
+        });
+        queryParams.set('page', '1');
+        window.history.replaceState({}, "", `?${queryParams.toString()}`);
+    }, [filters]);
+
+    /**
+     * Lida com a alteração de um valor de filtro.
+     * Atualiza o estado `filters` com o novo valor.
+     * @param {string} filterName - O nome do filtro a ser alterado (ex: "curso", "instituicao", "area").
+     * @param {string} value - O novo valor para o filtro.
+     */
+    const handleFilterChange = (filterName, value) => {
+        setFilters(prevFilters => ({
+            ...prevFilters,
+            [filterName]: value
+        }));
+    };
+
+    /**
+     * Lida com a remoção de um filtro aplicado, limpando o seu valor.
+     * @param {string} filterName - O nome do filtro a ser removido.
+     */
+    const handleRemoveFilter = (filterName) => {
+        setFilters(prevFilters => ({
+            ...prevFilters,
+            [filterName]: ""
+        }));
+    };
+
+    /**
+     * Lida com a mudança de página na paginação.
+     * Atualiza a `currentPage` e o parâmetro 'page' na URL.
+     * @param {number} page - O número da nova página.
+     */
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        const queryParams = new URLSearchParams(window.location.search);
+        queryParams.set('page', page.toString());
+        window.history.replaceState({}, "", `?${queryParams.toString()}`);
+    };
+
+    return (
+        &lt;>
+            &lt;div className="filters">
+                &lt;div className="filters-box">
+                    &lt;AutocompleteDropdown
+                        label="curso"
+                        options={courseNames}
+                        value={filters.curso}
+                        onValueChange={(value) => handleFilterChange("curso", value)}
+                        className="option"
+                    />
+                    &lt;AutocompleteDropdown
+                        label="instituição"
+                        options={institutionNames}
+                        value={filters.instituicao}
+                        onValueChange={(value) => handleFilterChange("instituicao", value)}
+                        className="option"
+                    />
+                    &lt;AutocompleteDropdown
+                        label="área"
+                        options={areas}
+                        value={filters.area}
+                        onValueChange={(value) => handleFilterChange("area", value)}
+                        className="option"
+                    />
+                    &lt;AutocompleteDropdown
+                        label="distrito"
+                        options={districts}
+                        value={filters.distrito}
+                        onValueChange={(value) => handleFilterChange("distrito", value)}
+                        className="option"
+                    />
+                    &lt;AutocompleteDropdown
+                        label="status"
+                        options={status}
+                        value={filters.status}
+                        onValueChange={(value) => handleFilterChange("status", value)}
+                        className="option"
+                    />
+                &lt;/div>
+            &lt;/div>
+
+            &lt;div className="applied-filters">
+                &lt;p>Filtros ativos:&lt;/p>
+                {Object.entries(filters).map(
+                    ([key, value]) =>
+                        value &amp;&amp; (
+                            &lt;span key={key} className="filter-tag">
+                                {key}: {value}
+                                &lt;span className="filter-tag-remove" onClick={() => handleRemoveFilter(key)}>
+                                    &amp;times;
+                                &lt;/span>
+                            &lt;/span>
+                        )
+                )}
+            &lt;/div>
+
+            &lt;div className="courses-container">
+                {isLoading ? (
+                    &lt;p className="loading-text">A carregar cursos...&lt;/p>
+                ) : coursesData.length === 0 ? (
+                    &lt;p className="empty-text">Nenhum curso encontrado com os filtros aplicados.&lt;/p>
+                ) : (
+                    coursesData.map((course) => {
+                        const isBookmarked = savedCourseIds.has(course.courseId);
+
+                        return (
+                            &lt;Link to={`/cursos/${course.courseId}`} key={course.courseId}
+                                  className={`course-card ${course.color}`}>
+                                &lt;h3 className="course-header">
+                                    &lt;span className="course-name">{course.courseName}&lt;/span>
+
+                                    &lt;span
+                                        className={isBookmarked ? "icon-bookmark-filled" : "icon-bookmark"}
+                                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleSaveCourse(course); }}
+                                        aria-hidden="true"
+                                    >&lt;/span>
+                                &lt;/h3>
+                                &lt;section className="course-info">
+                                    &lt;h5>{course.fieldOfStudy}&lt;/h5>
+                                    &lt;p
+                                        className="institution-link"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            navigate(`/instituicao/${course.institutionId}`);
+                                        }}
+                                    >
+                                        {course.institutionName}
+                                    &lt;/p>
+                                &lt;/section>
+                            &lt;/Link>
+                        );
+                    })
+                )}
+            &lt;/div>
+
+            {totalPages > 1 &amp;&amp; (
+                &lt;Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                />
+            )}
+        &lt;/>
+    );
+}
+
+export default Courses;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#About">About</a></li><li><a href="global.html#AdminPage">AdminPage</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#AutocompleteDropdown">AutocompleteDropdown</a></li><li><a href="global.html#BOOKMARKS_COLORS">BOOKMARKS_COLORS</a></li><li><a href="global.html#Bookmarks">Bookmarks</a></li><li><a href="global.html#COLORS">COLORS</a></li><li><a href="global.html#Calendar">Calendar</a></li><li><a href="global.html#Comments">Comments</a></li><li><a href="global.html#Configurations">Configurations</a></li><li><a href="global.html#CourseDetails">CourseDetails</a></li><li><a href="global.html#Courses">Courses</a></li><li><a href="global.html#FAVORITES_COLORS">FAVORITES_COLORS</a></li><li><a href="global.html#Faqs">Faqs</a></li><li><a href="global.html#Favorites">Favorites</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#Homepage">Homepage</a></li><li><a href="global.html#InstitutionDetails">InstitutionDetails</a></li><li><a href="global.html#Interactions">Interactions</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#Notifications">Notifications</a></li><li><a href="global.html#Pagination">Pagination</a></li><li><a href="global.html#Profile">Profile</a></li><li><a href="global.html#ProfileLayout">ProfileLayout</a></li><li><a href="global.html#ProtectedRoute">ProtectedRoute</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#SignIn">SignIn</a></li><li><a href="global.html#SignUp">SignUp</a></li><li><a href="global.html#UserContext">UserContext</a></li><li><a href="global.html#UserProvider">UserProvider</a></li><li><a href="global.html#api">api</a></li><li><a href="global.html#assignColorsToBookmarks">assignColorsToBookmarks</a></li><li><a href="global.html#assignColorsToCourses">assignColorsToCourses</a></li><li><a href="global.html#assignColorsToFavorites">assignColorsToFavorites</a></li><li><a href="global.html#setUserContextRef">setUserContextRef</a></li><li><a href="global.html#useUserContext">useUserContext</a></li><li><a href="global.html#userContextRef">userContextRef</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu Jul 17 2025 23:05:57 GMT+0100 (Hora de verão da Europa Ocidental)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

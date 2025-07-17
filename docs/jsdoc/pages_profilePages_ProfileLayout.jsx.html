@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pages/profilePages/ProfileLayout.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pages/profilePages/ProfileLayout.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import '../../style/profilePages/ProfileLayout.css';
+import React, {useState, useRef, useEffect} from 'react';
+import {Outlet, NavLink, useNavigate} from 'react-router-dom';
+import {toast} from 'react-toastify';
+import {useUserContext} from "../../services/UserContext.jsx";
+import api from "../../services/api.js";
+
+/**
+ * @typedef {object} UserContextObject
+ * @property {object|null} user - O objeto do utilizador autenticado, ou `null`.
+ * @property {function(): Promise&lt;void>} logout - Função para terminar a sessão do utilizador.
+ * @property {boolean} loading - Indica se o contexto do utilizador está a carregar.
+ */
+
+/**
+ * @typedef {function(...*): void} NavigateFunction
+ * Representa a função de navegação do React Router DOM.
+ * @see https://reactrouter.com/docs/en/v6/hooks/use-navigate
+ */
+
+/**
+ * Componente ProfileLayout.
+ * Este layout é a estrutura base para as páginas de perfil do utilizador.
+ * Contém a navegação lateral do perfil e uma área para renderizar o conteúdo das sub-rotas.
+ * Gere o upload e exibição do avatar do utilizador e o estado do menu móvel.
+ * @returns {JSX.Element} O componente ProfileLayout.
+ */
+function ProfileLayout() {
+    /**
+     * Estado para armazenar os dados do formulário, incluindo o URL do avatar.
+     * Inicializado com um placeholder genérico.
+     * @type {object}
+     */
+    const [formData, setFormData] = useState({avatar: 'https://placehold.co/150'}); // Inicializado com o placeholder
+    /**
+     * Estado para controlar a abertura/fecho do menu de navegação móvel do perfil.
+     * @type {boolean}
+     */
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    /**
+     * Referência para o input de ficheiro do avatar (oculto).
+     * Usado para acionar o clique programaticamente.
+     * @type {React.RefObject&lt;HTMLInputElement>}
+     */
+    const avatarInputRef = useRef(null);
+    /**
+     * Hook para aceder ao contexto do utilizador, contendo o objeto de utilizador logado e a função de logout.
+     * @type {UserContextObject}
+     */
+    const { user, logout, loading: userContextLoading } = useUserContext();
+    /**
+     * Hook para navegação programática.
+     * @type {NavigateFunction}
+     */
+    const navigate = useNavigate();
+
+    /**
+     * O ID do utilizador do contexto, usado para fazer chamadas de API relacionadas ao utilizador.
+     * É null se o objeto `user` for null (ex: durante o carregamento inicial ou se não houver utilizador logado).
+     * @type {number|null}
+     */
+    const userIdFromContext = user?.id;
+
+    // REMOVIDO: O useEffect que fazia a chamada à API ImageRetrieve foi removido.
+    // Agora, o avatar será sempre o placeholder definido no useState inicial,
+    // a menos que a funcionalidade de upload de avatar seja usada.
+
+    /**
+     * Lida com o upload de um novo ficheiro de imagem para o avatar.
+     * Envia o ficheiro para a API e atualiza o URL do avatar no estado local.
+     * @param {React.ChangeEvent&lt;HTMLInputElement>} e - O evento de mudança do input de ficheiro.
+     */
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file || !user || !user.id) { // Usar user.id diretamente
+            toast.warn("Por favor, faça login para carregar imagens ou selecione um ficheiro válido.", {theme: 'colored'});
+            return;
+        }
+
+        const form = new FormData();
+        form.append('image', file);
+        form.append('user_id', user.id); // Usar user.id diretamente
+        form.append('type', 'avatar');
+
+        try {
+            const config = { headers: {'Content-Type': 'multipart/form-data'} };
+            const {data} = await api.post(`/api/auth/ImageUpload`, form, config);
+            toast.success('Image uploaded successfully!', {theme: 'colored'});
+            setFormData(prev => ({...prev, avatar: data.link})); // Atualiza com o URL da nova imagem
+        } catch (error) {
+            console.error("Erro ao carregar imagem:", error);
+            toast.error('Erro ao carregar imagem', {theme: 'colored'});
+        }
+    };
+
+    /**
+     * Aciona programaticamente o clique no input de ficheiro do avatar.
+     * Isso permite que o utilizador selecione um ficheiro clicando na imagem do avatar.
+     */
+    const triggerFileInput = () => avatarInputRef.current.click();
+    /**
+     * Alterna o estado de abertura/fecho do menu de navegação móvel do perfil.
+     */
+    const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+    return (
+        &lt;>
+            &lt;button className="profile-menu-toggle" onClick={toggleMenu}>
+                {isMenuOpen ? '✖' : '☰'}
+            &lt;/button>
+            &lt;section className="cards">
+                &lt;div className={`container-card-one ${isMenuOpen ? 'open' : ''}`}>
+                    &lt;h2 className="card-one-title">área pessoal&lt;/h2>
+                    &lt;div className="card-one">
+                        &lt;div className="profile-avatar-container" onClick={triggerFileInput}>
+                            &lt;input type="file"
+                                   ref={avatarInputRef}
+                                   onChange={handleImageUpload}
+                                   accept="image/*"
+                                   style={{display: 'none'}}
+                            />
+                            {/* EXIBIR: Avatar do formulário ou um placeholder padrão.
+                                O src agora é sempre o valor de formData.avatar,
+                                que é inicializado como placeholder e atualizado no upload. */}
+                            &lt;img src={formData.avatar}
+                                 alt="Profile avatar"
+                                 className="profile-avatar"
+                                 style={{cursor: 'pointer' }}
+                            />
+                            {/* EXIBIR: Nome de utilizador do contexto. Se 'user' for null, mostra "Carregando..." */}
+                            &lt;div className="avatar-upload-hint">@{user ? user.username : 'Carregando...'}&lt;/div>
+                        &lt;/div>
+                        &lt;div className="profile-menu">
+                            &lt;NavLink to="/perfil/conta" className={({isActive}) => isActive ? 'active' : ''}>&lt;i
+                                className="icon-user">&lt;/i>Conta&lt;/NavLink>
+                            &lt;NavLink to="/perfil/favoritos" className={({isActive}) => isActive ? 'active' : ''}>&lt;i
+                                className="icon-star">&lt;/i>Favoritos&lt;/NavLink>
+                            &lt;NavLink to="/perfil/ver-mais-tarde" className={({isActive}) => isActive ? 'active' : ''}>&lt;i
+                                className="icon-bookmark">&lt;/i>Ver mais tarde&lt;/NavLink>
+                            &lt;NavLink to="/perfil/notificacoes" className={({isActive}) => isActive ? 'active' : ''}>&lt;i
+                                className="icon-bell">&lt;/i>Notificações&lt;/NavLink>
+                            &lt;NavLink to="/perfil/interacoes" className={({isActive}) => isActive ? 'active' : ''}>&lt;i
+                                className="icon-interactions">&lt;/i>Interações&lt;/NavLink>
+                            &lt;NavLink to="/perfil/calendario" className={({isActive}) => isActive ? 'active' : ''}>&lt;i
+                                className="icon-calendar">&lt;/i>Calendário&lt;/NavLink>
+                            &lt;NavLink to="/perfil/configuracoes" className={({isActive}) => isActive ? 'active' : ''}>&lt;i
+                                className="icon-config">&lt;/i>Configurações&lt;/NavLink>
+                            &lt;button onClick={() => { logout(); navigate("/"); }}>&lt;i className="icon-logout">&lt;/i>Terminar Sessão&lt;/button>
+                        &lt;/div>
+                    &lt;/div>
+                &lt;/div>
+                {/* O Outlet renderiza os componentes filhos das rotas aninhadas */}
+                &lt;Outlet/>
+            &lt;/section>
+        &lt;/>
+    );
+}
+
+export default ProfileLayout;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#About">About</a></li><li><a href="global.html#AdminPage">AdminPage</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#AutocompleteDropdown">AutocompleteDropdown</a></li><li><a href="global.html#BOOKMARKS_COLORS">BOOKMARKS_COLORS</a></li><li><a href="global.html#Bookmarks">Bookmarks</a></li><li><a href="global.html#COLORS">COLORS</a></li><li><a href="global.html#Calendar">Calendar</a></li><li><a href="global.html#Comments">Comments</a></li><li><a href="global.html#Configurations">Configurations</a></li><li><a href="global.html#CourseDetails">CourseDetails</a></li><li><a href="global.html#Courses">Courses</a></li><li><a href="global.html#FAVORITES_COLORS">FAVORITES_COLORS</a></li><li><a href="global.html#Faqs">Faqs</a></li><li><a href="global.html#Favorites">Favorites</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#Homepage">Homepage</a></li><li><a href="global.html#InstitutionDetails">InstitutionDetails</a></li><li><a href="global.html#Interactions">Interactions</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#Notifications">Notifications</a></li><li><a href="global.html#Pagination">Pagination</a></li><li><a href="global.html#Profile">Profile</a></li><li><a href="global.html#ProfileLayout">ProfileLayout</a></li><li><a href="global.html#ProtectedRoute">ProtectedRoute</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#SignIn">SignIn</a></li><li><a href="global.html#SignUp">SignUp</a></li><li><a href="global.html#UserContext">UserContext</a></li><li><a href="global.html#UserProvider">UserProvider</a></li><li><a href="global.html#api">api</a></li><li><a href="global.html#assignColorsToBookmarks">assignColorsToBookmarks</a></li><li><a href="global.html#assignColorsToCourses">assignColorsToCourses</a></li><li><a href="global.html#assignColorsToFavorites">assignColorsToFavorites</a></li><li><a href="global.html#setUserContextRef">setUserContextRef</a></li><li><a href="global.html#useUserContext">useUserContext</a></li><li><a href="global.html#userContextRef">userContextRef</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu Jul 17 2025 23:05:57 GMT+0100 (Hora de verão da Europa Ocidental)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/signupPage/Register.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/signupPage/Register.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import "../../style/LoginAndRegister.css";
+import api from "../../services/api.js";
+import {useNavigate} from "react-router-dom";
+import {useState} from "react";
+
+/**
+ * @typedef {function(...*): void} NavigateFunction
+ * Representa a função de navegação do React Router DOM.
+ * @see https://reactrouter.com/docs/en/v6/hooks/use-navigate
+ */
+
+/**
+ * Componente Register.
+ * Permite que novos utilizadores se registem na aplicação.
+ * Realiza validação de password e envia os dados para o backend.
+ * @returns {JSX.Element} O componente Register.
+ */
+function Register() {
+    /**
+     * Estado para o primeiro nome do utilizador.
+     * @type {string}
+     */
+    const [firstName, setFirstName] = useState('');
+    /**
+     * Estado para o apelido do utilizador.
+     * @type {string}
+     */
+    const [lastName, setLastName] = useState('');
+    /**
+     * Estado para o email do utilizador.
+     * @type {string}
+     */
+    const [email, setEmail] = useState('');
+    /**
+     * Estado para o nome de utilizador.
+     * @type {string}
+     */
+    const [username, setUsername] = useState('');
+    /**
+     * Estado para a nova palavra-passe.
+     * @type {string}
+     */
+    const [newPassword, setNewPassword] = useState('');
+    /**
+     * Estado para repetir a palavra-passe.
+     * @type {string}
+     */
+    const [repeatPassword, setRepeatPassword] = useState('');
+    /**
+     * Hook para navegação programática.
+     * @type {NavigateFunction}
+     */
+    const navigate = useNavigate();
+
+    /**
+     * Lida com a submissão do formulário de registo.
+     * Valida as passwords, constrói o objeto de dados do utilizador e envia para a API.
+     * Exibe alertas para feedback ao utilizador.
+     * @param {Event} e - O evento de submissão do formulário.
+     */
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (newPassword !== repeatPassword) {
+            alert("As palavras-passe não coincidem!");
+            return;
+        }
+        const userData = {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            username: username,
+            password: newPassword
+        };
+
+        try {
+            await api.post("/api/signup", userData);
+            alert("Registo efetuado com sucesso! Redirecionando para a página de login...");
+            setTimeout(() => {
+                navigate('/entrar');
+            }, 2000);
+        } catch (error) {
+            console.error('Erro ao registar:', error);
+
+            if (error.response) {
+                const status = error.response.status;
+                const errorMessage = error.response.data &amp;&amp; error.response.data.message
+                    ? error.response.data.message
+                    : "Ocorreu um erro desconhecido.";
+
+                switch (status) {
+                    case 400:
+                        alert("Dados de registo inválidos: " + errorMessage);
+                        break;
+                    case 409:
+                        alert("Erro no registo: " + (errorMessage.includes("já existe") ? errorMessage : "Este nome de utilizador ou email já está em uso. Por favor, escolha outro."));
+                        break;
+                    case 500:
+                        alert("Erro interno no servidor. Por favor, tente novamente mais tarde.");
+                        break;
+                    default:
+                        alert("Ocorreu um erro inesperado: " + errorMessage);
+                }
+            } else if (error.request) {
+                alert("Não foi possível conectar ao servidor. Verifique sua conexão ou o status do backend.");
+            } else {
+                alert("Ocorreu um erro inesperado ao processar o pedido.");
+            }
+        }
+    };
+
+    return (
+        &lt;>
+            &lt;div className="background-register">
+                &lt;div className="background-image">
+                    &lt;img src="/images/background-registo.jpg" alt="Background Image" className="background-image"/>
+                &lt;/div>
+            &lt;/div>
+
+            &lt;section id="contact">
+                &lt;div className="contact-container">
+                    &lt;h3>registo&lt;/h3>
+                    &lt;form id="form" className="topBefore" onSubmit={handleSubmit}>
+                        &lt;div className="form-columns">
+                            &lt;div className="column left-column">
+                                &lt;label htmlFor="firstName">&lt;/label>
+                                &lt;input
+                                    id="firstName"
+                                    type="text"
+                                    value={firstName}
+                                    onChange={(e) => setFirstName(e.target.value)}
+                                    placeholder="primeiro nome"
+                                    required
+                                />
+
+                                &lt;label htmlFor="email">&lt;/label>
+                                &lt;input
+                                    id="email"
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="email"
+                                    required
+                                />
+
+                                &lt;label htmlFor="newPassword">&lt;/label>
+                                &lt;input
+                                    id="newPassword"
+                                    type="password"
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    placeholder="nova palavra-passe"
+                                    required
+                                />
+                            &lt;/div>
+
+                            &lt;div className="column right-column">
+                                &lt;label htmlFor="lastName">&lt;/label>
+                                &lt;input
+                                    id="lastName"
+                                    type="text"
+                                    value={lastName}
+                                    onChange={(e) => setLastName(e.target.value)}
+                                    placeholder="último nome"
+                                    required
+                                />
+
+                                &lt;label htmlFor="username">&lt;/label>
+                                &lt;input
+                                    id="username"
+                                    type="text"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    placeholder="nome de utilizador"
+                                    required
+                                />
+
+                                &lt;label htmlFor="repeatPassword">&lt;/label>
+                                &lt;input
+                                    id="repeatPassword"
+                                    type="password"
+                                    value={repeatPassword}
+                                    onChange={(e) => setRepeatPassword(e.target.value)}
+                                    placeholder="repetir palavra-passe"
+                                    required
+                                />
+                            &lt;/div>
+                        &lt;/div>
+                        &lt;button type="submit">registar&lt;/button>
+                        &lt;p className="login-link">Já tens conta? &lt;a className="login-link-text" href="/entrar">Iniciar Sessão&lt;/a>&lt;/p>
+                    &lt;/form>
+                &lt;/div>
+            &lt;/section>
+        &lt;/>
+    );
+}
+
+export default Register;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#About">About</a></li><li><a href="global.html#AdminPage">AdminPage</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#AutocompleteDropdown">AutocompleteDropdown</a></li><li><a href="global.html#BOOKMARKS_COLORS">BOOKMARKS_COLORS</a></li><li><a href="global.html#Bookmarks">Bookmarks</a></li><li><a href="global.html#COLORS">COLORS</a></li><li><a href="global.html#Calendar">Calendar</a></li><li><a href="global.html#Comments">Comments</a></li><li><a href="global.html#Configurations">Configurations</a></li><li><a href="global.html#CourseDetails">CourseDetails</a></li><li><a href="global.html#Courses">Courses</a></li><li><a href="global.html#FAVORITES_COLORS">FAVORITES_COLORS</a></li><li><a href="global.html#Faqs">Faqs</a></li><li><a href="global.html#Favorites">Favorites</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#Homepage">Homepage</a></li><li><a href="global.html#InstitutionDetails">InstitutionDetails</a></li><li><a href="global.html#Interactions">Interactions</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#Notifications">Notifications</a></li><li><a href="global.html#Pagination">Pagination</a></li><li><a href="global.html#Profile">Profile</a></li><li><a href="global.html#ProfileLayout">ProfileLayout</a></li><li><a href="global.html#ProtectedRoute">ProtectedRoute</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#SignIn">SignIn</a></li><li><a href="global.html#SignUp">SignUp</a></li><li><a href="global.html#UserContext">UserContext</a></li><li><a href="global.html#UserProvider">UserProvider</a></li><li><a href="global.html#api">api</a></li><li><a href="global.html#assignColorsToBookmarks">assignColorsToBookmarks</a></li><li><a href="global.html#assignColorsToCourses">assignColorsToCourses</a></li><li><a href="global.html#assignColorsToFavorites">assignColorsToFavorites</a></li><li><a href="global.html#setUserContextRef">setUserContextRef</a></li><li><a href="global.html#useUserContext">useUserContext</a></li><li><a href="global.html#userContextRef">userContextRef</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu Jul 17 2025 23:05:57 GMT+0100 (Hora de verão da Europa Ocidental)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/generalComponents/Comments.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/generalComponents/Comments.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect } from "react";
+import api from "../../services/api.js";
+import { useUserContext } from "../../services/UserContext.jsx";
+import { toast } from 'react-toastify';
+import "../../style/Comments.css";
+
+/**
+ * @typedef {object} CommentsProps
+ * @property {string|number} courseId - O ID do curso ao qual os comentários estão associados.
+ */
+
+/**
+ * @typedef {object} CommentResponseData
+ * @property {number} id - O ID do comentário.
+ * @property {number} courseId - O ID do curso associado ao comentário.
+ * @property {string} username - O nome de utilizador do autor do comentário.
+ * @property {string} commentText - O texto do comentário.
+ * @property {string} commentDate - A data e hora do comentário (formato ISO 8601).
+ * @property {number} totalLikes - O número total de likes que o comentário recebeu.
+ * @property {boolean} likedByCurrentUser - Indica se o utilizador autenticado deu like neste comentário.
+ */
+
+/**
+ * @typedef {object} UserContextObject
+ * @property {object|null} user - O objeto do utilizador autenticado, ou `null`.
+ * @property {boolean} loading - Indica se o contexto do utilizador está a carregar.
+ */
+
+/**
+ * Componente Comments para exibir e adicionar comentários a um curso.
+ *
+ * @param {CommentsProps} props - As propriedades passadas para o componente.
+ * @returns {JSX.Element} O componente Comments.
+ */
+function Comments({ courseId }) {
+    /**
+     * Estado para armazenar a lista de comentários.
+     * @type {Array&lt;CommentResponseData>}
+     */
+    const [comments, setComments] = useState([]);
+    /**
+     * Estado para o texto do novo comentário a ser submetido.
+     * @type {string}
+     */
+    const [newCommentText, setNewCommentText] = useState("");
+    /**
+     * Estado para controlar a visibilidade da secção de comentários.
+     * @type {boolean}
+     */
+    const [showComments, setShowComments] = useState(false);
+    /**
+     * Estado para controlar o número de comentários visíveis.
+     * @type {number}
+     */
+    const [visibleComments, setVisibleComments] = useState(5);
+
+    /**
+     * Obtém o utilizador logado do contexto.
+     * @type {UserContextObject}
+     */
+    const { user } = useUserContext();
+    /**
+     * O ID do utilizador logado, ou null se não estiver autenticado.
+     * @type {string|number|null}
+     */
+    const userId = user ? user.id : null;
+
+    /**
+     * Efeito para carregar os comentários do curso.
+     * Ativado quando o `courseId` muda.
+     */
+    useEffect(() => {
+        if (!courseId) {
+            setComments([]);
+            return;
+        }
+
+        api.get(`/api/courses/${courseId}/comments`)
+            .then((res) => {
+                const fetchedComments = res.data.map(comment => ({
+                    ...comment,
+                    totalLikes: comment.totalLikes || 0,
+                    likedByCurrentUser: comment.likedByCurrentUser || false
+                }));
+                setComments(fetchedComments);
+            })
+            .catch((err) => {
+                console.error("Erro ao carregar comentários:", err);
+                toast.error("Erro ao carregar comentários.", { theme: "colored" });
+                setComments([]);
+            });
+    }, [courseId]);
+
+    /**
+     * Lida com a submissão de um novo comentário.
+     * Valida o texto do comentário e a autenticação do utilizador antes de enviar para o backend.
+     * @param {Event} e - O evento de submissão do formulário.
+     */
+    const handleCommentSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!newCommentText.trim()) {
+            toast.warn("O comentário não pode estar vazio.", { theme: "colored" });
+            return;
+        }
+
+        if (!userId) {
+            toast.error("É necessário fazer login para comentar.", { theme: "colored" });
+            return;
+        }
+
+        if (!courseId) {
+            toast.error("Não é possível adicionar comentário, ID do curso inválido.", { theme: "colored" });
+            return;
+        }
+
+        try {
+            const response = await api.post(`/api/courses/${courseId}/comments`, null, {
+                params: { commentText: newCommentText }
+            });
+            setComments(prevComments => [response.data, ...prevComments]);
+            setNewCommentText("");
+            toast.success("Comentário adicionado com sucesso!", { theme: "colored" });
+        } catch (err) {
+            console.error("Erro ao adicionar comentário:", err);
+            toast.error("Erro ao adicionar comentário. Por favor, tente novamente.", { theme: "colored" });
+        }
+    };
+
+    /**
+     * Formata uma string de data para exibição localizada.
+     * @param {string} dateString - A string de data a ser formatada.
+     * @returns {string} A data formatada ou "Data Inválida" se o formato for inválido.
+     */
+    const formatDate = (dateString) => {
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-PT', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        } catch (e) {
+            console.error("Erro ao formatar data:", dateString, e);
+            return "Data Inválida";
+        }
+    };
+
+    /**
+     * Alterna a visibilidade da secção de comentários.
+     */
+    const toggleComments = () => {
+        setShowComments(prev => !prev);
+    };
+
+    /**
+     * Aumenta o número de comentários visíveis em 5.
+     */
+    const handleSeeMore = () => {
+        setVisibleComments(prev => prev + 5);
+    };
+
+    /**
+     * Lida com a ação de "gostar" (like) de um comentário.
+     * Envia um pedido para adicionar/remover o like e atualiza o estado localmente.
+     *
+     * @param {number|string} commentId - O ID do comentário ao qual o like será adicionado/removido.
+     * @param {boolean} currentLikedStatus - O estado atual de `likedByCurrentUser` para este comentário.
+     */
+    const handleToggleLike = async (commentId, currentLikedStatus) => {
+        if (!userId) {
+            toast.info("É necessário fazer login para dar like.", { theme: "colored" });
+            return;
+        }
+        try {
+            await api.post(`/api/comments/${commentId}/toggleLike`);
+
+            setComments(prevComments =>
+                prevComments.map(comment =>
+                    comment.id === commentId
+                        ? {
+                            ...comment,
+                            likedByCurrentUser: !currentLikedStatus,
+                            totalLikes: currentLikedStatus ? (comment.totalLikes || 0) - 1 : (comment.totalLikes || 0) + 1
+                        }
+                        : comment
+                )
+            );
+            toast.success(currentLikedStatus ? "Like removido!" : "Like adicionado!", { theme: "colored" });
+
+        } catch (err) {
+            console.error("Erro ao alternar like:", err);
+            toast.error("Erro ao alternar like. Tente novamente.", { theme: "colored" });
+        }
+    };
+
+    return (
+        &lt;div className="comments-section">
+            &lt;div className="comments-dropdown-header" onClick={toggleComments}>
+                &lt;h2>Comentários&lt;/h2>
+                {showComments ? (
+                    &lt;i className="icon-up-arrow" aria-hidden="true"/>
+                ) : (
+                    &lt;i className="icon-down-arrow" aria-hidden="true"/>
+                )}
+            &lt;/div>
+
+            {showComments &amp;&amp; (
+                &lt;>
+                    &lt;div className="comment-input">
+                        &lt;textarea
+                            placeholder="Adicionar comentário"
+                            value={newCommentText}
+                            onChange={e => setNewCommentText(e.target.value)}
+                            rows="4"
+                        />
+                        &lt;button className="submit-button" onClick={handleCommentSubmit}>
+                            &lt;i className="icon-send" aria-label="Enviar comentário"/>
+                        &lt;/button>
+                    &lt;/div>
+
+                    {comments.length > 0 ? (
+                        comments.slice(0, visibleComments).map((comment) => (
+                            &lt;div className="comment-card" key={comment.id}>
+                                &lt;div className="comment-header">
+                                    &lt;span className="username">@{comment.username || "Utilizador Desconhecido"}&lt;/span>
+                                    &lt;span className="date">{formatDate(comment.commentDate)}&lt;/span>
+                                    &lt;span
+                                        className="like-icon"
+                                        onClick={() => handleToggleLike(comment.id, comment.likedByCurrentUser)}
+                                    >
+                                    &lt;i
+                                        className={comment.likedByCurrentUser ? "icon-heart-filled" : "icon-heart"}
+                                        title="like"
+                                    />
+                                        &lt;span className="like-count">{comment.totalLikes}&lt;/span>
+                                 &lt;/span>
+                                &lt;/div>
+                                &lt;p className="comment-text">{comment.commentText}&lt;/p>
+                            &lt;/div>
+                        ))
+                    ) : (
+                        !newCommentText.trim() &amp;&amp;
+                        &lt;p className="no-comments-message">Ainda não há comentários. Seja o primeiro a comentar!&lt;/p>
+                    )}
+
+                    {visibleComments &lt; comments.length &amp;&amp; (
+                        &lt;div className="see-more" onClick={handleSeeMore}>
+                            ver mais
+                        &lt;/div>
+                    )}
+                &lt;/>
+            )}
+        &lt;/div>
+    );
+}
+
+export default Comments;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#About">About</a></li><li><a href="global.html#AdminPage">AdminPage</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#AutocompleteDropdown">AutocompleteDropdown</a></li><li><a href="global.html#BOOKMARKS_COLORS">BOOKMARKS_COLORS</a></li><li><a href="global.html#Bookmarks">Bookmarks</a></li><li><a href="global.html#COLORS">COLORS</a></li><li><a href="global.html#Calendar">Calendar</a></li><li><a href="global.html#Comments">Comments</a></li><li><a href="global.html#Configurations">Configurations</a></li><li><a href="global.html#CourseDetails">CourseDetails</a></li><li><a href="global.html#Courses">Courses</a></li><li><a href="global.html#FAVORITES_COLORS">FAVORITES_COLORS</a></li><li><a href="global.html#Faqs">Faqs</a></li><li><a href="global.html#Favorites">Favorites</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#Homepage">Homepage</a></li><li><a href="global.html#InstitutionDetails">InstitutionDetails</a></li><li><a href="global.html#Interactions">Interactions</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#Notifications">Notifications</a></li><li><a href="global.html#Pagination">Pagination</a></li><li><a href="global.html#Profile">Profile</a></li><li><a href="global.html#ProfileLayout">ProfileLayout</a></li><li><a href="global.html#ProtectedRoute">ProtectedRoute</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#SignIn">SignIn</a></li><li><a href="global.html#SignUp">SignUp</a></li><li><a href="global.html#UserContext">UserContext</a></li><li><a href="global.html#UserProvider">UserProvider</a></li><li><a href="global.html#api">api</a></li><li><a href="global.html#assignColorsToBookmarks">assignColorsToBookmarks</a></li><li><a href="global.html#assignColorsToCourses">assignColorsToCourses</a></li><li><a href="global.html#assignColorsToFavorites">assignColorsToFavorites</a></li><li><a href="global.html#setUserContextRef">setUserContextRef</a></li><li><a href="global.html#useUserContext">useUserContext</a></li><li><a href="global.html#userContextRef">userContextRef</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu Jul 17 2025 23:05:57 GMT+0100 (Hora de verão da Europa Ocidental)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

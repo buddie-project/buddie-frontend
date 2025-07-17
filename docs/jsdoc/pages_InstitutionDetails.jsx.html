@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pages/InstitutionDetails.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pages/InstitutionDetails.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { useParams, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import "../style/InstitutionDetails.css";
+import api from "../services/api.js";
+import { toast } from 'react-toastify';
+
+/**
+ * @typedef {object} InstitutionDetailsData
+ * @property {number} id - O ID da instituição.
+ * @property {string} nomeIes - O nome da instituição.
+ * @property {string} tipoIes - O tipo da instituição (ex: "Universidade", "Politécnico").
+ * @property {string} localidade - A localidade da instituição.
+ * @property {string} distrito - O distrito da instituição.
+ * @property {string} [urlIes] - O URL do website da instituição.
+ * @property {string} [urlLogo] - O URL do logótipo da instituição.
+ * @property {string} [email] - O email de contacto da instituição.
+ * @property {string} [telefone] - O telefone de contacto da instituição.
+ * @property {string} [fax] - O número de fax da instituição.
+ * @property {string} [morada] - A morada completa da instituição.
+ * @property {string} [cp] - O código postal da instituição.
+ */
+
+/**
+ * @typedef {object} CourseSummaryData
+ * @property {number} courseId - O ID do curso.
+ * @property {string} courseName - O nome do curso.
+ * @property {string} fieldOfStudy - A área de estudo do curso.
+ * @property {string} institutionName - O nome da instituição do curso.
+ * @property {number} institutionId - O ID da instituição do curso.
+ */
+
+/**
+ * Componente InstitutionDetails.
+ * Exibe os detalhes de uma instituição de ensino superior específica,
+ * incluindo informações de contacto e uma lista de cursos associados.
+ * @returns {JSX.Element} O componente InstitutionDetails.
+ */
+function InstitutionDetails() {
+    /**
+     * Hook para obter os parâmetros da URL, incluindo o `id` da instituição.
+     * @type {{id: string}}
+     */
+    const { id } = useParams();
+    /**
+     * Estado para armazenar os detalhes da instituição.
+     * @type {InstitutionDetailsData|null}
+     */
+    const [institution, setInstitution] = useState(null);
+    /**
+     * Estado para armazenar a lista de cursos oferecidos pela instituição.
+     * @type {CourseSummaryData[]}
+     */
+    const [courses, setCourses] = useState([]);
+    /**
+     * Estado para indicar se os dados estão a ser carregados.
+     * @type {boolean}
+     */
+    const [loading, setLoading] = useState(true);
+    /**
+     * Estado para armazenar mensagens de erro.
+     * @type {string|null}
+     */
+    const [error, setError] = useState(null);
+
+    /**
+     * Efeito para buscar os detalhes da instituição e os seus cursos.
+     * É executado sempre que o `id` da instituição muda.
+     */
+    useEffect(() => {
+        if (!id) {
+            setLoading(false);
+            setError("ID da instituição não fornecido.");
+            return;
+        }
+
+        const fetchInstitutionDetails = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                // Buscar detalhes da instituição
+                const instRes = await api.get(`/api/institution/${id}`);
+                setInstitution(instRes.data);
+
+                // Buscar cursos da instituição
+                const coursesRes = await api.get(`/api/institution/${id}/courses`);
+                setCourses(coursesRes.data);
+
+            } catch (err) {
+                console.error("Erro ao carregar detalhes da instituição ou cursos:", err);
+                setError("Não foi possível carregar os detalhes da instituição. Por favor, tente novamente.");
+                toast.error("Erro ao carregar detalhes da instituição.", { theme: "colored" });
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchInstitutionDetails();
+    }, [id]);
+
+    // Exibe mensagem de carregamento.
+    if (loading) return &lt;div className="loading">A carregar detalhes da instituição...&lt;/div>;
+    // Exibe mensagem de erro.
+    if (error) return &lt;div className="error-message">{error}&lt;/div>;
+    // Exibe mensagem se a instituição não for encontrada após o carregamento.
+    if (!institution) return &lt;div className="no-data">Instituição não encontrada.&lt;/div>;
+
+    return (
+        &lt;div className="institution-details-container">
+            &lt;h3 className="back-container" onClick={event => window.history.back()}> &lt;i className="icon-left-arrow" aria-hidden="true">&lt;/i>Instituições&lt;/h3>
+
+            &lt;div className="institution-header">
+                &lt;div className="institution-logo-name">
+                    {institution.urlLogo &amp;&amp; (
+                        &lt;img src={institution.urlLogo} alt={`${institution.nomeIes} Logo`} className="institution-logo" />
+                    )}
+                    &lt;h1 className="institution-name">{institution.nomeIes}&lt;/h1>
+                &lt;/div>
+                &lt;p className="institution-type">{institution.tipoIes}&lt;/p>
+            &lt;/div>
+
+            &lt;div className="institution-info-box">
+                &lt;div className="info-column">
+                    &lt;h4>Localização&lt;/h4>
+                    &lt;p>&lt;strong>Localidade:&lt;/strong> {institution.localidade}&lt;/p>
+                    &lt;p>&lt;strong>Distrito:&lt;/strong> {institution.distrito}&lt;/p>
+                    &lt;p>&lt;strong>Morada:&lt;/strong> {institution.morada || 'Não disponível'}&lt;/p>
+                    &lt;p>&lt;strong>Código Postal:&lt;/strong> {institution.cp || 'Não disponível'}&lt;/p>
+                &lt;/div>
+
+                &lt;div className="info-column">
+                    &lt;h4>Contacto&lt;/h4>
+                    &lt;p>&lt;strong>Email:&lt;/strong> {institution.email || 'Não disponível'}&lt;/p>
+                    &lt;p>&lt;strong>Telefone:&lt;/strong> {institution.telefone || 'Não disponível'}&lt;/p>
+                    &lt;p>&lt;strong>Fax:&lt;/strong> {institution.fax || 'Não disponível'}&lt;/p>
+                    &lt;p>
+                        &lt;strong>Website:&lt;/strong>{" "}
+                        {institution.urlIes ? (
+                            &lt;a href={institution.urlIes} target="_blank" rel="noopener noreferrer">
+                                {institution.urlIes}
+                            &lt;/a>
+                        ) : (
+                            "Não disponível"
+                        )}
+                    &lt;/p>
+                &lt;/div>
+            &lt;/div>
+
+            &lt;div className="institution-courses-section">
+                &lt;h2>Cursos Oferecidos&lt;/h2>
+                {courses.length > 0 ? (
+                    &lt;div className="courses-list">
+                        {courses.map(course => (
+                            &lt;Link to={`/cursos/${course.courseId}`} key={course.courseId} className="course-item-link">
+                                &lt;div className="course-item">
+                                    &lt;h3>{course.courseName}&lt;/h3>
+                                    &lt;p>{course.fieldOfStudy}&lt;/p>
+                                &lt;/div>
+                            &lt;/Link>
+                        ))}
+                    &lt;/div>
+                ) : (
+                    &lt;p>Nenhum curso encontrado para esta instituição.&lt;/p>
+                )}
+            &lt;/div>
+        &lt;/div>
+    );
+}
+
+export default InstitutionDetails;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#About">About</a></li><li><a href="global.html#AdminPage">AdminPage</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#AutocompleteDropdown">AutocompleteDropdown</a></li><li><a href="global.html#BOOKMARKS_COLORS">BOOKMARKS_COLORS</a></li><li><a href="global.html#Bookmarks">Bookmarks</a></li><li><a href="global.html#COLORS">COLORS</a></li><li><a href="global.html#Calendar">Calendar</a></li><li><a href="global.html#Comments">Comments</a></li><li><a href="global.html#Configurations">Configurations</a></li><li><a href="global.html#CourseDetails">CourseDetails</a></li><li><a href="global.html#Courses">Courses</a></li><li><a href="global.html#FAVORITES_COLORS">FAVORITES_COLORS</a></li><li><a href="global.html#Faqs">Faqs</a></li><li><a href="global.html#Favorites">Favorites</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#Homepage">Homepage</a></li><li><a href="global.html#InstitutionDetails">InstitutionDetails</a></li><li><a href="global.html#Interactions">Interactions</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#Notifications">Notifications</a></li><li><a href="global.html#Pagination">Pagination</a></li><li><a href="global.html#Profile">Profile</a></li><li><a href="global.html#ProfileLayout">ProfileLayout</a></li><li><a href="global.html#ProtectedRoute">ProtectedRoute</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#SignIn">SignIn</a></li><li><a href="global.html#SignUp">SignUp</a></li><li><a href="global.html#UserContext">UserContext</a></li><li><a href="global.html#UserProvider">UserProvider</a></li><li><a href="global.html#api">api</a></li><li><a href="global.html#assignColorsToBookmarks">assignColorsToBookmarks</a></li><li><a href="global.html#assignColorsToCourses">assignColorsToCourses</a></li><li><a href="global.html#assignColorsToFavorites">assignColorsToFavorites</a></li><li><a href="global.html#setUserContextRef">setUserContextRef</a></li><li><a href="global.html#useUserContext">useUserContext</a></li><li><a href="global.html#userContextRef">userContextRef</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu Jul 17 2025 23:05:57 GMT+0100 (Hora de verão da Europa Ocidental)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pages/CourseDetails.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pages/CourseDetails.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { useParams, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import "../style/CourseDetails.css";
+import Comments from "../components/generalComponents/Comments.jsx";
+import api from "../services/api.js";
+import { useUserContext } from "../services/UserContext.jsx";
+import {toast} from "react-toastify";
+
+/**
+ * @typedef {object} CourseDetailsData
+ * @property {object} courseDTO - Objeto com os detalhes básicos do curso (nome, área, estado, etc.).
+ * @property {string} [courseDTO.nome] - Nome do curso.
+ * @property {string} [courseDTO.nomeAreaEstudo] - Nome da área de estudo.
+ * @property {string} [courseDTO.estadoCursoDGES] - Estado do curso na DGES.
+ * @property {number} [courseDTO.instituicaoId] - ID da instituição.
+ * @property {number} [courseDTO.ects] - Créditos ECTS do curso.
+ * @property {string} [courseDTO.grau] - Grau académico do curso.
+ * @property {string} [courseDTO.localidade] - Localidade do curso.
+ * @property {string} [accessRegime] - Regime de acesso ao curso.
+ * @property {string} [shift] - Turno do curso (Diurno, Pós-laboral).
+ * @property {string} [academicYear] - Ano académico do curso.
+ * @property {number} [vacancies] - Número de vagas.
+ * @property {string} [rankingCriteria] - Critérios de seriação.
+ * @property {string} [description] - Descrição do curso.
+ * @property {string} [sourceUrl] - URL da fonte (site da universidade).
+ * @property {string} [institutionName] - Nome da instituição (pode vir diretamente com o curso).
+ */
+
+/**
+ * @typedef {object} InstitutionData
+ * @property {number} id - ID da instituição.
+ * @property {string} nomeIes - Nome da instituição.
+ * // ... outras propriedades da instituição
+ */
+
+/**
+ * @typedef {object} UserContextObject
+ * @property {object|null} user - O objeto do utilizador autenticado, ou `null`.
+ * @property {boolean} loading - Indica se o contexto do utilizador está a carregar.
+ */
+
+/**
+ * Componente CourseDetails.
+ * Exibe os detalhes completos de um curso específico, incluindo informações da instituição,
+ * dados do concurso (se aplicável) e a funcionalidade de adicionar/remover dos favoritos.
+ * Também integra o componente de comentários.
+ * @returns {JSX.Element} O componente CourseDetails.
+ */
+function CourseDetails() {
+    /**
+     * Hook para obter os parâmetros da URL, incluindo o `courseId`.
+     * @type {{courseId: string}}
+     */
+    const {courseId } = useParams();
+    /**
+     * Estado para armazenar os dados detalhados do curso.
+     * @type {CourseDetailsData|null}
+     */
+    const [course, setCourse] = useState(null);
+    /**
+     * Estado para armazenar os dados da instituição associada ao curso.
+     * @type {InstitutionData|null}
+     */
+    const [institution, setInstitution] = useState(null);
+    /**
+     * Estado para indicar se o curso atual é favorito do utilizador logado.
+     * @type {boolean}
+     */
+    const [isFavorite, setIsFavorite] = useState(false);
+    /**
+     * Hook para aceder ao contexto do utilizador.
+     * @type {UserContextObject}
+     */
+    const { user } = useUserContext();
+    /**
+     * O ID do utilizador logado, ou null se não estiver autenticado.
+     * @type {string|number|null}
+     */
+    const userId = user ? user.id : null;
+
+    /**
+     * Efeito para buscar os detalhes do curso e da instituição associada.
+     * É executado sempre que o `courseId` muda.
+     */
+    useEffect(() => {
+        if (!courseId) {
+            setCourse(null);
+            return;
+        }
+
+        api.get(`/api/courses/${courseId}`)
+            .then((res) => {
+                const courseData = Array.isArray(res.data) &amp;&amp; res.data.length > 0 ? res.data[0] : res.data;
+
+                if (courseData) {
+                    setCourse(courseData);
+
+                    if (courseData.courseDTO?.instituicaoId) {
+                        api.get(`/api/institution/${courseData.courseDTO.instituicaoId}`)
+                            .then((instRes) => setInstitution(instRes.data))
+                            .catch((err) => console.error("Erro ao encontrar detalhes da instituição:", err));
+                    }
+                } else {
+                    setCourse(null);
+                }
+            })
+            .catch((err) => {
+                console.error("Erro ao carregar detalhes do curso:", err);
+                setCourse(null);
+            });
+    }, [courseId]);
+
+    /**
+     * Efeito para verificar o status de favorito do curso para o utilizador logado.
+     * É executado sempre que `courseId` ou `userId` mudam.
+     */
+    useEffect(() => {
+        if (!courseId || !userId) {
+            setIsFavorite(false);
+            return;
+        }
+
+        api.get(`/api/courses/${courseId}/isFavorite`)
+            .then((res) => {
+                setIsFavorite(res.data);
+            })
+            .catch((err) => {
+                console.error("Erro ao verificar status de favorito:", err);
+                setIsFavorite(false);
+            });
+    }, [courseId, userId]);
+
+    // Exibe mensagem de carregamento ou "curso não encontrado" enquanto os dados são buscados.
+    if (!course) return &lt;div className="loading">A carregar detalhes ou curso não encontrado...&lt;/div>;
+
+    /**
+     * Retorna o elemento de imagem do ícone de turno com base no valor fornecido.
+     * @param {string} shiftValue - O valor do turno (ex: "Diurno", "Pós-laboral").
+     * @returns {JSX.Element|null} O elemento `&lt;img>` para o ícone do turno, ou `null` se não corresponder.
+     */
+    const getShiftImage = (shiftValue) => {
+        if (shiftValue === "Diurno") {
+            return &lt;img src="/icons/day-study.png" alt="Estudo Diurno" className="shift-icon" />;
+        }
+        if (shiftValue === "Pós-laboral") {
+            return &lt;img src="/icons/night-study.png" alt="Estudo Noturno" className="shift-icon"/>;
+        }
+        return null;
+    };
+
+    /**
+     * Alterna o status de favorito do curso (adiciona/remove dos favoritos).
+     * Requer que o utilizador esteja autenticado.
+     */
+    const toggleFavorite = () => {
+        if (!userId) {
+            console.warn("Utilizador não autenticado para adicionar/remover favoritos.");
+            toast.info("Por favor, faça login para adicionar aos favoritos.", { theme: "colored" });
+            return;
+        }
+
+        if (isFavorite) {
+            api.post(`/api/courses/${courseId}/favorites/delete`)
+                .then(() => setIsFavorite(false))
+                .catch((err) => console.error("Erro ao remover dos favoritos:", err));
+        } else {
+            api.post(`/api/courses/${courseId}/favorites`)
+                .then(() => setIsFavorite(true))
+                .catch((err) => console.error("Erro ao adicionar aos favoritos:", err));
+        }
+    };
+
+    /**
+     * Obtém o ID da instituição a partir do DTO do curso.
+     * Usado para criar o link para a página de detalhes da instituição.
+     * @type {string|number|undefined}
+     */
+    const institutionIdFromCourseDTO = course.courseDTO?.instituicaoId;
+
+    return (
+        &lt;>
+            &lt;div className="background-course-details">
+                &lt;div className="background-image">
+                    &lt;img src="/images/background-color.jpg" alt="Background Image" className="background-image"/>
+                &lt;/div>
+            &lt;/div>
+            &lt;h3 className="back-container" onClick={event=>window.history.back()}> &lt;i className="icon-left-arrow" aria-hidden="true">&lt;/i>Cursos&lt;/h3>
+            &lt;div className="course-detail-container">
+                &lt;h1 className="course-title" key={course.courseDTO?.nome}>
+                    {course.courseDTO?.nome}
+                    {course.shift &amp;&amp; (
+                        &lt;span className="shift-icon-wrapper">
+                            {getShiftImage(course.shift)}
+                        &lt;/span>
+                    )}
+
+                    &lt;div className={"course-title-action"}>
+                        &lt;i
+                            onClick={toggleFavorite}
+                            className={isFavorite ? "icon-star-filled" : "icon-star"}
+                            aria-hidden="true"
+                        >&lt;/i>
+                    &lt;/div>
+                &lt;/h1>
+                &lt;h2 className="course-subtitle">
+                    {institutionIdFromCourseDTO ? (
+                        &lt;Link to={`/instituicao/${institutionIdFromCourseDTO}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                            {course.institutionName || institution?.nomeIes || "A carregar..."}
+                        &lt;/Link>
+                    ) : (
+                        course.institutionName || "Instituição Desconhecida"
+                    )}
+                &lt;/h2>
+
+                &lt;div className="course-info-box">
+                    &lt;div className="left-column">
+                        &lt;p>&lt;strong>Área de estudo:&lt;/strong> {course.courseDTO?.nomeAreaEstudo}&lt;/p>
+                        &lt;p>&lt;strong>Regime de acesso:&lt;/strong> {course.accessRegime}&lt;/p>
+                        &lt;p>&lt;strong>Estado do curso:&lt;/strong> {course.courseDTO?.estadoCursoDGES}&lt;/p>
+
+                        &lt;p>&lt;strong>Horário:&lt;/strong> {course.shift}&lt;/p>
+                        &lt;p>&lt;strong>Ects:&lt;/strong> {course.courseDTO?.ects}&lt;/p>
+                        &lt;p>&lt;strong>Grau:&lt;/strong> {course.courseDTO?.grau}&lt;/p>
+                        &lt;p>&lt;strong>Ano académico:&lt;/strong> {course.academicYear}&lt;/p>
+                    &lt;/div>
+
+                    &lt;div className={"right-column"}>
+                        &lt;p>&lt;strong>Vagas:&lt;/strong> {course.vacancies}&lt;/p>
+                        &lt;p>&lt;strong>Requisitos:&lt;/strong> {course.rankingCriteria}&lt;/p>
+                        &lt;p>&lt;strong>Descrição:&lt;/strong> {course.description}&lt;/p>
+
+                        &lt;p>&lt;strong>Localidade:&lt;/strong> {course.courseDTO?.localidade}&lt;/p>
+                        &lt;p>
+                            &lt;strong>Site da universidade:&lt;/strong>{" "}
+                            {course.sourceUrl ? (
+                                &lt;a href={course.sourceUrl} target="_blank" rel="noopener noreferrer">
+                                    {course.sourceUrl}
+                                &lt;/a>
+                            ) : (
+                                "Não disponível"
+                            )}
+                        &lt;/p>
+                    &lt;/div>
+                &lt;/div>
+            &lt;/div>
+
+            &lt;Comments courseId={courseId} />
+        &lt;/>
+    );
+}
+
+export default CourseDetails;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#About">About</a></li><li><a href="global.html#AdminPage">AdminPage</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#AutocompleteDropdown">AutocompleteDropdown</a></li><li><a href="global.html#BOOKMARKS_COLORS">BOOKMARKS_COLORS</a></li><li><a href="global.html#Bookmarks">Bookmarks</a></li><li><a href="global.html#COLORS">COLORS</a></li><li><a href="global.html#Calendar">Calendar</a></li><li><a href="global.html#Comments">Comments</a></li><li><a href="global.html#Configurations">Configurations</a></li><li><a href="global.html#CourseDetails">CourseDetails</a></li><li><a href="global.html#Courses">Courses</a></li><li><a href="global.html#FAVORITES_COLORS">FAVORITES_COLORS</a></li><li><a href="global.html#Faqs">Faqs</a></li><li><a href="global.html#Favorites">Favorites</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#Homepage">Homepage</a></li><li><a href="global.html#InstitutionDetails">InstitutionDetails</a></li><li><a href="global.html#Interactions">Interactions</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#Notifications">Notifications</a></li><li><a href="global.html#Pagination">Pagination</a></li><li><a href="global.html#Profile">Profile</a></li><li><a href="global.html#ProfileLayout">ProfileLayout</a></li><li><a href="global.html#ProtectedRoute">ProtectedRoute</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#SignIn">SignIn</a></li><li><a href="global.html#SignUp">SignUp</a></li><li><a href="global.html#UserContext">UserContext</a></li><li><a href="global.html#UserProvider">UserProvider</a></li><li><a href="global.html#api">api</a></li><li><a href="global.html#assignColorsToBookmarks">assignColorsToBookmarks</a></li><li><a href="global.html#assignColorsToCourses">assignColorsToCourses</a></li><li><a href="global.html#assignColorsToFavorites">assignColorsToFavorites</a></li><li><a href="global.html#setUserContextRef">setUserContextRef</a></li><li><a href="global.html#useUserContext">useUserContext</a></li><li><a href="global.html#userContextRef">userContextRef</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu Jul 17 2025 23:05:57 GMT+0100 (Hora de verão da Europa Ocidental)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

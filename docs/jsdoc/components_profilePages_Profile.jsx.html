@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/profilePages/Profile.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/profilePages/Profile.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import '../../style/profilePages/ProfileLayout.css';
+import React, { useEffect, useState } from "react";
+import { useUserContext } from "../../services/UserContext.jsx";
+import api from "../../services/api.js";
+
+/**
+ * @typedef {object} UserContextObject
+ * @property {object|null} user - O objeto do utilizador autenticado, ou `null`.
+ * @property {boolean} loading - Indica se o contexto do utilizador está a carregar.
+ */
+
+/**
+ * @typedef {object} ProfileData
+ * @property {string} [fullName] - Nome completo do utilizador.
+ * @property {string} [firstName] - Primeiro nome do utilizador.
+ * @property {string} [lastName] - Apelido(s) do utilizador.
+ * @property {number} [age] - Idade do utilizador.
+ * @property {string} [gender] - Género do utilizador.
+ * @property {string} [phoneNumber] - Número de telefone do utilizador.
+ * @property {string} [district] - Distrito de residência.
+ * @property {string} [city] - Cidade de residência.
+ * @property {string} [country] - País de residência.
+ * @property {string} [zipCode] - Código postal.
+ * @property {string} [bio] - Biografia do utilizador.
+ * @property {string} [imagePath] - Caminho da imagem de perfil.
+ * @property {string} [institution] - Instituição de ensino.
+ * @property {string} [degree] - Grau de ensino.
+ */
+
+/**
+ * Componente Profile.
+ * Exibe as informações de perfil do utilizador logado, como dados pessoais e morada.
+ * Permite uma visualização consolidada dos detalhes do perfil.
+ * @returns {JSX.Element} O componente Profile.
+ */
+function Profile() {
+    /**
+     * Estado para o título da página ativa (fixo como 'Conta').
+     * @type {string}
+     */
+    const [activePage] = useState('Conta');
+    /**
+     * Hook para aceder ao contexto do utilizador.
+     * @type {UserContextObject}
+     */
+    const { user } = useUserContext();
+    /**
+     * Estado para armazenar os dados do perfil do utilizador.
+     * @type {ProfileData|null}
+     */
+    const [profileData, setProfileData] = useState(null);
+    /**
+     * Estado para indicar se os dados do perfil estão a ser carregados.
+     * @type {boolean}
+     */
+    const [loading, setLoading] = useState(true);
+    /**
+     * Estado para armazenar mensagens de erro caso a carga do perfil falhe.
+     * @type {string|null}
+     */
+    const [error, setError] = useState(null);
+
+    /**
+     * Efeito para buscar os dados do perfil do utilizador.
+     * É executado sempre que o objeto `user` do contexto muda.
+     */
+    useEffect(() => {
+        // Verifica se o utilizador está logado antes de tentar buscar o perfil.
+        if (!user) {
+            setLoading(false);
+            setError("Não estás logado. Por favor, faz login para continuar.");
+            return;
+        }
+
+        /**
+         * Função assíncrona para buscar os dados do perfil do utilizador a partir da API.
+         */
+        const fetchProfile = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const response = await api.get(`/api/users/profile/${user.id}`);
+                setProfileData({
+                    fullName: response.data.fullName || "",
+                    firstName: response.data.firstName || "",
+                    lastName: response.data.lastName || "",
+                    age: response.data.age || 0,
+                    gender: response.data.gender || "",
+                    phoneNumber: response.data.phoneNumber || "",
+                    district: response.data.district || "",
+                    city: response.data.city || "",
+                    country: response.data.country || "",
+                    zipCode: response.data.zipCode || "",
+                    bio: response.data.bio || "",
+                    imagePath: response.data.imagePath || "",
+                    institution: response.data.institution || "",
+                    degree: response.data.degree || "",
+                });
+            } catch (err) {
+                console.error("Erro ao carregar perfil:", err);
+                setError("Não foi possível carregar o perfil. Por favor, tente novamente mais tarde.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProfile();
+    }, [user]);
+
+    // Exibe mensagem de carregamento enquanto os dados estão a ser buscados.
+    if (loading) return &lt;div className="loading-profile">A carregar perfil...&lt;/div>;
+    // Exibe mensagem de erro se ocorreu um problema ao carregar o perfil.
+    if (error) return &lt;div className="error-profile">{error}&lt;/div>;
+
+    return (
+        &lt;section className="cards">
+            &lt;div className="container-card-two">
+                &lt;h2 className="card-two-title">{activePage}&lt;/h2>
+                &lt;div className="card-two">
+                    {profileData &amp;&amp; (
+                        &lt;div className="sections">
+                            &lt;div className="section section-one">
+                                &lt;h4>{profileData.firstName} {profileData.lastName}&lt;/h4>
+                                &lt;p>{profileData.degree || "Estudante"}&lt;/p>
+                                &lt;p>{profileData.city}, {profileData.country}&lt;/p>
+                            &lt;/div>
+
+                            &lt;div className="section section-two">
+                                &lt;h4>Informação Pessoal&lt;/h4>
+                                &lt;div className="line">
+                                    &lt;div className="first-name">
+                                        &lt;p>Primeiro Nome&lt;/p>
+                                        &lt;p>{profileData.firstName}&lt;/p>
+                                    &lt;/div>
+                                    &lt;div className="last-name">
+                                        &lt;p>Apelido(s)&lt;/p>
+                                        &lt;p>{profileData.lastName}&lt;/p>
+                                    &lt;/div>
+                                    &lt;div className="age">
+                                        &lt;p>Idade&lt;/p>
+                                        &lt;p>{profileData.age}&lt;/p>
+                                    &lt;/div>
+                                &lt;/div>
+                                &lt;div className="line">
+                                    &lt;div className="bio">
+                                        &lt;p>Bio&lt;/p>
+                                        &lt;p className="bio-name">{profileData.bio}&lt;/p>
+                                    &lt;/div>
+                                    &lt;div className="email">
+                                        &lt;p>E-mail&lt;/p>
+                                        &lt;p className="email-address">{user.email}&lt;/p>
+                                    &lt;/div>
+                                    &lt;div className="phone">
+                                        &lt;p>Telemóvel&lt;/p>
+                                        &lt;p className="phone-number">{profileData.phoneNumber}&lt;/p>
+                                    &lt;/div>
+                                &lt;/div>
+                            &lt;/div>
+
+                            &lt;div className="section section-three">
+                                &lt;h4>Morada&lt;/h4>
+                                &lt;div className="line">
+                                    &lt;div className="country">
+                                        &lt;p>País&lt;/p>
+                                        &lt;p className="country-name">{profileData.country}&lt;/p>
+                                    &lt;/div>
+                                    &lt;div className="city">
+                                        &lt;p>Cidade&lt;/p>
+                                        &lt;p className="city-name">{profileData.city}&lt;/p>
+                                    &lt;/div>
+                                &lt;/div>
+                                &lt;div className="line">
+                                    &lt;div className="cp">
+                                        &lt;p>Código Postal&lt;/p>
+                                        &lt;p className="cp-number">{profileData.zipCode}&lt;/p>
+                                    &lt;/div>
+                                    &lt;div className="district">
+                                        &lt;p>Distrito&lt;/p>
+                                        &lt;p className="district-name">{profileData.district}&lt;/p>
+                                    &lt;/div>
+                                &lt;/div>
+                            &lt;/div>
+                        &lt;/div>
+                    )}
+                &lt;/div>
+            &lt;/div>
+        &lt;/section>
+    );
+}
+
+export default Profile;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#About">About</a></li><li><a href="global.html#AdminPage">AdminPage</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#AutocompleteDropdown">AutocompleteDropdown</a></li><li><a href="global.html#BOOKMARKS_COLORS">BOOKMARKS_COLORS</a></li><li><a href="global.html#Bookmarks">Bookmarks</a></li><li><a href="global.html#COLORS">COLORS</a></li><li><a href="global.html#Calendar">Calendar</a></li><li><a href="global.html#Comments">Comments</a></li><li><a href="global.html#Configurations">Configurations</a></li><li><a href="global.html#CourseDetails">CourseDetails</a></li><li><a href="global.html#Courses">Courses</a></li><li><a href="global.html#FAVORITES_COLORS">FAVORITES_COLORS</a></li><li><a href="global.html#Faqs">Faqs</a></li><li><a href="global.html#Favorites">Favorites</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#Homepage">Homepage</a></li><li><a href="global.html#InstitutionDetails">InstitutionDetails</a></li><li><a href="global.html#Interactions">Interactions</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#Notifications">Notifications</a></li><li><a href="global.html#Pagination">Pagination</a></li><li><a href="global.html#Profile">Profile</a></li><li><a href="global.html#ProfileLayout">ProfileLayout</a></li><li><a href="global.html#ProtectedRoute">ProtectedRoute</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#SignIn">SignIn</a></li><li><a href="global.html#SignUp">SignUp</a></li><li><a href="global.html#UserContext">UserContext</a></li><li><a href="global.html#UserProvider">UserProvider</a></li><li><a href="global.html#api">api</a></li><li><a href="global.html#assignColorsToBookmarks">assignColorsToBookmarks</a></li><li><a href="global.html#assignColorsToCourses">assignColorsToCourses</a></li><li><a href="global.html#assignColorsToFavorites">assignColorsToFavorites</a></li><li><a href="global.html#setUserContextRef">setUserContextRef</a></li><li><a href="global.html#useUserContext">useUserContext</a></li><li><a href="global.html#userContextRef">userContextRef</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu Jul 17 2025 23:05:57 GMT+0100 (Hora de verão da Europa Ocidental)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

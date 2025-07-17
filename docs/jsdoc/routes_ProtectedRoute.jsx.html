@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: routes/ProtectedRoute.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: routes/ProtectedRoute.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
+import { useUserContext } from '../services/UserContext';
+
+/**
+ * @typedef {object} ProtectedRouteProps
+ * @property {Array&lt;string>} [allowedRoles] - Um array de strings com os roles permitidos para aceder a esta rota (ex: ['USER', 'ADMIN']).
+ * Se não for fornecido, a rota é protegida apenas por autenticação (qualquer role autenticado).
+ */
+
+/**
+ * Componente ProtectedRoute.
+ * Utilizado para proteger rotas no React Router DOM, verificando a autenticação do utilizador
+ * e os seus privilégios (roles).
+ *
+ * @param {ProtectedRouteProps} props - As propriedades do componente.
+ * @returns {JSX.Element} O conteúdo da rota protegida ou um componente `Maps` para redirecionamento.
+ */
+const ProtectedRoute = ({ allowedRoles }) => {
+    /**
+     * Obtém o objeto de utilizador e o estado de carregamento do contexto do utilizador.
+     * @type {{user: object|null, loading: boolean}}
+     */
+    const { user, loading } = useUserContext();
+
+    // Estes console.log são para depuração e podem ser removidos em produção.
+    console.log('ProtectedRoute: User', user);
+    console.log('ProtectedRoute: Loading', loading);
+    console.log('ProtectedRoute: Allowed Roles', allowedRoles);
+    if (user) {
+        console.log('ProtectedRoute: User Role', user.role);
+        console.log('ProtectedRoute: Is Role Allowed?', allowedRoles.includes(user.role));
+    }
+
+    /**
+     * Enquanto os dados do utilizador estão a ser carregados, renderiza uma mensagem de carregamento.
+     * Isso evita renderizar a página protegida com um estado de utilizador indefinido.
+     */
+    if (loading) {
+        return &lt;div>Verificando autenticação...&lt;/div>;
+    }
+
+    /**
+     * 1. Verifica a Autenticação:
+     * Se o utilizador não estiver logado (`user` é `null`), redireciona para a página de login.
+     */
+    if (!user) {
+        return &lt;Navigate to="/entrar" replace />;
+    }
+
+    /**
+     * 2. Verifica as Permissões (Roles):
+     * Se `allowedRoles` foi especificado E o `role` do utilizador não está na lista de roles permitidos,
+     * redireciona para a homepage ou para uma página de "acesso negado".
+     */
+    if (allowedRoles &amp;&amp; !allowedRoles.includes(user.role)) {
+        console.warn(`Acesso negado para o utilizador ${user.username} com role ${user.role}.`);
+        return &lt;Navigate to="/" replace />;
+    }
+
+    /**
+     * Se o utilizador estiver autenticado e tiver as permissões necessárias,
+     * renderiza o conteúdo da rota protegida através do `Outlet`.
+     */
+    return &lt;Outlet />;
+};
+
+export default ProtectedRoute;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#About">About</a></li><li><a href="global.html#AdminPage">AdminPage</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#AutocompleteDropdown">AutocompleteDropdown</a></li><li><a href="global.html#BOOKMARKS_COLORS">BOOKMARKS_COLORS</a></li><li><a href="global.html#Bookmarks">Bookmarks</a></li><li><a href="global.html#COLORS">COLORS</a></li><li><a href="global.html#Calendar">Calendar</a></li><li><a href="global.html#Comments">Comments</a></li><li><a href="global.html#Configurations">Configurations</a></li><li><a href="global.html#CourseDetails">CourseDetails</a></li><li><a href="global.html#Courses">Courses</a></li><li><a href="global.html#FAVORITES_COLORS">FAVORITES_COLORS</a></li><li><a href="global.html#Faqs">Faqs</a></li><li><a href="global.html#Favorites">Favorites</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#Homepage">Homepage</a></li><li><a href="global.html#InstitutionDetails">InstitutionDetails</a></li><li><a href="global.html#Interactions">Interactions</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#Notifications">Notifications</a></li><li><a href="global.html#Pagination">Pagination</a></li><li><a href="global.html#Profile">Profile</a></li><li><a href="global.html#ProfileLayout">ProfileLayout</a></li><li><a href="global.html#ProtectedRoute">ProtectedRoute</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#SignIn">SignIn</a></li><li><a href="global.html#SignUp">SignUp</a></li><li><a href="global.html#UserContext">UserContext</a></li><li><a href="global.html#UserProvider">UserProvider</a></li><li><a href="global.html#api">api</a></li><li><a href="global.html#assignColorsToBookmarks">assignColorsToBookmarks</a></li><li><a href="global.html#assignColorsToCourses">assignColorsToCourses</a></li><li><a href="global.html#assignColorsToFavorites">assignColorsToFavorites</a></li><li><a href="global.html#setUserContextRef">setUserContextRef</a></li><li><a href="global.html#useUserContext">useUserContext</a></li><li><a href="global.html#userContextRef">userContextRef</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu Jul 17 2025 23:05:57 GMT+0100 (Hora de verão da Europa Ocidental)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

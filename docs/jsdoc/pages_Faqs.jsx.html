@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pages/Faqs.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pages/Faqs.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, {useEffect, useState} from "react";
+import "../style/Faqs.css";
+
+/**
+ * Componente Faqs.
+ * Exibe uma lista de Perguntas Frequentes (FAQs) com funcionalidade de expandir/colapsar.
+ * Busca as FAQs de uma API local.
+ * @returns {JSX.Element} O componente Faqs.
+ */
+function Faqs() {
+    /**
+     * Estado para armazenar a lista de FAQs.
+     * @type {[Array&lt;object>, React.Dispatch&lt;React.SetStateAction&lt;Array&lt;object>>>]}
+     */
+    const [faqs, setFaqs] = useState([]);
+    /**
+     * Estado para controlar o índice da FAQ atualmente aberta (expandida).
+     * `null` se nenhuma FAQ estiver aberta.
+     * @type {[number|null, React.Dispatch&lt;React.SetStateAction&lt;number|null>>]}
+     */
+    const [openIndex, setOpenIndex] = useState(null);
+
+    /**
+     * Efeito para buscar as FAQs do backend quando o componente é montado.
+     */
+    useEffect(() => {
+        fetch("http://localhost:8080/api/faqs")
+            .then((response) => response.json())
+            .then((data) => {
+                setFaqs(data);
+            })
+            .catch((error) => {
+                console.error("Erro ao carregar FAQs:", error);
+            });
+    }, []);
+
+    /**
+     * Alterna a visibilidade da resposta de uma FAQ específica.
+     * Se a FAQ clicada já estiver aberta, ela será fechada; caso contrário, será aberta.
+     * @param {number} index - O índice da FAQ a ser alternada.
+     */
+    const toggleFaq = (index) => {
+        setOpenIndex(openIndex === index ? null : index);
+    };
+
+    return (
+        &lt;>
+            &lt;div className="faqs-container">
+                &lt;div className="faqs-left">
+                    &lt;div className="faqs-left-content">
+                        &lt;h1>Alguma questão?&lt;/h1>
+                        &lt;h1>Pergunta-nos!&lt;/h1>
+                    &lt;/div>
+                    &lt;p>O Buddie foi criado para esclarecer todas as tuas dúvidas!&lt;br/>
+                        Estas são algumas das questões mais frequentes sobre&lt;br/>
+                        o regime de acesso ao ensino superior, dedicado a&lt;br/>
+                        maiores de 23 anos.&lt;/p>
+                &lt;/div>
+
+                &lt;div className="faqs-right">
+                    {faqs.map((faq, index) => (
+                        &lt;div className={`faq-item ${openIndex === index ? 'active' : ''}`} key={index}>
+                            &lt;div className="faq-question" onClick={() => toggleFaq(index)}>
+                                &lt;h2>{faq.questionText}&lt;/h2>
+                                &lt;h2 className="symbol">{openIndex === index ? '-' : '+'}&lt;/h2>
+                            &lt;/div>
+                            {openIndex === index &amp;&amp; (
+                                &lt;div className="faq-answer">
+                                    &lt;p>{faq.answerText}&lt;/p>
+                                &lt;/div>
+                            )}
+                            &lt;div className="bottom-line">&lt;/div>
+                        &lt;/div>
+                    ))}
+                &lt;/div>
+            &lt;/div>
+        &lt;/>
+    );
+}
+
+export default Faqs;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#About">About</a></li><li><a href="global.html#AdminPage">AdminPage</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#AutocompleteDropdown">AutocompleteDropdown</a></li><li><a href="global.html#BOOKMARKS_COLORS">BOOKMARKS_COLORS</a></li><li><a href="global.html#Bookmarks">Bookmarks</a></li><li><a href="global.html#COLORS">COLORS</a></li><li><a href="global.html#Calendar">Calendar</a></li><li><a href="global.html#Comments">Comments</a></li><li><a href="global.html#Configurations">Configurations</a></li><li><a href="global.html#CourseDetails">CourseDetails</a></li><li><a href="global.html#Courses">Courses</a></li><li><a href="global.html#FAVORITES_COLORS">FAVORITES_COLORS</a></li><li><a href="global.html#Faqs">Faqs</a></li><li><a href="global.html#Favorites">Favorites</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#Homepage">Homepage</a></li><li><a href="global.html#InstitutionDetails">InstitutionDetails</a></li><li><a href="global.html#Interactions">Interactions</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#Notifications">Notifications</a></li><li><a href="global.html#Pagination">Pagination</a></li><li><a href="global.html#Profile">Profile</a></li><li><a href="global.html#ProfileLayout">ProfileLayout</a></li><li><a href="global.html#ProtectedRoute">ProtectedRoute</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#SignIn">SignIn</a></li><li><a href="global.html#SignUp">SignUp</a></li><li><a href="global.html#UserContext">UserContext</a></li><li><a href="global.html#UserProvider">UserProvider</a></li><li><a href="global.html#api">api</a></li><li><a href="global.html#assignColorsToBookmarks">assignColorsToBookmarks</a></li><li><a href="global.html#assignColorsToCourses">assignColorsToCourses</a></li><li><a href="global.html#assignColorsToFavorites">assignColorsToFavorites</a></li><li><a href="global.html#setUserContextRef">setUserContextRef</a></li><li><a href="global.html#useUserContext">useUserContext</a></li><li><a href="global.html#userContextRef">userContextRef</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu Jul 17 2025 23:05:57 GMT+0100 (Hora de verão da Europa Ocidental)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

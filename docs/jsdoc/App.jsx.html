@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: App.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: App.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import './style/App.css';
+import "../public/icons/css/icons.css";
+import "./style/Homepage.css";
+
+import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useRef } from 'react';
+
+// Imports de componentes de Páginas
+import SignIn from "./pages/SignIn.jsx";
+import SignUp from "./pages/SignUp.jsx";
+import Homepage from "./pages/Homepage.jsx";
+import About from "./pages/About.jsx";
+import Faqs from "./pages/Faqs.jsx";
+import Courses from "./pages/Courses.jsx";
+import CourseDetails from "./pages/CourseDetails.jsx";
+import InstitutionDetails from "./pages/InstitutionDetails.jsx";
+
+// Imports de componentes de Layout e Páginas de Perfil
+import ProfileLayout from "./pages/profilePages/ProfileLayout.jsx";
+import Profile from "./components/profilePages/Profile.jsx";
+import Favorites from "./pages/profilePages/Favorites.jsx";
+import Bookmarks from "./pages/profilePages/Bookmarks.jsx";
+import Notifications from "./pages/profilePages/Notifications.jsx";
+import Interactions from "./pages/profilePages/Interactions.jsx";
+import Calendar from "./pages/profilePages/Calendar.jsx";
+import Configurations from "./pages/profilePages/Configurations.jsx";
+import AdminPage from "./components/profilePages/AdminPage.jsx";
+
+// Imports de componentes gerais
+import Navbar from "./components/generalComponents/Navbar.jsx";
+import Footer from "./components/generalComponents/Footer.jsx";
+
+// Importar o UserProvider (provedor do contexto do utilizador) e setUserContextRef
+import UserProvider, { useUserContext } from "./services/UserContext.jsx";
+import { setUserContextRef } from "./services/api.js";
+
+// Importar o ProtectedRoute (componente de proteção de rotas)
+import ProtectedRoute from './routes/ProtectedRoute';
+
+/**
+ * @typedef {object} LocationObject
+ * @property {string} pathname - O caminho da URL atual.
+ * @property {string} search - A string de query da URL atual.
+ * @property {string} hash - O fragmento de hash da URL atual.
+ * @property {string} key - A chave única para a localização.
+ * @property {object} state - O estado associado à localização.
+ */
+
+/**
+ * @typedef {function(...*): void} NavigateFunction
+ * Representa a função de navegação do React Router DOM.
+ * @see https://reactrouter.com/docs/en/v6/hooks/use-navigate
+ */
+
+/**
+ * @typedef {object} UserContextValue
+ * @property {object|null} user - O objeto do utilizador autenticado, ou `null`.
+ * @property {function(object|null): void} setUser - Função para definir o objeto do utilizador.
+ * @property {boolean} loading - Indica se o contexto do utilizador está a carregar.
+ * @property {function(string, string): Promise&lt;boolean>} login - Função para realizar o login.
+ * @property {function(): Promise&lt;void>} logout - Função para realizar o logout.
+ */
+
+/**
+ * Componente principal da aplicação.
+ * Configura as rotas da aplicação, gerencia o estado global do utilizador através do UserContext,
+ * e controla a renderização condicional da Navbar e do Footer.
+ * @returns {JSX.Element} O componente App.
+ */
+function App() {
+    /**
+     * Hook para obter o objeto de localização atual, usado para determinar a rota.
+     * @type {LocationObject}
+     */
+    const location = useLocation();
+    /**
+     * Hook para navegação programática.
+     * @type {NavigateFunction}
+     */
+    const navigate = useNavigate();
+    /**
+     * Objeto de contexto do utilizador obtido via hook `useUserContext`.
+     * Contém o estado do utilizador e funções de autenticação.
+     * @type {UserContextValue}
+     */
+    const userContext = useUserContext();
+    /**
+     * Referência mutável para o objeto de contexto do utilizador e a função `navigate`.
+     * Usada para permitir que o interceptor de Axios aceda a estas funções.
+     * @type {React.MutableRefObject&lt;object|null>}
+     */
+    const userContextRef = useRef(null);
+
+    /**
+     * Efeito para inicializar a referência do contexto do utilizador e da função de navegação.
+     * Esta referência é passada para o serviço `api.js` para ser usada nos interceptores.
+     * É executado a cada renderização se `userContext` ou `navigate` mudarem.
+     */
+    useEffect(() => {
+        userContextRef.current = { ...userContext, navigate };
+        setUserContextRef(userContextRef);
+    }, [userContext, navigate]);
+
+    /**
+     * Verifica se a rota atual é a página inicial.
+     * @type {boolean}
+     */
+    const isHomePage = location.pathname === '/';
+    /**
+     * Verifica se a rota atual é uma página de perfil (inclui sub-rotas).
+     * @type {boolean}
+     */
+    const isProfilePage = location.pathname.startsWith('/perfil');
+    /**
+     * Verifica se a rota atual é a página de administração.
+     * @type {boolean}
+     */
+    const isAdminPage = location.pathname.startsWith('/admin');
+    /**
+     * Verifica se a rota atual é a página de login.
+     * @type {boolean}
+     */
+    const isLoginPage = location.pathname === '/entrar';
+    /**
+     * Verifica se a rota atual é a página de registo.
+     * @type {boolean}
+     */
+    const isRegisterPage = location.pathname === '/registar';
+    /**
+     * Verifica se a rota atual é a página de FAQs.
+     * @type {boolean}
+     */
+    const isFaqsPage = location.pathname === '/faqs';
+    /**
+     * Verifica se a rota atual é uma página de detalhes de instituição.
+     * @type {boolean}
+     */
+    const isInstitutionDetails = location.pathname.startsWith('/instituicao');
+
+    return (
+        &lt;>
+            {/* O UserProvider envolve toda a aplicação para que o contexto do utilizador esteja disponível para todos os componentes. */}
+            &lt;UserProvider>
+                {/* A Navbar é renderizada em todas as páginas. */}
+                &lt;Navbar/>
+                {/* As Rotas definem a navegação da aplicação. */}
+                &lt;Routes>
+                    {/* Rotas Públicas: Acessíveis a todos os utilizadores. */}
+                    &lt;Route path="/" element={&lt;Homepage/>}/>
+                    &lt;Route path="/sobre" element={&lt;About/>}/>
+                    &lt;Route path="/cursos" element={&lt;Courses/>}/>
+                    &lt;Route path="/cursos/:courseId" element={&lt;CourseDetails/>}/>
+                    &lt;Route path="/instituicao/:id" element={&lt;InstitutionDetails/>}/>
+                    &lt;Route path="/entrar" element={&lt;SignIn/>}/>
+                    &lt;Route path="/registar" element={&lt;SignUp/>}/>
+                    &lt;Route path="/faqs" element={&lt;Faqs/>}/>
+
+                    {/* Rotas Protegidas para Utilizadores Autenticados (USER e ADMIN).
+                        Qualquer utilizador autenticado pode aceder a estas rotas de perfil. */}
+                    &lt;Route element={&lt;ProtectedRoute allowedRoles={['USER', 'ADMIN']} />}>
+                        &lt;Route path="/perfil" element={&lt;ProfileLayout />}>
+                            {/* Redireciona a rota base /perfil para /perfil/conta */}
+                            &lt;Route index element={&lt;Navigate to="conta" />} />
+                            &lt;Route path="conta" element={&lt;Profile />} />
+                            &lt;Route path="configuracoes" element={&lt;Configurations />} />
+                            &lt;Route path="favoritos" element={&lt;Favorites />} />
+                            &lt;Route path="ver-mais-tarde" element={&lt;Bookmarks />} />
+                            &lt;Route path="notificacoes" element={&lt;Notifications />} />
+                            &lt;Route path="interacoes" element={&lt;Interactions />} />
+                            &lt;Route path="calendario" element={&lt;Calendar />} />
+                        &lt;/Route>
+                    &lt;/Route>
+
+                    {/* Rota Protegida para a Área de Administração (APENAS ADMIN).
+                        Esta rota de nível superior é protegida pelo ProtectedRoute. */}
+                    &lt;Route element={&lt;ProtectedRoute allowedRoles={['ADMIN']} />}>
+                        &lt;Route path="/admin" element={&lt;AdminPage/>}/>
+                    &lt;/Route>
+
+                    {/* Rota para Acesso Negado:
+                        Exibida caso um utilizador sem permissão tente aceder a uma rota protegida. */}
+                    &lt;Route path="/acesso-negado" element={&lt;div>Acesso Negado. Você não tem permissão para ver esta página.&lt;/div>} />
+
+                &lt;/Routes>
+            &lt;/UserProvider>
+            {/* Lógica de Renderização Condicional do Footer:
+                O Footer é exibido APENAS se a rota atual não for uma das páginas listadas. */}
+            {!isHomePage &amp;&amp; !isProfilePage &amp;&amp; !isAdminPage &amp;&amp; !isInstitutionDetails &amp;&amp; !isLoginPage &amp;&amp; !isRegisterPage &amp;&amp; !isFaqsPage &amp;&amp; &lt;Footer/>}
+        &lt;/>
+    );
+}
+
+export default App;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#About">About</a></li><li><a href="global.html#AdminPage">AdminPage</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#AutocompleteDropdown">AutocompleteDropdown</a></li><li><a href="global.html#BOOKMARKS_COLORS">BOOKMARKS_COLORS</a></li><li><a href="global.html#Bookmarks">Bookmarks</a></li><li><a href="global.html#COLORS">COLORS</a></li><li><a href="global.html#Calendar">Calendar</a></li><li><a href="global.html#Comments">Comments</a></li><li><a href="global.html#Configurations">Configurations</a></li><li><a href="global.html#CourseDetails">CourseDetails</a></li><li><a href="global.html#Courses">Courses</a></li><li><a href="global.html#FAVORITES_COLORS">FAVORITES_COLORS</a></li><li><a href="global.html#Faqs">Faqs</a></li><li><a href="global.html#Favorites">Favorites</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#Homepage">Homepage</a></li><li><a href="global.html#InstitutionDetails">InstitutionDetails</a></li><li><a href="global.html#Interactions">Interactions</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#Notifications">Notifications</a></li><li><a href="global.html#Pagination">Pagination</a></li><li><a href="global.html#Profile">Profile</a></li><li><a href="global.html#ProfileLayout">ProfileLayout</a></li><li><a href="global.html#ProtectedRoute">ProtectedRoute</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#SignIn">SignIn</a></li><li><a href="global.html#SignUp">SignUp</a></li><li><a href="global.html#UserContext">UserContext</a></li><li><a href="global.html#UserProvider">UserProvider</a></li><li><a href="global.html#api">api</a></li><li><a href="global.html#assignColorsToBookmarks">assignColorsToBookmarks</a></li><li><a href="global.html#assignColorsToCourses">assignColorsToCourses</a></li><li><a href="global.html#assignColorsToFavorites">assignColorsToFavorites</a></li><li><a href="global.html#setUserContextRef">setUserContextRef</a></li><li><a href="global.html#useUserContext">useUserContext</a></li><li><a href="global.html#userContextRef">userContextRef</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu Jul 17 2025 23:05:57 GMT+0100 (Hora de verão da Europa Ocidental)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

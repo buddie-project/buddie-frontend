@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pages/profilePages/Notifications.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pages/profilePages/Notifications.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import '../../style/profilePages/ProfileLayout.css';
+import '../../style/profilePages/Notifications.css';
+import React from 'react';
+
+/**
+ * Componente Notifications.
+ * Exibe uma lista estática de notificações de exemplo para o utilizador.
+ * @returns {JSX.Element} O componente Notifications.
+ */
+function Notifications() {
+    /**
+     * Array de objetos de notificação de exemplo.
+     * Atualmente, os dados são estáticos.
+     * @type {Array&lt;object>}
+     */
+    const notifications = [
+        { id: 1, type: 'like', message: 'João Silva gostou do teu comentário.', date: '13/07/2025' },
+        { id: 2, type: 'comment', message: 'Maria Costa comentou: "Excelente trabalho!"', date: '12/07/2025' },
+        { id: 3, type: 'alert', message: 'Prazo de inscrição termina amanhã!', date: '11/07/2025' },
+        { id: 4, type: 'like', message: 'Carlos Matos gostou do teu comentário.', date: '10/07/2025' },
+        { id: 5, type: 'comment', message: 'Ana Pereira respondeu ao teu comentário.', date: '09/07/2025' },
+        { id: 6, type: 'alert', message: 'Nova data de teste disponível!', date: '08/07/2025' },
+        { id: 7, type: 'like', message: 'Beatriz Lopes gostou do teu comentário.', date: '07/07/2025' },
+    ];
+
+    return (
+        &lt;div className="container-card-two">
+            &lt;h2 className="card-two-title">Notificações&lt;/h2>
+            &lt;div className="card-two">
+                &lt;section className="notifications-page">
+                    &lt;div className="notifications-list">
+                        {notifications.map((notif) => (
+                            &lt;div className={`notification-card ${notif.type}`} key={notif.id}>
+                                &lt;div className="icon-area">
+                                    {notif.type === 'like' &amp;&amp; &lt;span className="icon">👍&lt;/span>}
+                                    {notif.type === 'comment' &amp;&amp; &lt;span className="icon">💬&lt;/span>}
+                                    {notif.type === 'alert' &amp;&amp; &lt;span className="icon">⚠️&lt;/span>}
+                                &lt;/div>
+                                &lt;div className="content-area">
+                                    &lt;p className="notification-text">{notif.message}&lt;/p>
+                                    &lt;span className="notification-date">{notif.date}&lt;/span>
+                                &lt;/div>
+                            &lt;/div>
+                        ))}
+                    &lt;/div>
+                &lt;/section>
+            &lt;/div>
+        &lt;/div>
+    );
+}
+
+export default Notifications;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#About">About</a></li><li><a href="global.html#AdminPage">AdminPage</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#AutocompleteDropdown">AutocompleteDropdown</a></li><li><a href="global.html#BOOKMARKS_COLORS">BOOKMARKS_COLORS</a></li><li><a href="global.html#Bookmarks">Bookmarks</a></li><li><a href="global.html#COLORS">COLORS</a></li><li><a href="global.html#Calendar">Calendar</a></li><li><a href="global.html#Comments">Comments</a></li><li><a href="global.html#Configurations">Configurations</a></li><li><a href="global.html#CourseDetails">CourseDetails</a></li><li><a href="global.html#Courses">Courses</a></li><li><a href="global.html#FAVORITES_COLORS">FAVORITES_COLORS</a></li><li><a href="global.html#Faqs">Faqs</a></li><li><a href="global.html#Favorites">Favorites</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#Homepage">Homepage</a></li><li><a href="global.html#InstitutionDetails">InstitutionDetails</a></li><li><a href="global.html#Interactions">Interactions</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#Notifications">Notifications</a></li><li><a href="global.html#Pagination">Pagination</a></li><li><a href="global.html#Profile">Profile</a></li><li><a href="global.html#ProfileLayout">ProfileLayout</a></li><li><a href="global.html#ProtectedRoute">ProtectedRoute</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#SignIn">SignIn</a></li><li><a href="global.html#SignUp">SignUp</a></li><li><a href="global.html#UserContext">UserContext</a></li><li><a href="global.html#UserProvider">UserProvider</a></li><li><a href="global.html#api">api</a></li><li><a href="global.html#assignColorsToBookmarks">assignColorsToBookmarks</a></li><li><a href="global.html#assignColorsToCourses">assignColorsToCourses</a></li><li><a href="global.html#assignColorsToFavorites">assignColorsToFavorites</a></li><li><a href="global.html#setUserContextRef">setUserContextRef</a></li><li><a href="global.html#useUserContext">useUserContext</a></li><li><a href="global.html#userContextRef">userContextRef</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu Jul 17 2025 23:05:57 GMT+0100 (Hora de verão da Europa Ocidental)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
