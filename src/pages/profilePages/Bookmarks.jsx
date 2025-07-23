@@ -184,11 +184,13 @@ function Bookmarks() {
                     )}
                 </div>
                 {totalPages > 1 && (
+                    <div className="pagination-container">
                     <Pagination
                         currentPage={currentPage}
                         totalPages={totalPages}
                         onPageChange={setCurrentPage}
                     />
+                    </div>
                 )}
             </div>
         </div>
