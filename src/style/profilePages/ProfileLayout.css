@@ -16,6 +16,16 @@
     margin-top: 6rem;
 }
 
+.card-two > .pagination-container {
+    margin-top: 4rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    position: absolute;
+    top: 540px;
+}
+
 .card-one {
     background: white;
     border-radius: 25px;
@@ -38,6 +48,8 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    box-sizing: border-box;
+    position: relative;
 }
 
 .card-one-title,
@@ -271,5 +283,9 @@
         width: 90%;
         height: auto;
         margin: 1rem 1rem 0.5rem 1rem;
+    }
+
+    .card-two > .pagination-container {
+        top: 950px;
     }
 }
