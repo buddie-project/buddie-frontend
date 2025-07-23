@@ -229,6 +229,7 @@ function Configurations() {
                 <div className="card-two">
                     {profileData && (
                         <div className="configurations-section">
+                            <div className="section section-one">
                             <h4>Informação Pessoal</h4>
                             <div className="line">
                                 <div className="inputs">
@@ -286,6 +287,7 @@ function Configurations() {
                                         onChange={handleInputChange}
                                     />
                                 </div>
+                            </div>
                             </div>
 
                             <div className="section section-two">

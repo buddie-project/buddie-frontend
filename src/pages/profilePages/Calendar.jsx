@@ -57,7 +57,7 @@ function Calendar() {
      * Estado para armazenar todos os eventos (públicos e privados) obtidos do backend.
      * @type {Array<EventObject>}
      */
-    const [events, setEvents] = useState([]);
+    const [setEvents] = useState([]);
     /**
      * Estado para mapear datas (formato 'YYYY-MM-DD') a arrays de eventos que ocorrem nesse dia.
      * Facilita a aplicação de estilos e a exibição de conteúdo.
@@ -138,16 +138,17 @@ function Calendar() {
      */
     const generateColorsForMonth = (monthDates) => {
         const colors = {};
-        let prevColor = '';
+        const month = monthDates[0].getMonth();
+        const year = monthDates[0].getFullYear();
+        const seed = `${year}-${month}`;
+
+        const rng = seedrandom(seed);
+        const randomColor = colorList[Math.floor(rng() * colorList.length)];
+
         monthDates.forEach((date) => {
-            let rng = seedrandom(date.toDateString());
-            let randomColor;
-            do {
-                randomColor = colorList[Math.floor(rng() * colorList.length)];
-            } while (randomColor === prevColor);
-            prevColor = randomColor;
             colors[date.toDateString()] = randomColor;
         });
+
         return colors;
     };
 
