@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import "../style/Faqs.css";
+import api from "../services/api.js";
 
 /**
  * Componente Faqs.
@@ -24,11 +25,8 @@ function Faqs() {
      * Efeito para buscar as FAQs do backend quando o componente é montado.
      */
     useEffect(() => {
-        fetch("http://localhost:8080/api/faqs")
-            .then((response) => response.json())
-            .then((data) => {
-                setFaqs(data);
-            })
+        api.get("/api/faqs")
+            .then((res) => setFaqs(res.data))
             .catch((error) => {
                 console.error("Erro ao carregar FAQs:", error);
             });
