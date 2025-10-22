@@ -31,7 +31,6 @@ import Navbar from "./components/generalComponents/Navbar.jsx";
 import Footer from "./components/generalComponents/Footer.jsx";
 
 // Importar o UserProvider (provedor do contexto do utilizador) e setUserContextRef
-import UserProvider, { useUserContext } from "./services/UserContext.jsx";
 import { setUserContextRef } from "./services/api.js";
 
 // Importar o ProtectedRoute (componente de proteção de rotas)
@@ -140,7 +139,6 @@ function App() {
     return (
         <>
             {/* O UserProvider envolve toda a aplicação para que o contexto do utilizador esteja disponível para todos os componentes. */}
-            <UserProvider>
                 {/* A Navbar é renderizada em todas as páginas. */}
                 <Navbar/>
                 {/* As Rotas definem a navegação da aplicação. */}
@@ -182,7 +180,6 @@ function App() {
                     <Route path="/acesso-negado" element={<div>Acesso Negado. Você não tem permissão para ver esta página.</div>} />
 
                 </Routes>
-            </UserProvider>
             {/* Lógica de Renderização Condicional do Footer:
                 O Footer é exibido APENAS se a rota atual não for uma das páginas listadas. */}
             {!isHomePage && !isProfilePage && !isAdminPage && !isInstitutionDetails && !isLoginPage && !isRegisterPage && !isFaqsPage && <Footer/>}
