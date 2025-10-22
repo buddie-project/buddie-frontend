@@ -32,6 +32,7 @@ import Footer from "./components/generalComponents/Footer.jsx";
 
 // Importar o UserProvider (provedor do contexto do utilizador) e setUserContextRef
 import { setUserContextRef } from "./services/api.js";
+import { useUserContext } from "./services/UserContext.jsx";
 
 // Importar o ProtectedRoute (componente de proteção de rotas)
 import ProtectedRoute from './routes/ProtectedRoute';
